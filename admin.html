@@ -1,74 +1,100 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" data-theme="light">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Panel Admin - HCD Mendoza</title>
   <style>
+    :root {
+      --primary: #004b87;
+      --primary-dark: #003366;
+      --accent: #e67e22;
+      --bg: #f4f6f9;
+      --card-bg: #ffffff;
+      --text: #2c3e50;
+      --text-light: #6c757d;
+      --border: #dee2e6;
+      --shadow: 0 2px 8px rgba(0,0,0,0.08);
+    }
+    [data-theme="dark"] {
+      --primary: #003366;
+      --primary-dark: #001f3f;
+      --accent: #d35400;
+      --bg: #121212;
+      --card-bg: #1e1e1e;
+      --text: #e0e0e0;
+      --text-light: #a0a0a0;
+      --border: #333333;
+      --shadow: 0 2px 8px rgba(0,0,0,0.3);
+    }
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #f5f7fa; color: #333; line-height: 1.6; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; font-size: 14px; transition: background 0.3s, color 0.3s; }
     .container { max-width: 1000px; margin: 0 auto; padding: 20px; }
     
-    #loginScreen { max-width: 600px; margin: 60px auto; background: white; padding: 40px; border-radius: 8px; box-shadow: 0 2px 20px rgba(0,0,0,0.1); }
-    #loginScreen h2 { margin-bottom: 10px; color: #2c3e50; }
-    #loginScreen > p { color: #7f8c8d; margin-bottom: 30px; }
-    .form-group { margin-bottom: 20px; }
-    .form-group label { display: block; margin-bottom: 6px; font-weight: 600; color: #2c3e50; font-size: 0.9em; }
-    .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 10px 12px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px; background: white; }
-    .form-group input:focus, .form-group select:focus, .form-group textarea:focus { outline: none; border-color: #3498db; box-shadow: 0 0 0 3px rgba(52,152,219,0.1); }
+    .accessibility-bar { background: var(--primary-dark); color: white; padding: 6px 20px; text-align: right; margin-bottom: 20px; border-radius: 0 0 8px 8px; }
+    .accessibility-bar button { background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: white; padding: 4px 10px; border-radius: 4px; cursor: pointer; font-size: 0.85rem; margin-left: 10px; }
+    .accessibility-bar button:hover { background: rgba(255,255,255,0.2); }
+
+    #loginScreen { max-width: 500px; margin: 40px auto; background: var(--card-bg); padding: 30px; border-radius: 8px; box-shadow: var(--shadow); }
+    #loginScreen h2 { margin-bottom: 10px; color: var(--primary); }
+    #loginScreen > p { color: var(--text-light); margin-bottom: 25px; font-size: 0.9rem; }
+    .form-group { margin-bottom: 15px; }
+    .form-group label { display: block; margin-bottom: 5px; font-weight: 600; color: var(--text); font-size: 0.85rem; }
+    .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 9px 12px; border: 1px solid var(--border); border-radius: 4px; font-size: 13px; background: var(--card-bg); color: var(--text); }
+    .form-group input:focus, .form-group select:focus, .form-group textarea:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 2px rgba(0,75,135,0.1); }
     .token-wrapper { display: flex; gap: 8px; }
     .token-wrapper input { flex: 1; }
-    .help-text { font-size: 0.85em; color: #7f8c8d; margin-top: 6px; }
-    .help-text a { color: #3498db; text-decoration: none; }
-    .help-text a:hover { text-decoration: underline; }
+    .help-text { font-size: 0.8rem; color: var(--text-light); margin-top: 5px; }
+    .help-text a { color: var(--primary); text-decoration: none; }
     
-    .btn { padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer; font-size: 14px; font-weight: 600; transition: all 0.2s; }
-    .btn-primary { background: #3498db; color: white; }
-    .btn-primary:hover { background: #2980b9; }
+    .btn { padding: 9px 18px; border: none; border-radius: 4px; cursor: pointer; font-size: 13px; font-weight: 600; transition: all 0.2s; }
+    .btn-primary { background: var(--primary); color: white; }
+    .btn-primary:hover { background: var(--primary-dark); }
     .btn-secondary { background: #95a5a6; color: white; }
     .btn-secondary:hover { background: #7f8c8d; }
     .btn-danger { background: #e74c3c; color: white; }
     .btn-danger:hover { background: #c0392b; }
-    .btn-toggle { background: #ecf0f1; color: #333; border: 1px solid #ddd; }
-    .btn-toggle:hover { background: #dfe6e9; }
-    .btn-small { padding: 6px 12px; font-size: 12px; }
+    .btn-toggle { background: var(--bg); color: var(--text); border: 1px solid var(--border); }
+    .btn-small { padding: 5px 10px; font-size: 12px; }
     
     #adminPanel { display: none; }
-    .panel-header { background: white; padding: 20px 30px; border-radius: 8px; margin-bottom: 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); display: flex; justify-content: space-between; align-items: center; }
-    .panel-header h2 { color: #2c3e50; }
-    .repo-info { color: #7f8c8d; font-size: 0.9em; }
+    .panel-header { background: var(--card-bg); padding: 20px; border-radius: 8px; margin-bottom: 20px; box-shadow: var(--shadow); display: flex; justify-content: space-between; align-items: center; }
+    .panel-header h2 { color: var(--primary); font-size: 1.2rem; }
+    .repo-info { color: var(--text-light); font-size: 0.85rem; }
     
-    .tabs { display: flex; gap: 5px; margin-bottom: 20px; background: white; padding: 5px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
-    .tab { flex: 1; padding: 12px 15px; border: none; background: none; cursor: pointer; color: #7f8c8d; font-weight: 600; border-radius: 6px; transition: all 0.2s; }
-    .tab:hover { background: #f8f9fa; }
-    .tab.active { background: #3498db; color: white; }
+    .tabs { display: flex; gap: 5px; margin-bottom: 20px; background: var(--card-bg); padding: 5px; border-radius: 8px; box-shadow: var(--shadow); }
+    .tab { flex: 1; padding: 10px; border: none; background: none; cursor: pointer; color: var(--text-light); font-weight: 600; border-radius: 6px; transition: all 0.2s; font-size: 0.9rem; }
+    .tab:hover { background: var(--bg); }
+    .tab.active { background: var(--primary); color: white; }
     
-    .panel-section { display: none; background: white; padding: 30px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
+    .panel-section { display: none; background: var(--card-bg); padding: 25px; border-radius: 8px; box-shadow: var(--shadow); }
     .panel-section.active { display: block; }
-    .panel-section h3 { margin-bottom: 20px; color: #2c3e50; padding-bottom: 10px; border-bottom: 2px solid #ecf0f1; }
+    .panel-section h3 { margin-bottom: 20px; color: var(--primary); padding-bottom: 10px; border-bottom: 2px solid var(--border); font-size: 1.1rem; }
     
     .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
-    .form-group textarea { width: 100%; padding: 10px 12px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px; font-family: inherit; resize: vertical; min-height: 100px; }
+    .form-group textarea { width: 100%; padding: 9px 12px; border: 1px solid var(--border); border-radius: 4px; font-size: 13px; font-family: inherit; resize: vertical; min-height: 80px; background: var(--card-bg); color: var(--text); }
     .form-actions { display: flex; gap: 10px; margin-top: 20px; }
     
-    .image-preview { width: 100px; height: 100px; border-radius: 4px; object-fit: cover; margin-top: 10px; border: 2px solid #ecf0f1; display: none; }
+    .image-preview { width: 80px; height: 80px; border-radius: 4px; object-fit: cover; margin-top: 8px; border: 2px solid var(--border); display: none; }
     
-    .item-list { margin-top: 30px; }
-    .item-card { display: flex; align-items: center; gap: 15px; padding: 15px; background: #f8f9fa; border-radius: 6px; margin-bottom: 10px; border: 1px solid #e9ecef; }
-    .item-card img { width: 60px; height: 60px; border-radius: 4px; object-fit: cover; }
+    .item-list { margin-top: 25px; }
+    .item-card { display: flex; align-items: center; gap: 15px; padding: 12px; background: var(--bg); border-radius: 6px; margin-bottom: 10px; border: 1px solid var(--border); }
+    .item-card img { width: 50px; height: 50px; border-radius: 4px; object-fit: cover; }
     .item-info { flex: 1; }
-    .item-info h4 { color: #2c3e50; margin-bottom: 4px; }
-    .item-info small { color: #7f8c8d; font-size: 0.85em; }
-    .item-actions { display: flex; gap: 8px; }
+    .item-info h4 { color: var(--text); margin-bottom: 3px; font-size: 0.95rem; }
+    .item-info small { color: var(--text-light); font-size: 0.8rem; }
+    .item-actions { display: flex; gap: 6px; }
     
-    .status-bar { position: fixed; bottom: 20px; right: 20px; padding: 12px 20px; border-radius: 6px; color: white; font-weight: 600; box-shadow: 0 4px 12px rgba(0,0,0,0.15); transform: translateY(100px); opacity: 0; transition: all 0.3s; z-index: 1000; }
+    .status-bar { position: fixed; bottom: 20px; right: 20px; padding: 10px 18px; border-radius: 6px; color: white; font-weight: 600; font-size: 0.9rem; box-shadow: 0 4px 12px rgba(0,0,0,0.15); transform: translateY(100px); opacity: 0; transition: all 0.3s; z-index: 1000; }
     .status-bar.show { transform: translateY(0); opacity: 1; }
-    .status-bar.success { background: #2ecc71; }
+    .status-bar.success { background: #27ae60; }
     .status-bar.error { background: #e74c3c; }
-    .status-bar.info { background: #3498db; }
+    .status-bar.info { background: var(--primary); }
     
-    .alert-box { background: #fff3cd; border-left: 4px solid #ffc107; padding: 12px 15px; margin-bottom: 20px; border-radius: 4px; display: flex; justify-content: space-between; align-items: center; }
+    .alert-box { background: #fff3cd; border-left: 4px solid #ffc107; padding: 10px 15px; margin-bottom: 20px; border-radius: 4px; display: flex; justify-content: space-between; align-items: center; font-size: 0.85rem; }
     .alert-box strong { color: #856404; }
+    [data-theme="dark"] .alert-box { background: #3d3512; }
+    [data-theme="dark"] .alert-box strong { color: #ffd966; }
     
     @media (max-width: 768px) {
       .form-row { grid-template-columns: 1fr; }
@@ -79,15 +105,18 @@
 </head>
 <body>
 
+<div class="accessibility-bar">
+  <button onclick="toggleTheme()" id="themeBtn">🌙 Modo Oscuro</button>
+</div>
+
 <div class="container">
-  <!-- LOGIN SCREEN -->
   <div id="loginScreen">
     <h2>🔐 Panel Admin HCD Mendoza</h2>
     <p>Ingresá tus credenciales de GitHub para gestionar el contenido del sitio.</p>
     
     <div class="alert-box">
       <strong>⚠️ ¿Error 401 o problemas de conexión?</strong>
-      <button type="button" class="btn btn-danger btn-small" onclick="limpiarDatosGuardados()">️ Borrar datos y reiniciar</button>
+      <button type="button" class="btn btn-danger btn-small" onclick="limpiarDatosGuardados()">🗑️ Borrar datos</button>
     </div>
 
     <div class="form-group">
@@ -106,39 +135,37 @@
       <label>Personal Access Token (con permisos repo)</label>
       <div class="token-wrapper">
         <input type="password" id="ghToken" placeholder="ghp_...">
-        <button type="button" class="btn btn-toggle" onclick="toggleTokenVisibility()" title="Ver token">👁️ Mostrar</button>
+        <button type="button" class="btn btn-toggle" onclick="toggleTokenVisibility()" title="Ver token">👁️</button>
       </div>
       <p class="help-text">Creá uno en: <a href="https://github.com/settings/tokens" target="_blank">github.com/settings/tokens</a> → "Generate new token (classic)" → marcar repo.</p>
     </div>
     
-    <div style="display: flex; gap: 10px; margin-top: 25px;">
+    <div style="display: flex; gap: 10px; margin-top: 20px;">
       <button class="btn btn-primary" onclick="doLogin()" style="flex: 2;">Ingresar</button>
       <button class="btn btn-secondary" onclick="testConnection()" style="flex: 1;">Probar conexión</button>
     </div>
   </div>
 
-  <!-- ADMIN PANEL -->
   <div id="adminPanel">
     <div class="panel-header">
       <div>
-        <h2> Panel de Administración</h2>
+        <h2>📋 Panel de Administración</h2>
         <div class="repo-info" id="repoInfo">Cargando...</div>
       </div>
-      <button class="btn btn-danger" onclick="logout()">Cerrar sesión</button>
+      <button class="btn btn-danger btn-small" onclick="logout()">Cerrar sesión</button>
     </div>
 
     <div class="tabs">
       <button class="tab active" data-tab="concejales" onclick="switchTab('concejales')">👥 Concejales</button>
-      <button class="tab" data-tab="banners" onclick="switchTab('banners')">🖼️ Banners (Hero)</button>
-      <button class="tab" data-tab="noticias" onclick="switchTab('noticias')"> Noticias</button>
-      <button class="tab" data-tab="temas" onclick="switchTab('temas')">📋 Temas de Sesión</button>
+      <button class="tab" data-tab="banners" onclick="switchTab('banners')">🖼️ Banners</button>
+      <button class="tab" data-tab="noticias" onclick="switchTab('noticias')">📰 Noticias</button>
+      <button class="tab" data-tab="temas" onclick="switchTab('temas')">📋 Temas Sesión</button>
     </div>
 
     <!-- CONCEJALES -->
     <div id="sec-concejales" class="panel-section active">
       <h3>Gestión de Concejales</h3>
       <input type="hidden" id="cc-edit-index" value="-1">
-      
       <div class="form-group">
         <label>Nombre completo *</label>
         <input type="text" id="cc-nombre" placeholder="Ej: Marcelo Rubio">
@@ -169,12 +196,10 @@
         <input type="file" id="cc-foto" accept="image/*">
         <img id="cc-foto-preview" class="image-preview" alt="Preview">
       </div>
-      
       <div class="form-actions">
         <button class="btn btn-primary" onclick="saveConcejal()">💾 Guardar concejal</button>
         <button class="btn btn-secondary" onclick="resetConcejalForm()">Cancelar</button>
       </div>
-
       <div id="listaConcejales" class="item-list"></div>
     </div>
 
@@ -182,7 +207,6 @@
     <div id="sec-banners" class="panel-section">
       <h3>Banners del Slider Principal</h3>
       <input type="hidden" id="bn-edit-index" value="-1">
-      
       <div class="form-group">
         <label>Título del banner *</label>
         <input type="text" id="bn-titulo" placeholder="Ej: Gestión Legislativa Abierta">
@@ -194,14 +218,12 @@
       <div class="form-group">
         <label>Imagen de fondo (recomendado 1920x550)</label>
         <input type="file" id="bn-imagen" accept="image/*">
-        <img id="bn-imagen-preview" class="image-preview" alt="Preview" style="width: 200px; height: 80px;">
+        <img id="bn-imagen-preview" class="image-preview" alt="Preview" style="width: 150px; height: 60px;">
       </div>
-      
       <div class="form-actions">
         <button class="btn btn-primary" onclick="saveBanner()">💾 Guardar banner</button>
         <button class="btn btn-secondary" onclick="resetBannerForm()">Cancelar</button>
       </div>
-
       <div id="listaBanners" class="item-list"></div>
     </div>
 
@@ -209,7 +231,6 @@
     <div id="sec-noticias" class="panel-section">
       <h3>Gestión de Noticias</h3>
       <input type="hidden" id="nt-edit-index" value="-1">
-      
       <div class="form-row">
         <div class="form-group">
           <label>Título *</label>
@@ -226,7 +247,7 @@
       </div>
       <div class="form-group">
         <label>Contenido completo *</label>
-        <textarea id="nt-contenido" rows="5" placeholder="Contenido completo de la noticia..."></textarea>
+        <textarea id="nt-contenido" rows="4" placeholder="Contenido completo..."></textarea>
       </div>
       <div class="form-group">
         <label>Imagen destacada (opcional)</label>
@@ -234,15 +255,13 @@
         <img id="nt-imagen-preview" class="image-preview" alt="Preview">
       </div>
       <div class="form-group">
-        <label>Enlace externo (opcional, si la noticia redirige a otro portal)</label>
+        <label>Enlace externo (opcional)</label>
         <input type="url" id="nt-link" placeholder="https://...">
       </div>
-      
       <div class="form-actions">
-        <button class="btn btn-primary" onclick="saveNoticia()"> Guardar noticia</button>
+        <button class="btn btn-primary" onclick="saveNoticia()">💾 Guardar noticia</button>
         <button class="btn btn-secondary" onclick="resetNoticiaForm()">Cancelar</button>
       </div>
-
       <div id="listaNoticias" class="item-list"></div>
     </div>
 
@@ -250,14 +269,13 @@
     <div id="sec-temas" class="panel-section">
       <h3>Temas a Tratar en la Próxima Sesión</h3>
       <input type="hidden" id="tm-edit-index" value="-1">
-      
       <div class="form-group">
         <label>Título del tema *</label>
         <input type="text" id="tm-titulo" placeholder="Ej: Ordenanza de Zonificación Comercial">
       </div>
       <div class="form-group">
         <label>Descripción / Expediente</label>
-        <textarea id="tm-descripcion" rows="3" placeholder="Ej: Expediente 5432-E-2026 - Modificación del Código de Urbanismo..."></textarea>
+        <textarea id="tm-descripcion" rows="3" placeholder="Ej: Expediente 5432-E-2026..."></textarea>
       </div>
       <div class="form-row">
         <div class="form-group">
@@ -280,55 +298,59 @@
           </select>
         </div>
       </div>
-      
       <div class="form-actions">
         <button class="btn btn-primary" onclick="saveTema()">💾 Guardar tema</button>
         <button class="btn btn-secondary" onclick="resetTemaForm()">Cancelar</button>
       </div>
-
       <div id="listaTemas" class="item-list"></div>
     </div>
   </div>
 </div>
 
-<!-- STATUS BAR -->
 <div id="statusBar" class="status-bar"></div>
 
-<!-- SCRIPTS -->
 <script src="js/github-api.js"></script>
 <script src="js/admin-app.js"></script>
 <script>
-function toggleTokenVisibility() {
-  const input = document.getElementById('ghToken');
-  const btn = document.querySelector('.btn-toggle');
-  if (input.type === 'password') {
-    input.type = 'text';
-    btn.textContent = '🙈 Ocultar';
-  } else {
-    input.type = 'password';
-    btn.textContent = '👁️ Mostrar';
+  // === MODO OSCURO ADMIN ===
+  function toggleTheme() {
+    const html = document.documentElement;
+    const currentTheme = html.getAttribute('data-theme');
+    const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+    html.setAttribute('data-theme', newTheme);
+    localStorage.setItem('adminTheme', newTheme);
+    document.getElementById('themeBtn').textContent = newTheme === 'dark' ? '☀️ Modo Claro' : '🌙 Modo Oscuro';
   }
-}
+  document.addEventListener('DOMContentLoaded', () => {
+    const savedTheme = localStorage.getItem('adminTheme') || 'light';
+    document.documentElement.setAttribute('data-theme', savedTheme);
+    document.getElementById('themeBtn').textContent = savedTheme === 'dark' ? '☀️ Modo Claro' : '🌙 Modo Oscuro';
+  });
 
-function limpiarDatosGuardados() {
-  localStorage.removeItem('hcd_github_config');
-  localStorage.removeItem('hcd_admin_logged_in');
-  localStorage.removeItem('gh_admin_config');
-  document.getElementById('ghOwner').value = '';
-  document.getElementById('ghRepo').value = '';
-  document.getElementById('ghBranch').value = 'main';
-  document.getElementById('ghToken').value = '';
-  alert('✅ Datos borrados. Ahora podés ingresar los datos correctos desde cero.');
-}
+  function toggleTokenVisibility() {
+    const input = document.getElementById('ghToken');
+    const btn = document.querySelector('.btn-toggle');
+    if (input.type === 'password') { input.type = 'text'; btn.textContent = '🙈'; } 
+    else { input.type = 'password'; btn.textContent = '👁️'; }
+  }
 
-function switchTab(tabName) {
-  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-  document.querySelectorAll('.panel-section').forEach(s => s.classList.remove('active'));
-  
-  document.querySelector(`[data-tab="${tabName}"]`).classList.add('active');
-  document.getElementById(`sec-${tabName}`).classList.add('active');
-}
+  function limpiarDatosGuardados() {
+    localStorage.removeItem('hcd_github_config');
+    localStorage.removeItem('hcd_admin_logged_in');
+    localStorage.removeItem('gh_admin_config');
+    document.getElementById('ghOwner').value = '';
+    document.getElementById('ghRepo').value = '';
+    document.getElementById('ghBranch').value = 'main';
+    document.getElementById('ghToken').value = '';
+    alert('✅ Datos borrados. Ahora podés ingresar los datos correctos desde cero.');
+  }
+
+  function switchTab(tabName) {
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.panel-section').forEach(s => s.classList.remove('active'));
+    document.querySelector(`[data-tab="${tabName}"]`).classList.add('active');
+    document.getElementById(`sec-${tabName}`).classList.add('active');
+  }
 </script>
-
 </body>
 </html>

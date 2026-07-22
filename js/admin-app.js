@@ -9,7 +9,6 @@ let DATA = {
   temas: []
 };
 
-// ========= INICIO =========
 window.addEventListener('DOMContentLoaded', () => {
   const cfg = GitHubAPI.loadConfig();
   if (cfg.token && cfg.owner && cfg.repo) {
@@ -20,7 +19,6 @@ window.addEventListener('DOMContentLoaded', () => {
     showPanel();
   }
   
-  // Tabs
   document.querySelectorAll('.tab').forEach(t => {
     t.addEventListener('click', () => {
       document.querySelectorAll('.tab').forEach(x => x.classList.remove('active'));
@@ -30,7 +28,6 @@ window.addEventListener('DOMContentLoaded', () => {
     });
   });
   
-  // Previews de imágenes
   setupImagePreview('cc-foto', 'cc-foto-preview');
   setupImagePreview('bn-imagen', 'bn-imagen-preview');
   setupImagePreview('nt-imagen', 'nt-imagen-preview');
@@ -40,12 +37,8 @@ function setupImagePreview(inputId, previewId) {
   document.getElementById(inputId).addEventListener('change', e => {
     const file = e.target.files[0];
     const preview = document.getElementById(previewId);
-    if (file) {
-      preview.src = URL.createObjectURL(file);
-      preview.style.display = 'block';
-    } else {
-      preview.style.display = 'none';
-    }
+    if (file) { preview.src = URL.createObjectURL(file); preview.style.display = 'block'; } 
+    else { preview.style.display = 'none'; }
   });
 }
 
@@ -56,7 +49,6 @@ function showStatus(msg, type = 'info') {
   setTimeout(() => bar.classList.remove('show'), 3500);
 }
 
-// ========= LOGIN =========
 async function doLogin() {
   const owner = document.getElementById('ghOwner').value.trim();
   const repo = document.getElementById('ghRepo').value.trim();
@@ -84,9 +76,7 @@ async function testConnection() {
   try {
     await GitHubAPI.testConnection();
     showStatus('✅ Conexión OK', 'success');
-  } catch (e) {
-    showStatus('❌ ' + e.message, 'error');
-  }
+  } catch (e) { showStatus('❌ ' + e.message, 'error'); }
 }
 
 function logout() {
@@ -95,7 +85,6 @@ function logout() {
   location.reload();
 }
 
-// ========= PANEL =========
 async function showPanel() {
   document.getElementById('loginScreen').style.display = 'none';
   document.getElementById('adminPanel').style.display = 'block';
@@ -117,16 +106,11 @@ async function loadAllData() {
     DATA.noticias = n.content ? JSON.parse(n.content) : [];
     DATA.temas = t.content ? JSON.parse(t.content) : [];
     renderAll();
-  } catch (e) {
-    showStatus('Error cargando datos: ' + e.message, 'error');
-  }
+  } catch (e) { showStatus('Error cargando datos: ' + e.message, 'error'); }
 }
 
 function renderAll() {
-  renderConcejales();
-  renderBanners();
-  renderNoticias();
-  renderTemas();
+  renderConcejales(); renderBanners(); renderNoticias(); renderTemas();
 }
 
 // ========= CONCEJALES =========
@@ -148,19 +132,11 @@ async function saveConcejal() {
       await GitHubAPI.uploadImage(fotoPath, fotoFile, `Upload foto ${nombre}`);
     }
     const item = { nombre, bloque, mandato, cargo, foto: fotoPath };
-    if (idx >= 0) DATA.concejales[idx] = item;
-    else DATA.concejales.push(item);
-    await GitHubAPI.putFile(
-      'data/concejales.json',
-      JSON.stringify(DATA.concejales, null, 2),
-      idx >= 0 ? `Update concejal ${nombre}` : `Add concejal ${nombre}`
-    );
+    if (idx >= 0) DATA.concejales[idx] = item; else DATA.concejales.push(item);
+    await GitHubAPI.putFile('data/concejales.json', JSON.stringify(DATA.concejales, null, 2), idx >= 0 ? `Update concejal ${nombre}` : `Add concejal ${nombre}`);
     showStatus('✅ Concejal guardado', 'success');
-    resetConcejalForm();
-    await loadAllData();
-  } catch (e) {
-    showStatus('Error: ' + e.message, 'error');
-  }
+    resetConcejalForm(); await loadAllData();
+  } catch (e) { showStatus('Error: ' + e.message, 'error'); }
 }
 
 function editConcejal(i) {
@@ -172,9 +148,8 @@ function editConcejal(i) {
   document.getElementById('cc-edit-index').value = i;
   if (c.foto) {
     const cfg = GitHubAPI.getConfig();
-    const url = `https://raw.githubusercontent.com/${cfg.owner}/${cfg.repo}/${cfg.branch}/${c.foto}`;
     const p = document.getElementById('cc-foto-preview');
-    p.src = url; p.style.display = 'block';
+    p.src = `https://raw.githubusercontent.com/${cfg.owner}/${cfg.repo}/${cfg.branch}/${c.foto}`; p.style.display = 'block';
   }
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
@@ -185,8 +160,7 @@ async function deleteConcejal(i) {
   DATA.concejales.splice(i, 1);
   try {
     await GitHubAPI.putFile('data/concejales.json', JSON.stringify(DATA.concejales, null, 2), `Delete concejal ${nombre}`);
-    showStatus('Eliminado', 'success');
-    await loadAllData();
+    showStatus('Eliminado', 'success'); await loadAllData();
   } catch (e) { showStatus('Error: ' + e.message, 'error'); }
 }
 
@@ -203,7 +177,7 @@ function renderConcejales() {
   cont.innerHTML = '<h3 style="margin:20px 0 10px; color:var(--primary);">Concejales cargados (' + DATA.concejales.length + ')</h3>' +
     DATA.concejales.map((c, i) => `
       <div class="item-card">
-        ${c.foto ? `<img src="https://raw.githubusercontent.com/${cfg.owner}/${cfg.repo}/${cfg.branch}/${c.foto}">` : '<div style="width:60px;height:60px;background:#ddd;border-radius:4px;"></div>'}
+        ${c.foto ? `<img src="https://raw.githubusercontent.com/${cfg.owner}/${cfg.repo}/${cfg.branch}/${c.foto}">` : '<div style="width:50px;height:50px;background:#ddd;border-radius:4px;"></div>'}
         <div class="item-info">
           <h4>${c.nombre}</h4>
           <small>${c.bloque} · Mandato ${c.mandato || '?'}${c.cargo ? ' · ' + c.cargo : ''}</small>
@@ -234,11 +208,8 @@ async function saveBanner() {
     }
     const item = { titulo, subtitulo, imagen: imgPath };
     if (idx >= 0) DATA.banners[idx] = item; else DATA.banners.push(item);
-    await GitHubAPI.putFile('data/banners.json', JSON.stringify(DATA.banners, null, 2),
-      idx >= 0 ? `Update banner` : `Add banner`);
-    showStatus('✅ Banner guardado', 'success');
-    resetBannerForm();
-    await loadAllData();
+    await GitHubAPI.putFile('data/banners.json', JSON.stringify(DATA.banners, null, 2), idx >= 0 ? `Update banner` : `Add banner`);
+    showStatus('✅ Banner guardado', 'success'); resetBannerForm(); await loadAllData();
   } catch (e) { showStatus('Error: ' + e.message, 'error'); }
 }
 
@@ -250,19 +221,15 @@ function editBanner(i) {
   if (b.imagen) {
     const cfg = GitHubAPI.getConfig();
     const p = document.getElementById('bn-imagen-preview');
-    p.src = `https://raw.githubusercontent.com/${cfg.owner}/${cfg.repo}/${cfg.branch}/${b.imagen}`;
-    p.style.display = 'block';
+    p.src = `https://raw.githubusercontent.com/${cfg.owner}/${cfg.repo}/${cfg.branch}/${b.imagen}`; p.style.display = 'block';
   }
 }
 
 async function deleteBanner(i) {
   if (!confirm('¿Eliminar este banner?')) return;
   DATA.banners.splice(i, 1);
-  try {
-    await GitHubAPI.putFile('data/banners.json', JSON.stringify(DATA.banners, null, 2), 'Delete banner');
-    showStatus('Eliminado', 'success');
-    await loadAllData();
-  } catch (e) { showStatus('Error: ' + e.message, 'error'); }
+  try { await GitHubAPI.putFile('data/banners.json', JSON.stringify(DATA.banners, null, 2), 'Delete banner'); showStatus('Eliminado', 'success'); await loadAllData(); } 
+  catch (e) { showStatus('Error: ' + e.message, 'error'); }
 }
 
 function resetBannerForm() {
@@ -312,11 +279,8 @@ async function saveNoticia() {
     }
     const item = { titulo, resumen, contenido, fecha, imagen: imgPath, link };
     if (idx >= 0) DATA.noticias[idx] = item; else DATA.noticias.unshift(item);
-    await GitHubAPI.putFile('data/noticias.json', JSON.stringify(DATA.noticias, null, 2),
-      idx >= 0 ? `Update noticia` : `Add noticia`);
-    showStatus('✅ Noticia guardada', 'success');
-    resetNoticiaForm();
-    await loadAllData();
+    await GitHubAPI.putFile('data/noticias.json', JSON.stringify(DATA.noticias, null, 2), idx >= 0 ? `Update noticia` : `Add noticia`);
+    showStatus('✅ Noticia guardada', 'success'); resetNoticiaForm(); await loadAllData();
   } catch (e) { showStatus('Error: ' + e.message, 'error'); }
 }
 
@@ -331,19 +295,15 @@ function editNoticia(i) {
   if (n.imagen) {
     const cfg = GitHubAPI.getConfig();
     const p = document.getElementById('nt-imagen-preview');
-    p.src = `https://raw.githubusercontent.com/${cfg.owner}/${cfg.repo}/${cfg.branch}/${n.imagen}`;
-    p.style.display = 'block';
+    p.src = `https://raw.githubusercontent.com/${cfg.owner}/${cfg.repo}/${cfg.branch}/${n.imagen}`; p.style.display = 'block';
   }
 }
 
 async function deleteNoticia(i) {
   if (!confirm('¿Eliminar esta noticia?')) return;
   DATA.noticias.splice(i, 1);
-  try {
-    await GitHubAPI.putFile('data/noticias.json', JSON.stringify(DATA.noticias, null, 2), 'Delete noticia');
-    showStatus('Eliminada', 'success');
-    await loadAllData();
-  } catch (e) { showStatus('Error: ' + e.message, 'error'); }
+  try { await GitHubAPI.putFile('data/noticias.json', JSON.stringify(DATA.noticias, null, 2), 'Delete noticia'); showStatus('Eliminada', 'success'); await loadAllData(); } 
+  catch (e) { showStatus('Error: ' + e.message, 'error'); }
 }
 
 function resetNoticiaForm() {
@@ -379,23 +339,14 @@ async function saveTema() {
   const descripcion = document.getElementById('tm-descripcion').value.trim();
   const tipo = document.getElementById('tm-tipo').value;
   const estado = document.getElementById('tm-estado').value;
-  
   if (!titulo) return showStatus('El título es obligatorio', 'error');
-  
   try {
     showStatus('Guardando...', 'info');
     const item = { titulo, descripcion, tipo, estado };
     if (idx >= 0) DATA.temas[idx] = item; else DATA.temas.push(item);
-    
-    await GitHubAPI.putFile('data/temas_sesion.json', JSON.stringify(DATA.temas, null, 2),
-      idx >= 0 ? `Update tema de sesión` : `Add tema de sesión`);
-    
-    showStatus('✅ Tema guardado', 'success');
-    resetTemaForm();
-    await loadAllData();
-  } catch (e) { 
-    showStatus('Error: ' + e.message, 'error'); 
-  }
+    await GitHubAPI.putFile('data/temas_sesion.json', JSON.stringify(DATA.temas, null, 2), idx >= 0 ? `Update tema de sesión` : `Add tema de sesión`);
+    showStatus('✅ Tema guardado', 'success'); resetTemaForm(); await loadAllData();
+  } catch (e) { showStatus('Error: ' + e.message, 'error'); }
 }
 
 function editTema(i) {
@@ -410,13 +361,8 @@ function editTema(i) {
 async function deleteTema(i) {
   if (!confirm('¿Eliminar este tema?')) return;
   DATA.temas.splice(i, 1);
-  try {
-    await GitHubAPI.putFile('data/temas_sesion.json', JSON.stringify(DATA.temas, null, 2), 'Delete tema de sesión');
-    showStatus('Eliminado', 'success');
-    await loadAllData();
-  } catch (e) { 
-    showStatus('Error: ' + e.message, 'error'); 
-  }
+  try { await GitHubAPI.putFile('data/temas_sesion.json', JSON.stringify(DATA.temas, null, 2), 'Delete tema de sesión'); showStatus('Eliminado', 'success'); await loadAllData(); } 
+  catch (e) { showStatus('Error: ' + e.message, 'error'); }
 }
 
 function resetTemaForm() {
@@ -426,11 +372,7 @@ function resetTemaForm() {
 
 function renderTemas() {
   const cont = document.getElementById('listaTemas');
-  if (!DATA.temas.length) { 
-    cont.innerHTML = '<p style="color:#888;">No hay temas cargados.</p>'; 
-    return; 
-  }
-  
+  if (!DATA.temas.length) { cont.innerHTML = '<p style="color:#888;">No hay temas cargados.</p>'; return; }
   cont.innerHTML = '<h3 style="margin:20px 0 10px; color:var(--primary);">Temas cargados (' + DATA.temas.length + ')</h3>' +
     DATA.temas.map((t, i) => `
       <div class="item-card">

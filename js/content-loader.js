@@ -1,7 +1,6 @@
 /**
  * content-loader.js
  * Carga dinámica de contenido desde GitHub
- * Usuario: jesugallardo | Repo: hcd-mendoza-web | Rama: main
  */
 (async function() {
   const OWNER = 'jesugallardo';
@@ -23,49 +22,93 @@
     const wrapper = document.querySelector('.slides-wrapper');
     if (wrapper) {
       wrapper.innerHTML = banners.map((b, i) => `
-        <div class="slide ${i === 0 ? 'is-active' : ''}" style="background-image:url('${BASE}/${b.imagen}'); background-size:cover; background-position:center;">
+        <div class="slide" style="background-image: url('${BASE}/${b.imagen}');">
           <div class="hero-content">
-            <h2>${b.titulo}</h2>
+            <h1>${b.titulo}</h1>
             <p>${b.subtitulo || ''}</p>
           </div>
         </div>
       `).join('');
-      if (window.initHeroSlider) window.initHeroSlider();
     }
   }
   
-  // ====== CONCEJALES ======
-  const concejales = await loadJSON('data/concejales.json');
-  if (concejales && concejales.length) {
-    const wrapper = document.querySelector('#concejales .cc-wrapper');
-    if (wrapper) {
-      wrapper.innerHTML = concejales.map(c => `
-        <div class="cc-slide">
-          <div class="concejal-card">
-            ${c.foto ? `<img src="${BASE}/${c.foto}" style="width:80px;height:80px;border-radius:50%;object-fit:cover;margin-bottom:10px;">` : '<div class="avatar"></div>'}
-            <h3>${c.nombre}</h3>
-            <div class="bloque">${c.bloque}</div>
-            ${c.cargo ? `<div style="font-size:11px;color:var(--accent-color);margin-top:4px;">${c.cargo}</div>` : ''}
-            <div style="font-size:11px;color:#999;margin-top:4px;">Mandato hasta ${c.mandato || '—'}</div>
+  // ====== CONCEJALES (Agrupados por Bloque con carruseles) ======
+  let concejales = await loadJSON('data/concejales.json');
+  
+  // Datos de prueba si no hay datos reales
+  if (!concejales || !concejales.length) {
+    concejales = [
+      { nombre: "Cecilia Rodríguez", bloque: "La Libertad Avanza + Frente Cambia Mendoza", mandato: "2030", cargo: "Presidente de Bloque", foto: "" },
+      { nombre: "Maximiliano Garrido", bloque: "La Libertad Avanza + Frente Cambia Mendoza", mandato: "2030", cargo: "Integrante", foto: "" },
+      { nombre: "Carla Ernani", bloque: "La Libertad Avanza + Frente Cambia Mendoza", mandato: "2030", cargo: "Integrante", foto: "" },
+      { nombre: "Tomás Dris", bloque: "La Libertad Avanza + Frente Cambia Mendoza", mandato: "2030", cargo: "Integrante", foto: "" },
+      { nombre: "L. Villarreal Occhionero", bloque: "La Libertad Avanza + Frente Cambia Mendoza", mandato: "2030", cargo: "Integrante", foto: "" },
+      { nombre: "Marcelo Rubio", bloque: "Frente Cambia Mendoza", mandato: "2027", cargo: "Presidente del Bloque", foto: "" },
+      { nombre: "Cielo Daou", bloque: "Frente Cambia Mendoza", mandato: "2027", cargo: "Integrante", foto: "" },
+      { nombre: "Rafael Bazán", bloque: "Frente Cambia Mendoza", mandato: "2027", cargo: "Integrante", foto: "" },
+      { nombre: "Ernesto Giménez", bloque: "Frente Cambia Mendoza", mandato: "2027", cargo: "Integrante", foto: "" },
+      { nombre: "Gustavo Caleau", bloque: "Fuerza Justicialista Mendoza", mandato: "2030", cargo: "Monobloque", foto: "" },
+      { nombre: "Ricardo García", bloque: "Partido Verde", mandato: "2027", cargo: "Integrante", foto: "" },
+      { nombre: "Gustavo Gutiérrez", bloque: "Coalición Cívica + ARI", mandato: "2027", cargo: "Monobloque", foto: "" }
+    ];
+  }
+
+  const container = document.getElementById('bloques-container');
+  if (container) {
+    const bloquesMap = {};
+    concejales.forEach(c => {
+      if (!bloquesMap[c.bloque]) bloquesMap[c.bloque] = [];
+      bloquesMap[c.bloque].push(c);
+    });
+
+    container.innerHTML = Object.keys(bloquesMap).map(bloqueNombre => {
+      const miembros = bloquesMap[bloqueNombre];
+      const presidente = miembros.find(m => m.cargo && m.cargo.toLowerCase().includes('presidente'));
+      
+      return `
+        <div class="bloque-item">
+          <div class="bloque-header" onclick="toggleBloque(this)">
+            <h3>Bloque ${bloqueNombre}</h3>
+            <span class="bloque-toggle">Ver Bloque e Integrantes ▾</span>
+          </div>
+          <div class="bloque-content">
+            ${presidente ? `<div class="bloque-presidente"><strong>Presidente de Bloque:</strong> ${presidente.nombre} · Mandato hasta ${presidente.mandato}</div>` : ''}
+            <div class="carousel-container">
+              <button class="carousel-btn prev" onclick="moveCarousel(this.parentElement.querySelector('.carousel-wrapper'), -1)">❮</button>
+              <div class="carousel-wrapper">
+                ${miembros.map(c => `
+                  <div class="carousel-slide">
+                    <div class="concejal-card">
+                      ${c.foto ? `<img src="${BASE}/${c.foto}" alt="${c.nombre}">` : '<div class="avatar">👤</div>'}
+                      <h4>${c.nombre}</h4>
+                      ${c.cargo ? `<div class="cargo">${c.cargo}</div>` : ''}
+                      <div class="mandato">Mandato hasta ${c.mandato || '—'}</div>
+                    </div>
+                  </div>
+                `).join('')}
+              </div>
+              <button class="carousel-btn next" onclick="moveCarousel(this.parentElement.querySelector('.carousel-wrapper'), 1)">❯</button>
+            </div>
           </div>
         </div>
-      `).join('');
-      if (window.initConcejalesCarousel) window.initConcejalesCarousel();
-    }
+      `;
+    }).join('');
   }
   
   // ====== NOTICIAS ======
   const noticias = await loadJSON('data/noticias.json');
   if (noticias && noticias.length) {
-    const cont = document.querySelector('#noticias .grid-3');
+    const cont = document.getElementById('noticias-container');
     if (cont) {
       cont.innerHTML = noticias.slice(0, 6).map(n => `
         <article class="noticia-card">
-          ${n.imagen ? `<img src="${BASE}/${n.imagen}" style="width:100%;height:160px;object-fit:cover;border-radius:4px;margin-bottom:12px;">` : ''}
-          <span class="fecha">${formatDate(n.fecha)}</span>
-          <h3>${n.titulo}</h3>
-          <p>${n.resumen || ''}</p>
-          <a class="leer-mas" href="${n.link || '#'}">Leer más →</a>
+          ${n.imagen ? `<img src="${BASE}/${n.imagen}" alt="${n.titulo}">` : ''}
+          <div class="noticia-content">
+            <span class="fecha">${formatDate(n.fecha)}</span>
+            <h3>${n.titulo}</h3>
+            <p>${n.resumen || ''}</p>
+            <a href="${n.link || '#'}" class="leer-mas">Leer más →</a>
+          </div>
         </article>
       `).join('');
     }
@@ -78,17 +121,18 @@
     if (cont) {
       const temasATratar = temas.filter(t => t.estado === 'A tratar');
       if (temasATratar.length) {
-        cont.innerHTML = '<ul class="temas-lista">' + 
+        cont.innerHTML = '<ul>' + 
           temasATratar.map(t => `
             <li>
               <span class="tipo-badge">${t.tipo}</span>
               <strong>${t.titulo}</strong>
-              ${t.descripcion ? `<br><small style="color:#666;">${t.descripcion}</small>` : ''}
+              <span class="estado-badge">${t.estado}</span>
+              ${t.descripcion ? `<small>${t.descripcion}</small>` : ''}
             </li>
           `).join('') + 
           '</ul>';
       } else {
-        cont.innerHTML = '<p style="color:#888; font-size:0.9em;">No hay temas programados para la próxima sesión.</p>';
+        cont.innerHTML = '<p style="color:var(--text-light); text-align:center; font-size:0.95rem;">No hay temas programados para la próxima sesión.</p>';
       }
     }
   }

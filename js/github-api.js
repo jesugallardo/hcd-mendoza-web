@@ -1,6 +1,7 @@
 /**
  * github-api.js
  * Wrapper sobre la REST API de GitHub para hacer commits desde el panel.
+ * Versión a prueba de conflictos (409)
  */
 const GitHubAPI = (() => {
   let config = { owner: '', repo: '', branch: 'main', token: '' };
@@ -45,13 +46,11 @@ const GitHubAPI = (() => {
     return text ? JSON.parse(text) : null;
   }
   
-  // Test de conexión
   async function testConnection() {
     await request('');
     return true;
   }
   
-  // Obtener archivo (decodificado)
   async function getFile(path) {
     try {
       const data = await request(`/contents/${path}?ref=${config.branch}`);
@@ -63,23 +62,18 @@ const GitHubAPI = (() => {
     }
   }
   
-  // Crear o actualizar archivo (commit)
   async function putFile(path, content, message, sha = null) {
-    if (!sha) {
-      try {
-        const existing = await request(`/contents/${path}?ref=${config.branch}`);
-        sha = existing.sha;
-      } catch (e) {
-        if (!e.message.includes('404')) throw e;
-      }
+    // 🔥 PROTECCIÓN ANTI-409: Forzamos la obtención del SHA más reciente
+    let currentSha = sha;
+    try {
+      const existing = await request(`/contents/${path}?ref=${config.branch}&t=${Date.now()}`);
+      currentSha = existing.sha;
+    } catch (e) {
+      if (!e.message.includes('404')) throw e;
     }
 
-    const body = {
-      message,
-      content: encodeBase64(content),
-      branch: config.branch
-    };
-    if (sha) body.sha = sha;
+    const body = { message, content: encodeBase64(content), branch: config.branch };
+    if (currentSha) body.sha = currentSha;
     
     return await request(`/contents/${path}`, {
       method: 'PUT',
@@ -87,7 +81,6 @@ const GitHubAPI = (() => {
     });
   }
   
-  // Eliminar archivo
   async function deleteFile(path, sha, message) {
     return await request(`/contents/${path}`, {
       method: 'DELETE',
@@ -95,21 +88,16 @@ const GitHubAPI = (() => {
     });
   }
   
-  // Subir imagen (binario)
   async function uploadImage(path, blob, message) {
     const base64 = await blobToBase64(blob);
-    let sha = null;
+    let currentSha = null;
     try {
-      const existing = await request(`/contents/${path}?ref=${config.branch}`);
-      sha = existing.sha;
+      const existing = await request(`/contents/${path}?ref=${config.branch}&t=${Date.now()}`);
+      currentSha = existing.sha;
     } catch (e) { /* no existe, ok */ }
     
-    const body = { 
-      message, 
-      content: base64.split(',')[1], 
-      branch: config.branch 
-    };
-    if (sha) body.sha = sha;
+    const body = { message, content: base64.split(',')[1], branch: config.branch };
+    if (currentSha) body.sha = currentSha;
     
     return await request(`/contents/${path}`, { 
       method: 'PUT', 
@@ -117,14 +105,8 @@ const GitHubAPI = (() => {
     });
   }
   
-  function encodeBase64(str) {
-    return btoa(unescape(encodeURIComponent(str)));
-  }
-  
-  function decodeBase64(str) {
-    return decodeURIComponent(escape(atob(str.replace(/\n/g, ''))));
-  }
-  
+  function encodeBase64(str) { return btoa(unescape(encodeURIComponent(str))); }
+  function decodeBase64(str) { return decodeURIComponent(escape(atob(str.replace(/\n/g, '')))); }
   function blobToBase64(blob) {
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
@@ -134,15 +116,5 @@ const GitHubAPI = (() => {
     });
   }
   
-  return { 
-    setConfig, 
-    loadConfig, 
-    clearConfig, 
-    testConnection, 
-    getFile, 
-    putFile, 
-    deleteFile, 
-    uploadImage, 
-    getConfig: () => config 
-  };
+  return { setConfig, loadConfig, clearConfig, testConnection, getFile, putFile, deleteFile, uploadImage, getConfig: () => config };
 })();
