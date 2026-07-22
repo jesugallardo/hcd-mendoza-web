@@ -1,215 +1,323 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<title>Panel Admin - HCD Mendoza</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<style>
-  :root { --primary:#2c3e50; --accent:#00bcd4; --yellow:#f1c40f; --bg:#f8f9fa; --border:#e2e8f0; }
-  * { box-sizing: border-box; margin:0; padding:0; }
-  body { font-family: -apple-system, Segoe UI, Roboto, sans-serif; background:var(--bg); color:#333; }
-  .login-screen, .admin-panel { max-width: 1100px; margin: 40px auto; padding: 20px; }
-  .login-box { background:#fff; padding:40px; border-radius:8px; box-shadow:0 4px 20px rgba(0,0,0,0.08); max-width:450px; margin:80px auto; }
-  .login-box h1 { color:var(--primary); margin-bottom:25px; font-size:22px; }
-  .login-box label { display:block; margin:12px 0 6px; font-weight:600; font-size:13px; }
-  .login-box input { width:100%; padding:10px; border:1px solid var(--border); border-radius:4px; font-size:14px; }
-  .btn { background:var(--accent); color:#fff; border:none; padding:11px 22px; border-radius:4px; cursor:pointer; font-weight:600; font-size:14px; transition:background .2s; }
-  .btn:hover { background:#0097a7; }
-  .btn-yellow { background:var(--yellow); color:#111; }
-  .btn-danger { background:#e74c3c; }
-  .btn-secondary { background:#95a5a6; }
-  .tabs { display:flex; gap:5px; border-bottom:2px solid var(--border); margin-bottom:25px; flex-wrap:wrap; }
-  .tab { padding:12px 20px; cursor:pointer; border:none; background:none; font-weight:600; color:#666; border-bottom:3px solid transparent; margin-bottom:-2px; }
-  .tab.active { color:var(--accent); border-bottom-color:var(--accent); }
-  .panel-section { background:#fff; padding:25px; border-radius:8px; box-shadow:0 2px 10px rgba(0,0,0,0.05); display:none; }
-  .panel-section.active { display:block; }
-  .panel-section h2 { color:var(--primary); margin-bottom:20px; font-size:20px; border-left:4px solid var(--accent); padding-left:12px; }
-  .form-row { margin-bottom:15px; }
-  .form-row label { display:block; margin-bottom:6px; font-weight:600; font-size:13px; }
-  .form-row input, .form-row textarea, .form-row select { width:100%; padding:10px; border:1px solid var(--border); border-radius:4px; font-size:14px; font-family:inherit; }
-  .form-row textarea { min-height:100px; resize:vertical; }
-  .item-list { margin-top:25px; }
-  .item-card { background:#f8f9fa; border:1px solid var(--border); padding:15px; border-radius:6px; margin-bottom:10px; display:flex; justify-content:space-between; align-items:center; gap:15px; }
-  .item-card img { width:60px; height:60px; object-fit:cover; border-radius:4px; background:#ddd; }
-  .item-info { flex:1; }
-  .item-info h4 { color:var(--primary); margin-bottom:4px; }
-  .item-info small { color:#7f8c8d; }
-  .item-actions { display:flex; gap:8px; }
-  .item-actions button { padding:6px 12px; font-size:12px; }
-  .status-bar { position:fixed; top:0; left:0; right:0; padding:12px; text-align:center; font-weight:600; z-index:9999; transform:translateY(-100%); transition:transform .3s; }
-  .status-bar.show { transform:translateY(0); }
-  .status-bar.success { background:#2ecc71; color:#fff; }
-  .status-bar.error { background:#e74c3c; color:#fff; }
-  .status-bar.info { background:var(--accent); color:#fff; }
-  .header-admin { background:var(--primary); color:#fff; padding:15px 25px; border-radius:8px 8px 0 0; display:flex; justify-content:space-between; align-items:center; margin-bottom:0; }
-  .header-admin h1 { font-size:18px; }
-  .header-admin button { background:rgba(255,255,255,0.15); color:#fff; border:none; padding:8px 14px; border-radius:4px; cursor:pointer; font-size:13px; }
-  .file-preview { max-width:200px; max-height:150px; margin-top:10px; border:1px solid var(--border); border-radius:4px; }
-  .help-text { font-size:12px; color:#7f8c8d; margin-top:4px; }
-  .config-box { background:#fffbe6; border:1px solid #f1c40f; padding:15px; border-radius:6px; margin-bottom:20px; font-size:13px; }
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Panel Admin - HCD Mendoza</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #f5f7fa; color: #333; line-height: 1.6; }
+    .container { max-width: 1000px; margin: 0 auto; padding: 20px; }
+    
+    /* Login Screen */
+    #loginScreen { max-width: 600px; margin: 60px auto; background: white; padding: 40px; border-radius: 8px; box-shadow: 0 2px 20px rgba(0,0,0,0.1); }
+    #loginScreen h2 { margin-bottom: 10px; color: #2c3e50; }
+    #loginScreen > p { color: #7f8c8d; margin-bottom: 30px; }
+    .form-group { margin-bottom: 20px; }
+    .form-group label { display: block; margin-bottom: 6px; font-weight: 600; color: #2c3e50; font-size: 0.9em; }
+    .form-group input { width: 100%; padding: 10px 12px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px; }
+    .form-group input:focus { outline: none; border-color: #3498db; box-shadow: 0 0 0 3px rgba(52,152,219,0.1); }
+    .token-wrapper { display: flex; gap: 8px; }
+    .token-wrapper input { flex: 1; }
+    .help-text { font-size: 0.85em; color: #7f8c8d; margin-top: 6px; }
+    .help-text a { color: #3498db; text-decoration: none; }
+    .help-text a:hover { text-decoration: underline; }
+    
+    /* Buttons */
+    .btn { padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer; font-size: 14px; font-weight: 600; transition: all 0.2s; }
+    .btn-primary { background: #3498db; color: white; }
+    .btn-primary:hover { background: #2980b9; }
+    .btn-secondary { background: #95a5a6; color: white; }
+    .btn-secondary:hover { background: #7f8c8d; }
+    .btn-danger { background: #e74c3c; color: white; }
+    .btn-danger:hover { background: #c0392b; }
+    .btn-success { background: #2ecc71; color: white; }
+    .btn-success:hover { background: #27ae60; }
+    .btn-toggle { background: #ecf0f1; color: #333; border: 1px solid #ddd; }
+    .btn-toggle:hover { background: #dfe6e9; }
+    .btn-small { padding: 6px 12px; font-size: 12px; }
+    
+    /* Admin Panel */
+    #adminPanel { display: none; }
+    .panel-header { background: white; padding: 20px 30px; border-radius: 8px; margin-bottom: 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); display: flex; justify-content: space-between; align-items: center; }
+    .panel-header h2 { color: #2c3e50; }
+    .repo-info { color: #7f8c8d; font-size: 0.9em; }
+    
+    /* Tabs */
+    .tabs { display: flex; gap: 5px; margin-bottom: 20px; background: white; padding: 5px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
+    .tab { flex: 1; padding: 12px 15px; border: none; background: none; cursor: pointer; color: #7f8c8d; font-weight: 600; border-radius: 6px; transition: all 0.2s; }
+    .tab:hover { background: #f8f9fa; }
+    .tab.active { background: #3498db; color: white; }
+    
+    /* Panel Sections */
+    .panel-section { display: none; background: white; padding: 30px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
+    .panel-section.active { display: block; }
+    .panel-section h3 { margin-bottom: 20px; color: #2c3e50; padding-bottom: 10px; border-bottom: 2px solid #ecf0f1; }
+    
+    /* Forms */
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+    .form-group textarea { width: 100%; padding: 10px 12px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px; font-family: inherit; resize: vertical; min-height: 100px; }
+    .form-actions { display: flex; gap: 10px; margin-top: 20px; }
+    
+    /* Image Preview */
+    .image-preview { width: 100px; height: 100px; border-radius: 4px; object-fit: cover; margin-top: 10px; border: 2px solid #ecf0f1; display: none; }
+    
+    /* Item List */
+    .item-list { margin-top: 30px; }
+    .item-card { display: flex; align-items: center; gap: 15px; padding: 15px; background: #f8f9fa; border-radius: 6px; margin-bottom: 10px; border: 1px solid #e9ecef; }
+    .item-card img { width: 60px; height: 60px; border-radius: 4px; object-fit: cover; }
+    .item-info { flex: 1; }
+    .item-info h4 { color: #2c3e50; margin-bottom: 4px; }
+    .item-info small { color: #7f8c8d; font-size: 0.85em; }
+    .item-actions { display: flex; gap: 8px; }
+    
+    /* Status Bar */
+    .status-bar { position: fixed; bottom: 20px; right: 20px; padding: 12px 20px; border-radius: 6px; color: white; font-weight: 600; box-shadow: 0 4px 12px rgba(0,0,0,0.15); transform: translateY(100px); opacity: 0; transition: all 0.3s; z-index: 1000; }
+    .status-bar.show { transform: translateY(0); opacity: 1; }
+    .status-bar.success { background: #2ecc71; }
+    .status-bar.error { background: #e74c3c; }
+    .status-bar.info { background: #3498db; }
+    
+    /* Alert Box */
+    .alert-box { background: #fff3cd; border-left: 4px solid #ffc107; padding: 12px 15px; margin-bottom: 20px; border-radius: 4px; display: flex; justify-content: space-between; align-items: center; }
+    .alert-box strong { color: #856404; }
+    
+    @media (max-width: 768px) {
+      .form-row { grid-template-columns: 1fr; }
+      .tabs { flex-direction: column; }
+      .item-card { flex-direction: column; align-items: flex-start; }
+    }
+  </style>
 </head>
 <body>
 
-<!-- PANTALLA DE LOGIN -->
-<div id="loginScreen" class="login-screen">
-  <div class="login-box">
-    <h1>🔐 Panel Admin HCD Mendoza</h1>
-    <p style="color:#666; font-size:13px; margin-bottom:20px;">
-      Ingresá tus credenciales de GitHub para gestionar el contenido del sitio.
-    </p>
-    <label>Usuario / Organización de GitHub</label>
-    <input type="text" id="ghOwner" placeholder="ej: tu-usuario">
-    <label>Nombre del Repositorio</label>
-    <input type="text" id="ghRepo" placeholder="ej: hcd-mendoza-web">
-    <label>Rama (branch)</label>
-    <input type="text" id="ghBranch" value="main" placeholder="main">
-    <label>Personal Access Token (con permisos repo)</label>
-    <input type="password" id="ghToken" placeholder="ghp_xxxxxxxxxxxx">
-    <p class="help-text">
-      Creá uno en: <a href="https://github.com/settings/tokens" target="_blank">github.com/settings/tokens</a> → "Generate new token (classic)" → marcar <b>repo</b>.
-    </p>
-    <div style="margin-top:20px; display:flex; gap:10px;">
-      <button class="btn" onclick="doLogin()">Ingresar</button>
-      <button class="btn btn-secondary" onclick="testConnection()">Probar conexión</button>
+<div class="container">
+  <!-- LOGIN SCREEN -->
+  <div id="loginScreen">
+    <h2>🔐 Panel Admin HCD Mendoza</h2>
+    <p>Ingresá tus credenciales de GitHub para gestionar el contenido del sitio.</p>
+    
+    <div class="alert-box">
+      <strong>⚠️ ¿Error 401 o problemas de conexión?</strong>
+      <button type="button" class="btn btn-danger btn-small" onclick="limpiarDatosGuardados()">🗑️ Borrar datos y reiniciar</button>
+    </div>
+
+    <div class="form-group">
+      <label>Usuario / Organización de GitHub</label>
+      <input type="text" id="ghOwner" placeholder="Ej: jesugallardo">
+    </div>
+    <div class="form-group">
+      <label>Nombre del Repositorio</label>
+      <input type="text" id="ghRepo" placeholder="Ej: hcd-mendoza-web">
+    </div>
+    <div class="form-group">
+      <label>Rama (branch)</label>
+      <input type="text" id="ghBranch" placeholder="Ej: main" value="main">
+    </div>
+    <div class="form-group">
+      <label>Personal Access Token (con permisos repo)</label>
+      <div class="token-wrapper">
+        <input type="password" id="ghToken" placeholder="ghp_...">
+        <button type="button" class="btn btn-toggle" onclick="toggleTokenVisibility()" title="Ver token">👁️ Mostrar</button>
+      </div>
+      <p class="help-text">Generá uno en: <a href="https://github.com/settings/tokens" target="_blank">github.com/settings/tokens</a> → "Generate new token (classic)" → marcar <strong>repo</strong>.</p>
+    </div>
+    
+    <div style="display: flex; gap: 10px; margin-top: 25px;">
+      <button class="btn btn-primary" onclick="doLogin()" style="flex: 2;">Ingresar</button>
+      <button class="btn btn-secondary" onclick="testConnection()" style="flex: 1;">Probar conexión</button>
     </div>
   </div>
-</div>
 
-<!-- PANEL PRINCIPAL -->
-<div id="adminPanel" class="admin-panel" style="display:none;">
-  <div class="header-admin">
-    <h1>📋 Panel de Administración</h1>
-    <div>
-      <span id="repoInfo" style="font-size:13px; margin-right:15px;"></span>
-      <button onclick="logout()">Cerrar sesión</button>
+  <!-- ADMIN PANEL -->
+  <div id="adminPanel">
+    <div class="panel-header">
+      <div>
+        <h2>📋 Panel de Administración</h2>
+        <div class="repo-info" id="repoInfo">Cargando...</div>
+      </div>
+      <button class="btn btn-danger" onclick="logout()">Cerrar sesión</button>
     </div>
-  </div>
 
-  <div style="background:#fff; padding:0 25px 25px; border-radius:0 0 8px 8px; box-shadow:0 2px 10px rgba(0,0,0,0.05);">
     <div class="tabs">
-      <button class="tab active" data-tab="concejales">👥 Concejales</button>
-      <button class="tab" data-tab="banners">🖼️ Banners (Hero)</button>
-      <button class="tab" data-tab="noticias">📰 Noticias</button>
-      <button class="tab" data-tab="bloques">🏛️ Bloques</button>
+      <button class="tab active" data-tab="concejales" onclick="switchTab('concejales')">👥 Concejales</button>
+      <button class="tab" data-tab="banners" onclick="switchTab('banners')">🖼️ Banners (Hero)</button>
+      <button class="tab" data-tab="noticias" onclick="switchTab('noticias')">📰 Noticias</button>
+      <button class="tab" data-tab="bloques" onclick="switchTab('bloques')">🏛️ Bloques</button>
     </div>
 
-    <!-- SECCIÓN CONCEJALES -->
-    <div class="panel-section active" id="sec-concejales">
-      <h2>Gestión de Concejales</h2>
-      <div class="form-row">
-        <label>Nombre completo</label>
-        <input type="text" id="cc-nombre" placeholder="Ej: Juan Pérez">
+    <!-- CONCEJALES -->
+    <div id="sec-concejales" class="panel-section active">
+      <h3>Gestión de Concejales</h3>
+      <input type="hidden" id="cc-edit-index" value="-1">
+      
+      <div class="form-group">
+        <label>Nombre completo *</label>
+        <input type="text" id="cc-nombre" placeholder="Ej: Marcelo Rubio">
       </div>
       <div class="form-row">
-        <label>Bloque político</label>
-        <input type="text" id="cc-bloque" placeholder="Ej: Frente Cambia Mendoza">
+        <div class="form-group">
+          <label>Bloque político *</label>
+          <input type="text" id="cc-bloque" placeholder="Ej: Frente Cambia Mendoza">
+        </div>
+        <div class="form-group">
+          <label>Mandato hasta</label>
+          <input type="text" id="cc-mandato" placeholder="Ej: 2027">
+        </div>
       </div>
-      <div class="form-row">
-        <label>Mandato hasta</label>
-        <input type="text" id="cc-mandato" placeholder="Ej: 2027">
-      </div>
-      <div class="form-row">
+      <div class="form-group">
         <label>Cargo especial (opcional)</label>
-        <input type="text" id="cc-cargo" placeholder="Ej: Presidente del Bloque">
+        <input type="text" id="cc-cargo" placeholder="Ej: Presidente del HCD">
       </div>
-      <div class="form-row">
+      <div class="form-group">
         <label>Foto del concejal (JPG/PNG)</label>
         <input type="file" id="cc-foto" accept="image/*">
-        <img id="cc-foto-preview" class="file-preview" style="display:none;">
+        <img id="cc-foto-preview" class="image-preview" alt="Preview">
       </div>
-      <input type="hidden" id="cc-edit-index" value="-1">
-      <button class="btn" onclick="saveConcejal()">💾 Guardar concejal</button>
-      <button class="btn btn-secondary" onclick="resetConcejalForm()">Cancelar</button>
+      
+      <div class="form-actions">
+        <button class="btn btn-primary" onclick="saveConcejal()">💾 Guardar concejal</button>
+        <button class="btn btn-secondary" onclick="resetConcejalForm()">Cancelar</button>
+      </div>
 
-      <div class="item-list" id="listaConcejales"></div>
+      <div id="listaConcejales" class="item-list"></div>
     </div>
 
-    <!-- SECCIÓN BANNERS -->
-    <div class="panel-section" id="sec-banners">
-      <h2>Banners del Slider Principal</h2>
-      <div class="form-row">
-        <label>Título del banner</label>
+    <!-- BANNERS -->
+    <div id="sec-banners" class="panel-section">
+      <h3>Banners del Slider Principal</h3>
+      <input type="hidden" id="bn-edit-index" value="-1">
+      
+      <div class="form-group">
+        <label>Título del banner *</label>
         <input type="text" id="bn-titulo" placeholder="Ej: Gestión Legislativa Abierta">
       </div>
-      <div class="form-row">
+      <div class="form-group">
         <label>Subtítulo / Descripción</label>
-        <textarea id="bn-subtitulo" placeholder="Texto que aparece debajo del título..."></textarea>
+        <input type="text" id="bn-subtitulo" placeholder="Ej: Accedé a toda la información pública...">
       </div>
-      <div class="form-row">
+      <div class="form-group">
         <label>Imagen de fondo (recomendado 1920x550)</label>
         <input type="file" id="bn-imagen" accept="image/*">
-        <img id="bn-imagen-preview" class="file-preview" style="display:none;">
+        <img id="bn-imagen-preview" class="image-preview" alt="Preview" style="width: 200px; height: 80px;">
       </div>
-      <input type="hidden" id="bn-edit-index" value="-1">
-      <button class="btn" onclick="saveBanner()">💾 Guardar banner</button>
-      <button class="btn btn-secondary" onclick="resetBannerForm()">Cancelar</button>
+      
+      <div class="form-actions">
+        <button class="btn btn-primary" onclick="saveBanner()">💾 Guardar banner</button>
+        <button class="btn btn-secondary" onclick="resetBannerForm()">Cancelar</button>
+      </div>
 
-      <div class="item-list" id="listaBanners"></div>
+      <div id="listaBanners" class="item-list"></div>
     </div>
 
-    <!-- SECCIÓN NOTICIAS -->
-    <div class="panel-section" id="sec-noticias">
-      <h2>Noticias</h2>
+    <!-- NOTICIAS -->
+    <div id="sec-noticias" class="panel-section">
+      <h3>Gestión de Noticias</h3>
+      <input type="hidden" id="nt-edit-index" value="-1">
+      
       <div class="form-row">
-        <label>Título</label>
-        <input type="text" id="nt-titulo" placeholder="Título de la noticia">
+        <div class="form-group">
+          <label>Título *</label>
+          <input type="text" id="nt-titulo" placeholder="Ej: Nueva sesión ordinaria">
+        </div>
+        <div class="form-group">
+          <label>Fecha *</label>
+          <input type="date" id="nt-fecha">
+        </div>
       </div>
-      <div class="form-row">
-        <label>Resumen (corto)</label>
-        <textarea id="nt-resumen" placeholder="Resumen que aparece en la tarjeta..."></textarea>
+      <div class="form-group">
+        <label>Resumen (corto) *</label>
+        <input type="text" id="nt-resumen" placeholder="Breve descripción de la noticia">
       </div>
-      <div class="form-row">
-        <label>Contenido completo</label>
-        <textarea id="nt-contenido" style="min-height:180px;" placeholder="Cuerpo de la noticia..."></textarea>
+      <div class="form-group">
+        <label>Contenido completo *</label>
+        <textarea id="nt-contenido" rows="5" placeholder="Contenido completo de la noticia..."></textarea>
       </div>
-      <div class="form-row">
-        <label>Fecha</label>
-        <input type="date" id="nt-fecha">
-      </div>
-      <div class="form-row">
+      <div class="form-group">
         <label>Imagen destacada (opcional)</label>
         <input type="file" id="nt-imagen" accept="image/*">
-        <img id="nt-imagen-preview" class="file-preview" style="display:none;">
+        <img id="nt-imagen-preview" class="image-preview" alt="Preview">
       </div>
-      <div class="form-row">
-        <label>Enlace externo (opcional, si la noticia redirige a otro portal)</label>
-        <input type="url" id="nt-link" placeholder="https://...">
+      <div class="form-group">
+        <label>Enlace externo (opcional)</label>
+        <input type="url" id="nt-link" placeholder="https://... (si redirige a otro portal)">
       </div>
-      <input type="hidden" id="nt-edit-index" value="-1">
-      <button class="btn" onclick="saveNoticia()">💾 Guardar noticia</button>
-      <button class="btn btn-secondary" onclick="resetNoticiaForm()">Cancelar</button>
+      
+      <div class="form-actions">
+        <button class="btn btn-primary" onclick="saveNoticia()">💾 Guardar noticia</button>
+        <button class="btn btn-secondary" onclick="resetNoticiaForm()">Cancelar</button>
+      </div>
 
-      <div class="item-list" id="listaNoticias"></div>
+      <div id="listaNoticias" class="item-list"></div>
     </div>
 
-    <!-- SECCIÓN BLOQUES -->
-    <div class="panel-section" id="sec-bloques">
-      <h2>Bloques Políticos</h2>
-      <div class="form-row">
-        <label>Nombre del bloque</label>
+    <!-- BLOQUES -->
+    <div id="sec-bloques" class="panel-section">
+      <h3>Bloques Políticos</h3>
+      <input type="hidden" id="bl-edit-index" value="-1">
+      
+      <div class="form-group">
+        <label>Nombre del bloque *</label>
         <input type="text" id="bl-nombre" placeholder="Ej: Frente Cambia Mendoza">
       </div>
-      <div class="form-row">
+      <div class="form-group">
         <label>Presidente del bloque</label>
-        <input type="text" id="bl-presidente" placeholder="Nombre del presidente">
+        <input type="text" id="bl-presidente" placeholder="Ej: Cecilia Rodríguez">
       </div>
-      <div class="form-row">
+      <div class="form-group">
         <label>Integrantes (uno por línea)</label>
-        <textarea id="bl-integrantes" placeholder="Nombre 1&#10;Nombre 2&#10;Nombre 3"></textarea>
+        <textarea id="bl-integrantes" rows="5" placeholder="Maximiliano Garrido&#10;L. Villarreal Occhionero&#10;Carla Ernani"></textarea>
       </div>
-      <input type="hidden" id="bl-edit-index" value="-1">
-      <button class="btn" onclick="saveBloque()">💾 Guardar bloque</button>
-      <button class="btn btn-secondary" onclick="resetBloqueForm()">Cancelar</button>
+      
+      <div class="form-actions">
+        <button class="btn btn-primary" onclick="saveBloque()">💾 Guardar bloque</button>
+        <button class="btn btn-secondary" onclick="resetBloqueForm()">Cancelar</button>
+      </div>
 
-      <div class="item-list" id="listaBloques"></div>
+      <div id="listaBloques" class="item-list"></div>
     </div>
   </div>
 </div>
 
+<!-- STATUS BAR -->
 <div id="statusBar" class="status-bar"></div>
 
+<!-- SCRIPTS -->
 <script src="js/github-api.js"></script>
 <script src="js/admin-app.js"></script>
+<script>
+// Funciones adicionales para el UI
+function toggleTokenVisibility() {
+  const input = document.getElementById('ghToken');
+  const btn = document.querySelector('.btn-toggle');
+  if (input.type === 'password') {
+    input.type = 'text';
+    btn.textContent = '🙈 Ocultar';
+  } else {
+    input.type = 'password';
+    btn.textContent = '👁️ Mostrar';
+  }
+}
+
+function limpiarDatosGuardados() {
+  localStorage.removeItem('hcd_github_config');
+  localStorage.removeItem('hcd_admin_logged_in');
+  localStorage.removeItem('gh_admin_config');
+  document.getElementById('ghOwner').value = '';
+  document.getElementById('ghRepo').value = '';
+  document.getElementById('ghBranch').value = 'main';
+  document.getElementById('ghToken').value = '';
+  alert('✅ Datos borrados. Ahora podés ingresar los datos correctos desde cero.');
+}
+
+function switchTab(tabName) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.panel-section').forEach(s => s.classList.remove('active'));
+  
+  document.querySelector(`[data-tab="${tabName}"]`).classList.add('active');
+  document.getElementById(`sec-${tabName}`).classList.add('active');
+}
+</script>
+
 </body>
 </html>
