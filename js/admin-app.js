@@ -2,12 +2,11 @@
  * admin-app.js
  * Controlador del panel: formularios, listados, guardado.
  */
-
 let DATA = {
   concejales: [],
   banners: [],
   noticias: [],
-  bloques: []
+  temas: []
 };
 
 // ========= INICIO =========
@@ -20,7 +19,7 @@ window.addEventListener('DOMContentLoaded', () => {
     document.getElementById('ghToken').value = cfg.token;
     showPanel();
   }
-
+  
   // Tabs
   document.querySelectorAll('.tab').forEach(t => {
     t.addEventListener('click', () => {
@@ -30,7 +29,7 @@ window.addEventListener('DOMContentLoaded', () => {
       document.getElementById('sec-' + t.dataset.tab).classList.add('active');
     });
   });
-
+  
   // Previews de imágenes
   setupImagePreview('cc-foto', 'cc-foto-preview');
   setupImagePreview('bn-imagen', 'bn-imagen-preview');
@@ -64,7 +63,6 @@ async function doLogin() {
   const branch = document.getElementById('ghBranch').value.trim() || 'main';
   const token = document.getElementById('ghToken').value.trim();
   if (!owner || !repo || !token) return showStatus('Completá todos los campos', 'error');
-
   GitHubAPI.setConfig({ owner, repo, branch, token });
   try {
     showStatus('Verificando conexión...', 'info');
@@ -108,16 +106,16 @@ async function showPanel() {
 
 async function loadAllData() {
   try {
-    const [c, b, n, bl] = await Promise.all([
+    const [c, b, n, t] = await Promise.all([
       GitHubAPI.getFile('data/concejales.json'),
       GitHubAPI.getFile('data/banners.json'),
       GitHubAPI.getFile('data/noticias.json'),
-      GitHubAPI.getFile('data/bloques.json')
+      GitHubAPI.getFile('data/temas_sesion.json')
     ]);
     DATA.concejales = c.content ? JSON.parse(c.content) : [];
     DATA.banners = b.content ? JSON.parse(b.content) : [];
     DATA.noticias = n.content ? JSON.parse(n.content) : [];
-    DATA.bloques = bl.content ? JSON.parse(bl.content) : [];
+    DATA.temas = t.content ? JSON.parse(t.content) : [];
     renderAll();
   } catch (e) {
     showStatus('Error cargando datos: ' + e.message, 'error');
@@ -128,7 +126,7 @@ function renderAll() {
   renderConcejales();
   renderBanners();
   renderNoticias();
-  renderBloques();
+  renderTemas();
 }
 
 // ========= CONCEJALES =========
@@ -139,24 +137,19 @@ async function saveConcejal() {
   const mandato = document.getElementById('cc-mandato').value.trim();
   const cargo = document.getElementById('cc-cargo').value.trim();
   const fotoFile = document.getElementById('cc-foto').files[0];
-
   if (!nombre || !bloque) return showStatus('Nombre y bloque son obligatorios', 'error');
-
   try {
     showStatus('Guardando...', 'info');
     let fotoPath = idx >= 0 ? DATA.concejales[idx].foto : '';
-
     if (fotoFile) {
       const ext = fotoFile.name.split('.').pop();
       const slug = nombre.toLowerCase().replace(/[^a-z0-9]/g, '-');
       fotoPath = `assets/img/concejales/${slug}.${ext}`;
       await GitHubAPI.uploadImage(fotoPath, fotoFile, `Upload foto ${nombre}`);
     }
-
     const item = { nombre, bloque, mandato, cargo, foto: fotoPath };
     if (idx >= 0) DATA.concejales[idx] = item;
     else DATA.concejales.push(item);
-
     await GitHubAPI.putFile(
       'data/concejales.json',
       JSON.stringify(DATA.concejales, null, 2),
@@ -230,7 +223,6 @@ async function saveBanner() {
   const subtitulo = document.getElementById('bn-subtitulo').value.trim();
   const imgFile = document.getElementById('bn-imagen').files[0];
   if (!titulo) return showStatus('El título es obligatorio', 'error');
-
   try {
     showStatus('Guardando...', 'info');
     let imgPath = idx >= 0 ? DATA.banners[idx].imagen : '';
@@ -309,7 +301,6 @@ async function saveNoticia() {
   const link = document.getElementById('nt-link').value.trim();
   const imgFile = document.getElementById('nt-imagen').files[0];
   if (!titulo || !fecha) return showStatus('Título y fecha son obligatorios', 'error');
-
   try {
     showStatus('Guardando...', 'info');
     let imgPath = idx >= 0 ? DATA.noticias[idx].imagen : '';
@@ -381,62 +372,75 @@ function renderNoticias() {
     `).join('');
 }
 
-// ========= BLOQUES =========
-async function saveBloque() {
-  const idx = parseInt(document.getElementById('bl-edit-index').value);
-  const nombre = document.getElementById('bl-nombre').value.trim();
-  const presidente = document.getElementById('bl-presidente').value.trim();
-  const integrantes = document.getElementById('bl-integrantes').value.split('\n').map(s => s.trim()).filter(Boolean);
-  if (!nombre) return showStatus('El nombre es obligatorio', 'error');
-
+// ========= TEMAS DE SESIÓN =========
+async function saveTema() {
+  const idx = parseInt(document.getElementById('tm-edit-index').value);
+  const titulo = document.getElementById('tm-titulo').value.trim();
+  const descripcion = document.getElementById('tm-descripcion').value.trim();
+  const tipo = document.getElementById('tm-tipo').value;
+  const estado = document.getElementById('tm-estado').value;
+  
+  if (!titulo) return showStatus('El título es obligatorio', 'error');
+  
   try {
     showStatus('Guardando...', 'info');
-    const item = { nombre, presidente, integrantes };
-    if (idx >= 0) DATA.bloques[idx] = item; else DATA.bloques.push(item);
-    await GitHubAPI.putFile('data/bloques.json', JSON.stringify(DATA.bloques, null, 2),
-      idx >= 0 ? `Update bloque` : `Add bloque`);
-    showStatus('✅ Bloque guardado', 'success');
-    resetBloqueForm();
+    const item = { titulo, descripcion, tipo, estado };
+    if (idx >= 0) DATA.temas[idx] = item; else DATA.temas.push(item);
+    
+    await GitHubAPI.putFile('data/temas_sesion.json', JSON.stringify(DATA.temas, null, 2),
+      idx >= 0 ? `Update tema de sesión` : `Add tema de sesión`);
+    
+    showStatus('✅ Tema guardado', 'success');
+    resetTemaForm();
     await loadAllData();
-  } catch (e) { showStatus('Error: ' + e.message, 'error'); }
+  } catch (e) { 
+    showStatus('Error: ' + e.message, 'error'); 
+  }
 }
 
-function editBloque(i) {
-  const b = DATA.bloques[i];
-  document.getElementById('bl-nombre').value = b.nombre;
-  document.getElementById('bl-presidente').value = b.presidente || '';
-  document.getElementById('bl-integrantes').value = (b.integrantes || []).join('\n');
-  document.getElementById('bl-edit-index').value = i;
+function editTema(i) {
+  const t = DATA.temas[i];
+  document.getElementById('tm-titulo').value = t.titulo;
+  document.getElementById('tm-descripcion').value = t.descripcion || '';
+  document.getElementById('tm-tipo').value = t.tipo || 'Ordenanza';
+  document.getElementById('tm-estado').value = t.estado || 'A tratar';
+  document.getElementById('tm-edit-index').value = i;
 }
 
-async function deleteBloque(i) {
-  if (!confirm('¿Eliminar este bloque?')) return;
-  DATA.bloques.splice(i, 1);
+async function deleteTema(i) {
+  if (!confirm('¿Eliminar este tema?')) return;
+  DATA.temas.splice(i, 1);
   try {
-    await GitHubAPI.putFile('data/bloques.json', JSON.stringify(DATA.bloques, null, 2), 'Delete bloque');
+    await GitHubAPI.putFile('data/temas_sesion.json', JSON.stringify(DATA.temas, null, 2), 'Delete tema de sesión');
     showStatus('Eliminado', 'success');
     await loadAllData();
-  } catch (e) { showStatus('Error: ' + e.message, 'error'); }
+  } catch (e) { 
+    showStatus('Error: ' + e.message, 'error'); 
+  }
 }
 
-function resetBloqueForm() {
-  ['bl-nombre','bl-presidente','bl-integrantes'].forEach(id => document.getElementById(id).value = '');
-  document.getElementById('bl-edit-index').value = -1;
+function resetTemaForm() {
+  ['tm-titulo','tm-descripcion','tm-tipo','tm-estado'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('tm-edit-index').value = -1;
 }
 
-function renderBloques() {
-  const cont = document.getElementById('listaBloques');
-  if (!DATA.bloques.length) { cont.innerHTML = '<p style="color:#888;">No hay bloques.</p>'; return; }
-  cont.innerHTML = '<h3 style="margin:20px 0 10px; color:var(--primary);">Bloques cargados (' + DATA.bloques.length + ')</h3>' +
-    DATA.bloques.map((b, i) => `
+function renderTemas() {
+  const cont = document.getElementById('listaTemas');
+  if (!DATA.temas.length) { 
+    cont.innerHTML = '<p style="color:#888;">No hay temas cargados.</p>'; 
+    return; 
+  }
+  
+  cont.innerHTML = '<h3 style="margin:20px 0 10px; color:var(--primary);">Temas cargados (' + DATA.temas.length + ')</h3>' +
+    DATA.temas.map((t, i) => `
       <div class="item-card">
         <div class="item-info">
-          <h4>${b.nombre}</h4>
-          <small>Presidente: ${b.presidente || '—'} · ${b.integrantes.length} integrantes</small>
+          <h4>${t.titulo}</h4>
+          <small>${t.tipo} · ${t.estado}${t.descripcion ? ' · ' + t.descripcion.substring(0, 60) + '...' : ''}</small>
         </div>
         <div class="item-actions">
-          <button class="btn" onclick="editBloque(${i})">Editar</button>
-          <button class="btn btn-danger" onclick="deleteBloque(${i})">Borrar</button>
+          <button class="btn" onclick="editTema(${i})">Editar</button>
+          <button class="btn btn-danger" onclick="deleteTema(${i})">Borrar</button>
         </div>
       </div>
     `).join('');

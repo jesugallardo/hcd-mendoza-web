@@ -8,7 +8,7 @@
   const REPO = 'hcd-mendoza-web';
   const BRANCH = 'main';
   const BASE = `https://raw.githubusercontent.com/${OWNER}/${REPO}/${BRANCH}`;
-
+  
   async function loadJSON(path) {
     try {
       const r = await fetch(`${BASE}/${path}?t=${Date.now()}`);
@@ -16,7 +16,7 @@
       return await r.json();
     } catch (e) { return null; }
   }
-
+  
   // ====== BANNERS ======
   const banners = await loadJSON('data/banners.json');
   if (banners && banners.length) {
@@ -33,7 +33,7 @@
       if (window.initHeroSlider) window.initHeroSlider();
     }
   }
-
+  
   // ====== CONCEJALES ======
   const concejales = await loadJSON('data/concejales.json');
   if (concejales && concejales.length) {
@@ -42,7 +42,7 @@
       wrapper.innerHTML = concejales.map(c => `
         <div class="cc-slide">
           <div class="concejal-card">
-            ${c.foto ? `<img src="${BASE}/${c.foto}" style="width:80px;height:80px;border-radius:50%;object-fit:cover;margin-bottom:10px;">` : '<div class="avatar">👤</div>'}
+            ${c.foto ? `<img src="${BASE}/${c.foto}" style="width:80px;height:80px;border-radius:50%;object-fit:cover;margin-bottom:10px;">` : '<div class="avatar"></div>'}
             <h3>${c.nombre}</h3>
             <div class="bloque">${c.bloque}</div>
             ${c.cargo ? `<div style="font-size:11px;color:var(--accent-color);margin-top:4px;">${c.cargo}</div>` : ''}
@@ -53,7 +53,7 @@
       if (window.initConcejalesCarousel) window.initConcejalesCarousel();
     }
   }
-
+  
   // ====== NOTICIAS ======
   const noticias = await loadJSON('data/noticias.json');
   if (noticias && noticias.length) {
@@ -70,34 +70,29 @@
       `).join('');
     }
   }
-
-  // ====== BLOQUES ======
-  const bloques = await loadJSON('data/bloques.json');
-  if (bloques && bloques.length) {
-    const cont = document.querySelector('#bloques-list');
+  
+  // ====== TEMAS DE SESIÓN ======
+  const temas = await loadJSON('data/temas_sesion.json');
+  if (temas && temas.length) {
+    const cont = document.querySelector('#temas-sesion-lista');
     if (cont) {
-      cont.innerHTML = bloques.map(b => `
-        <div class="bloque-item" style="background:#fff; border:1px solid var(--border-color); border-radius:6px; margin-bottom:10px;">
-          <button class="bloque-toggle-btn">
-            <span>Bloque ${b.nombre}</span>
-            <span>Ver Integrantes ▾</span>
-          </button>
-          <div class="bloque-content" style="display:none; padding:15px;">
-            ${b.presidente ? `<p><strong>Presidente:</strong> ${b.presidente}</p>` : ''}
-            <ul>${(b.integrantes || []).map(i => `<li>${i}</li>`).join('')}</ul>
-          </div>
-        </div>
-      `).join('');
-      // Re-asociar listeners a los nuevos botones
-      cont.querySelectorAll('.bloque-toggle-btn').forEach(btn => {
-        btn.addEventListener('click', () => {
-          const content = btn.nextElementSibling;
-          content.style.display = content.style.display === 'none' ? 'block' : 'none';
-        });
-      });
+      const temasATratar = temas.filter(t => t.estado === 'A tratar');
+      if (temasATratar.length) {
+        cont.innerHTML = '<ul class="temas-lista">' + 
+          temasATratar.map(t => `
+            <li>
+              <span class="tipo-badge">${t.tipo}</span>
+              <strong>${t.titulo}</strong>
+              ${t.descripcion ? `<br><small style="color:#666;">${t.descripcion}</small>` : ''}
+            </li>
+          `).join('') + 
+          '</ul>';
+      } else {
+        cont.innerHTML = '<p style="color:#888; font-size:0.9em;">No hay temas programados para la próxima sesión.</p>';
+      }
     }
   }
-
+  
   function formatDate(iso) {
     if (!iso) return '';
     const [y, m, d] = iso.split('-');

@@ -47,7 +47,7 @@ const GitHubAPI = (() => {
   
   // Test de conexión
   async function testConnection() {
-    await request(''); // Ruta base del repo
+    await request('');
     return true;
   }
   
@@ -65,16 +65,12 @@ const GitHubAPI = (() => {
   
   // Crear o actualizar archivo (commit)
   async function putFile(path, content, message, sha = null) {
-    // 🔥 CORRECCIÓN: Si no se pasa el SHA, intentamos obtenerlo automáticamente
     if (!sha) {
       try {
         const existing = await request(`/contents/${path}?ref=${config.branch}`);
         sha = existing.sha;
       } catch (e) {
-        // Si es 404, el archivo no existe, así que lo creamos (sha sigue siendo null)
-        if (!e.message.includes('404')) {
-          throw e;
-        }
+        if (!e.message.includes('404')) throw e;
       }
     }
 
@@ -102,12 +98,11 @@ const GitHubAPI = (() => {
   // Subir imagen (binario)
   async function uploadImage(path, blob, message) {
     const base64 = await blobToBase64(blob);
-    // obtener sha si ya existe
     let sha = null;
     try {
       const existing = await request(`/contents/${path}?ref=${config.branch}`);
       sha = existing.sha;
-    } catch (e) { /* no existe, está bien */ }
+    } catch (e) { /* no existe, ok */ }
     
     const body = { 
       message, 
