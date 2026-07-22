@@ -8,5 +8,10 @@
     "titulo": "Conoce a nuestros concejales",
     "subtitulo": "",
     "imagen": "assets/img/banners/banner-1784756745766.jpg"
+  },
+  {
+    "titulo": "Conoce los temas a tratar",
+    "subtitulo": "Conoce que temas seran tratados en las sesiones semanales del concejo.",
+    "imagen": "assets/img/banners/banner-1784756825181.jpg"
   }
 ]
