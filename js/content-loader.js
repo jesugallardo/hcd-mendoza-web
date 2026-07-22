@@ -1,11 +1,10 @@
 /**
  * content-loader.js
- * Se agrega al index.html público. Carga los JSONs desde GitHub
- * y reemplaza el contenido estático.
+ * Carga dinámica de contenido desde GitHub
+ * Usuario: jesugallardo | Repo: hcd-mendoza-web | Rama: main
  */
 (async function() {
-  // ⚠️ Configurá estos valores según tu repo
-  const OWNER = 'tu-usuario';
+  const OWNER = 'jesugallardo';
   const REPO = 'hcd-mendoza-web';
   const BRANCH = 'main';
   const BASE = `https://raw.githubusercontent.com/${OWNER}/${REPO}/${BRANCH}`;
@@ -18,7 +17,7 @@
     } catch (e) { return null; }
   }
 
-  // ====== BANNERS (Hero Slider) ======
+  // ====== BANNERS ======
   const banners = await loadJSON('data/banners.json');
   if (banners && banners.length) {
     const wrapper = document.querySelector('.slides-wrapper');
@@ -31,12 +30,11 @@
           </div>
         </div>
       `).join('');
-      // Reiniciar slider si tenés la lógica
       if (window.initHeroSlider) window.initHeroSlider();
     }
   }
 
-  // ====== CONCEJALES (Carrusel 3D) ======
+  // ====== CONCEJALES ======
   const concejales = await loadJSON('data/concejales.json');
   if (concejales && concejales.length) {
     const wrapper = document.querySelector('#concejales .cc-wrapper');
@@ -47,8 +45,8 @@
             ${c.foto ? `<img src="${BASE}/${c.foto}" style="width:80px;height:80px;border-radius:50%;object-fit:cover;margin-bottom:10px;">` : '<div class="avatar">👤</div>'}
             <h3>${c.nombre}</h3>
             <div class="bloque">${c.bloque}</div>
-            ${c.cargo ? `<div style="font-size:11px;color:var(--accent);margin-top:4px;">${c.cargo}</div>` : ''}
-            <div style="font-size:11px;color:#999;margin-top:4px;">Mandato hasta ${c.mandato}</div>
+            ${c.cargo ? `<div style="font-size:11px;color:var(--accent-color);margin-top:4px;">${c.cargo}</div>` : ''}
+            <div style="font-size:11px;color:#999;margin-top:4px;">Mandato hasta ${c.mandato || '—'}</div>
           </div>
         </div>
       `).join('');
@@ -59,7 +57,7 @@
   // ====== NOTICIAS ======
   const noticias = await loadJSON('data/noticias.json');
   if (noticias && noticias.length) {
-    const cont = document.querySelector('#noticias .grid-3') || document.querySelector('.grid-3.noticias-grid');
+    const cont = document.querySelector('#noticias .grid-3');
     if (cont) {
       cont.innerHTML = noticias.slice(0, 6).map(n => `
         <article class="noticia-card">
@@ -79,23 +77,31 @@
     const cont = document.querySelector('#bloques-list');
     if (cont) {
       cont.innerHTML = bloques.map(b => `
-        <div class="bloque-item">
+        <div class="bloque-item" style="background:#fff; border:1px solid var(--border-color); border-radius:6px; margin-bottom:10px;">
           <button class="bloque-toggle-btn">
             <span>Bloque ${b.nombre}</span>
             <span>Ver Integrantes ▾</span>
           </button>
           <div class="bloque-content" style="display:none; padding:15px;">
             ${b.presidente ? `<p><strong>Presidente:</strong> ${b.presidente}</p>` : ''}
-            <ul>${b.integrantes.map(i => `<li>${i}</li>`).join('')}</ul>
+            <ul>${(b.integrantes || []).map(i => `<li>${i}</li>`).join('')}</ul>
           </div>
         </div>
       `).join('');
+      // Re-asociar listeners a los nuevos botones
+      cont.querySelectorAll('.bloque-toggle-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const content = btn.nextElementSibling;
+          content.style.display = content.style.display === 'none' ? 'block' : 'none';
+        });
+      });
     }
   }
 
   function formatDate(iso) {
     if (!iso) return '';
     const [y, m, d] = iso.split('-');
-    return `${d}/${m}/${y}`;
+    const meses = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+    return `${parseInt(d)} de ${meses[parseInt(m)-1]}, ${y}`;
   }
 })();
