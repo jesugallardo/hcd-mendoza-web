@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Honorable Concejo Deliberante de la Ciudad de Mendoza</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="css/global.css">
+  <link rel="stylesheet" href="css/componentes.css">
+  <link rel="stylesheet" href="css/concejales-3d.css">
+  <link rel="stylesheet" href="css/responsive.css">
+</head>
+<body>
+
+<!-- BARRA SUPERIOR -->
+<div class="top-bar">
+  <div class="container top-bar-content">
+    <span>Honorable Concejo Deliberante de la Ciudad de Mendoza</span>
+    <a href="mailto:contacto@concejomendoza.gob.ar" class="top-contact-mail">
+      <i class="fas fa-envelope"></i> contacto@concejomendoza.gob.ar
+    </a>
+  </div>
+</div>
+
+<!-- ENCABEZADO -->
+<header class="main-header">
+  <div class="container header-container">
+    <a href="index.html" class="logo-link logo-area">
+      <span class="logo-main-text">Honorable Concejo Deliberante</span>
+      <span class="logo-sub-text">de la Ciudad de Mendoza</span>
+    </a>
+
+    <button class="menu-toggle" aria-label="Abrir menú">☰ Menú</button>
+
+    <nav class="main-nav">
+      <ul>
+        <li class="dropdown">
+          <a href="#institucional">Institucional ▾</a>
+          <div class="dropdown-content">
+            <a href="#institucional">El Concejo</a>
+            <a href="#concejales">Nuestros Concejales</a>
+            <a href="#institucional">Historia del Concejo</a>
+            <a href="#institucional">Reglamento Interno</a>
+          </div>
+        </li>
+        <li class="dropdown">
+          <a href="#actividad">Actividad Legislativa ▾</a>
+          <div class="dropdown-content">
+            <a href="#actividad">Material de Sesión</a>
+            <a href="#actividad">Sistema de Expedientes</a>
+            <a href="#actividad">Comisiones</a>
+            <a href="#actividad">Sesiones</a>
+          </div>
+        </li>
+        <li><a href="#noticias">Noticias</a></li>
+        <li><a href="#contacto">Contacto</a></li>
+      </ul>
+    </nav>
+  </div>
+</header>
+
+<!-- HERO SLIDER -->
+<section class="hero-slider-container">
+  <div class="slides-wrapper">
+    <div class="slide is-active" style="background-image:url('assets/img/banners/banner-default.jpg'); background-size:cover; background-position:center;">
+      <div class="hero-content">
+        <h2>Gestión Legislativa Abierta</h2>
+        <p>Accedé a toda la información pública sobre proyectos, ordenanzas y las actividades del Concejo Deliberante de la Ciudad de Mendoza.</p>
+      </div>
+    </div>
+    <div class="slide" style="background-image:url('assets/img/banners/banner-noticias.jpg'); background-size:cover; background-position:center;">
+      <div class="hero-content">
+        <h2>Noticias</h2>
+        <p>Informate sobre anuncios de gestión, agendas culturales y novedades institucionales del Concejo y el Municipio.</p>
+      </div>
+    </div>
+    <div class="slide" style="background-image:url('assets/img/banners/banner-concejales.jpg'); background-size:cover; background-position:center;">
+      <div class="hero-content">
+        <h2>Nuestros Concejales</h2>
+        <p>Conocé a los concejales que llevan a cabo la labor legislativa del Concejo Deliberante.</p>
+      </div>
+    </div>
+  </div>
+  <button class="slider-arrow prev" aria-label="Anterior">❮</button>
+  <button class="slider-arrow next" aria-label="Siguiente">❯</button>
+  <div class="slider-dots">
+    <span class="dot is-active"></span>
+    <span class="dot"></span>
+    <span class="dot"></span>
+  </div>
+</section>
+
+<!-- ACCESOS DIRECTOS -->
+<section class="destacados-accesos">
+  <div class="container">
+    <div class="destacados-grid">
+      <a href="#noticias" class="destacado-item">
+        <i class="fas fa-newspaper fa-2x"></i>
+        <span>Noticias</span>
+      </a>
+      <a href="#actividad" class="destacado-item">
+        <i class="fas fa-gavel fa-2x"></i>
+        <span>Sistema Legislativo</span>
+      </a>
+      <a href="#concejales" class="destacado-item">
+        <i class="fas fa-users fa-2x"></i>
+        <span>Concejales</span>
+      </a>
+      <a href="#boletin" class="destacado-item btn-amarillo">
+        <i class="fas fa-envelope-open-text fa-2x"></i>
+        <span>Suscribite al Boletín</span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- INSTITUCIONAL -->
+<section id="institucional" class="section">
+  <div class="container">
+    <h2 class="home-section-title">Institucional</h2>
+
+    <div class="grid-2">
+      <div class="card-info">
+        <h3>El Honorable Concejo Deliberante</h3>
+        <p>Organizado de acuerdo a lo dispuesto por la Constitución de la Provincia de Mendoza y la Ley Orgánica de Municipalidades Nº 1079, nuestro Concejo Deliberante es el ámbito democrático donde se debaten y sancionan las normativas de la capital mendocina.</p>
+        <p style="margin-top:12px;">Está integrado por 12 concejales y concejalas que representan a los vecinos de la ciudad, renovándose por mitades de manera democrática cada dos años.</p>
+      </div>
+
+      <div class="card-info">
+        <h3>Atribuciones Legislativas</h3>
+        <ul>
+          <li><i class="fas fa-check-circle" style="color:var(--accent-color);"></i> Dictar ordenanzas de urbanismo, servicios públicos y tasas.</li>
+          <li><i class="fas fa-check-circle" style="color:var(--accent-color);"></i> Evaluar y aprobar el Presupuesto de Gastos de la Ciudad.</li>
+          <li><i class="fas fa-check-circle" style="color:var(--accent-color);"></i> Ejercer control institucional sobre el Departamento Ejecutivo.</li>
+        </ul>
+      </div>
+    </div>
+
+    <h3 style="margin-top:40px; color:var(--primary-color);">Autoridades y Composición del Cuerpo</h3>
+
+    <div class="card-info" style="margin-top:15px;">
+      <h3>Marcelo Rubio</h3>
+      <p><strong>Presidente del HCD</strong></p>
+      <p style="color:#7f8c8d; font-size:13px;">Frente Cambia Mendoza · Mandato hasta 2027</p>
+    </div>
+
+    <h3 style="margin-top:30px; color:var(--primary-color);">Secretarías Administrativas (No Electivas)</h3>
+    <div class="grid-3" style="margin-top:15px;">
+      <div class="card-info"><h4>Leandro Le Donne</h4><p>Secretario Habilitado</p></div>
+      <div class="card-info"><h4>Federico Navarro Cavagnaro</h4><p>Secretario Legislativo</p></div>
+      <div class="card-info"><h4>Emanuel Italiano</h4><p>Prosecretario</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- CONCEJALES (Carrusel 3D) -->
+<section id="concejales" class="section bg-light">
+  <div class="container">
+    <h2 class="home-section-title">Composición por Bloques Políticos</h2>
+
+    <div id="bloques-list">
+      <!-- BLOQUE 1 -->
+      <div class="bloque-item" style="background:#fff; border:1px solid var(--border-color); border-radius:6px; margin-bottom:10px;">
+        <button class="bloque-toggle-btn">
+          <span>Bloque La Libertad Avanza + Frente Cambia Mendoza</span>
+          <span>Ver Bloque e Integrantes ▾</span>
+        </button>
+        <div class="bloque-content" style="display:none;">
+          <p style="padding:0 20px;"><strong>Presidente de Bloque:</strong> Cecilia Rodríguez · Mandato hasta 2030</p>
+          <div class="cc-slider-container">
+            <div class="cc-wrapper">
+              <div class="cc-slide is-center"><div class="concejal-card"><div class="avatar">👤</div><h3>Cecilia Rodríguez</h3><div class="bloque">Presidente de Bloque</div></div></div>
+              <div class="cc-slide is-next"><div class="concejal-card"><div class="avatar">👤</div><h3>Maximiliano Garrido</h3><div class="bloque">Mandato hasta 2030</div></div></div>
+              <div class="cc-slide"><div class="concejal-card"><div class="avatar">👤</div><h3>L. Villarreal Occhionero</h3><div class="bloque">Mandato hasta 2030</div></div></div>
+              <div class="cc-slide"><div class="concejal-card"><div class="avatar">👤</div><h3>Carla Ernani</h3><div class="bloque">Mandato hasta 2030</div></div></div>
+              <div class="cc-slide"><div class="concejal-card"><div class="avatar">👤</div><h3>Tomás Dris</h3><div class="bloque">Mandato hasta 2030</div></div></div>
+            </div>
+            <button class="cc-arrow prev">❮</button>
+            <button class="cc-arrow next">❯</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- BLOQUE 2 -->
+      <div class="bloque-item" style="background:#fff; border:1px solid var(--border-color); border-radius:6px; margin-bottom:10px;">
+        <button class="bloque-toggle-btn">
+          <span>Bloque Frente Cambia Mendoza</span>
+          <span>Ver Bloque e Integrantes ▾</span>
+        </button>
+        <div class="bloque-content" style="display:none;">
+          <p style="padding:0 20px;"><strong>Presidente del Bloque:</strong> Marcelo Rubio · Mandato hasta 2027</p>
+          <div class="cc-slider-container">
+            <div class="cc-wrapper">
+              <div class="cc-slide is-center"><div class="concejal-card"><div class="avatar">👤</div><h3>Marcelo Rubio</h3><div class="bloque">Presidente del Bloque</div></div></div>
+              <div class="cc-slide is-next"><div class="concejal-card"><div class="avatar">👤</div><h3>Cielo Daou</h3><div class="bloque">Mandato hasta 2027</div></div></div>
+              <div class="cc-slide"><div class="concejal-card"><div class="avatar">👤</div><h3>Rafael Bazán</h3><div class="bloque">Mandato hasta 2027</div></div></div>
+              <div class="cc-slide"><div class="concejal-card"><div class="avatar">👤</div><h3>Ernesto Giménez</h3><div class="bloque">Mandato hasta 2027</div></div></div>
+            </div>
+            <button class="cc-arrow prev">❮</button>
+            <button class="cc-arrow next">❯</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- BLOQUE 3 -->
+      <div class="bloque-item" style="background:#fff; border:1px solid var(--border-color); border-radius:6px; margin-bottom:10px;">
+        <button class="bloque-toggle-btn">
+          <span>Bloque Fuerza Justicialista Mendoza</span>
+          <span>Ver Integrante ▾</span>
+        </button>
+        <div class="bloque-content" style="display:none;">
+          <div class="cc-slider-container">
+            <div class="cc-wrapper">
+              <div class="cc-slide is-center"><div class="concejal-card"><div class="avatar">👤</div><h3>Gustavo Caleau</h3><div class="bloque">Monobloque · Mandato hasta 2030</div></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- BLOQUE 4 -->
+      <div class="bloque-item" style="background:#fff; border:1px solid var(--border-color); border-radius:6px; margin-bottom:10px;">
+        <button class="bloque-toggle-btn">
+          <span>Bloque Partido Verde</span>
+          <span>Ver Integrante ▾</span>
+        </button>
+        <div class="bloque-content" style="display:none;">
+          <div class="cc-slider-container">
+            <div class="cc-wrapper">
+              <div class="cc-slide is-center"><div class="concejal-card"><div class="avatar">👤</div><h3>Ricardo García</h3><div class="bloque">Historial de Vicepresidencia · Mandato hasta 2027</div></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- BLOQUE 5 -->
+      <div class="bloque-item" style="background:#fff; border:1px solid var(--border-color); border-radius:6px; margin-bottom:10px;">
+        <button class="bloque-toggle-btn">
+          <span>Bloque Coalición Cívica + ARI</span>
+          <span>Ver Integrante ▾</span>
+        </button>
+        <div class="bloque-content" style="display:none;">
+          <div class="cc-slider-container">
+            <div class="cc-wrapper">
+              <div class="cc
