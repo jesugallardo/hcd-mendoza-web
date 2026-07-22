@@ -1,9 +1,16 @@
 [
   {
-    "nombre": "prueba 1",
-    "bloque": "La Libertad Avanza + Frente Cambia Mendoza",
-    "mandato": "2027",
-    "cargo": "Presidente del HCD",
-    "foto": "assets/img/concejales/prueba-1.jpg"
+    "nombre": "laurita",
+    "bloque": "Frente Cambia Mendoza",
+    "mandato": "2030",
+    "cargo": "",
+    "foto": "assets/img/concejales/laurita.jpg"
+  },
+  {
+    "nombre": "laurita",
+    "bloque": "Frente Cambia Mendoza",
+    "mandato": "2030",
+    "cargo": "",
+    "foto": "assets/img/concejales/laurita.jpg"
   }
 ]
