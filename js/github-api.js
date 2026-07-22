@@ -30,10 +30,7 @@ const GitHubAPI = (() => {
   }
   
   async function request(path, options = {}) {
-    // Si path es '/' o vacío, usamos la base directamente.
-    const cleanPath = (path === '/' || path === '') ? '' : path;
-    const url = path.startsWith('http') ? path : `${base()}${cleanPath}`;
-    
+    const url = path.startsWith('http') ? path : `${base()}${path}`;
     const res = await fetch(url, { 
       ...options, 
       headers: { ...headers(), ...(options.headers || {}) } 
@@ -48,9 +45,9 @@ const GitHubAPI = (() => {
     return text ? JSON.parse(text) : null;
   }
   
-  // Test de conexión: pide la info del repositorio (URL válida)
+  // Test de conexión
   async function testConnection() {
-    await request(''); // Esto resuelve a https://api.github.com/repos/{owner}/{repo}
+    await request(''); // Ruta base del repo
     return true;
   }
   
@@ -68,6 +65,19 @@ const GitHubAPI = (() => {
   
   // Crear o actualizar archivo (commit)
   async function putFile(path, content, message, sha = null) {
+    // 🔥 CORRECCIÓN: Si no se pasa el SHA, intentamos obtenerlo automáticamente
+    if (!sha) {
+      try {
+        const existing = await request(`/contents/${path}?ref=${config.branch}`);
+        sha = existing.sha;
+      } catch (e) {
+        // Si es 404, el archivo no existe, así que lo creamos (sha sigue siendo null)
+        if (!e.message.includes('404')) {
+          throw e;
+        }
+      }
+    }
+
     const body = {
       message,
       content: encodeBase64(content),
