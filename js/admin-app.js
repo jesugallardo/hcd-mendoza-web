@@ -6,7 +6,7 @@ let DATA = {
   concejales: [],
   banners: [],
   noticias: [],
-  temas: []
+  bloques: []
 };
 
 window.addEventListener('DOMContentLoaded', () => {
@@ -95,25 +95,27 @@ async function showPanel() {
 
 async function loadAllData() {
   try {
-    const [c, b, n, t] = await Promise.all([
+    const [c, b, n, bl] = await Promise.all([
       GitHubAPI.getFile('data/concejales.json'),
       GitHubAPI.getFile('data/banners.json'),
       GitHubAPI.getFile('data/noticias.json'),
-      GitHubAPI.getFile('data/temas_sesion.json')
+      GitHubAPI.getFile('data/bloques.json')
     ]);
     DATA.concejales = c.content ? JSON.parse(c.content) : [];
     DATA.banners = b.content ? JSON.parse(b.content) : [];
     DATA.noticias = n.content ? JSON.parse(n.content) : [];
-    DATA.temas = t.content ? JSON.parse(t.content) : [];
+    DATA.bloques = bl.content ? JSON.parse(bl.content) : [];
     renderAll();
   } catch (e) { showStatus('Error cargando datos: ' + e.message, 'error'); }
 }
 
 function renderAll() {
-  renderConcejales(); renderBanners(); renderNoticias(); renderTemas();
+  renderConcejales();
+  renderBanners();
+  renderNoticias();
+  renderBloques();
 }
 
-// ========= CONCEJALES =========
 async function saveConcejal() {
   const idx = parseInt(document.getElementById('cc-edit-index').value);
   const nombre = document.getElementById('cc-nombre').value.trim();
@@ -135,7 +137,8 @@ async function saveConcejal() {
     if (idx >= 0) DATA.concejales[idx] = item; else DATA.concejales.push(item);
     await GitHubAPI.putFile('data/concejales.json', JSON.stringify(DATA.concejales, null, 2), idx >= 0 ? `Update concejal ${nombre}` : `Add concejal ${nombre}`);
     showStatus('✅ Concejal guardado', 'success');
-    resetConcejalForm(); await loadAllData();
+    resetConcejalForm();
+    await loadAllData();
   } catch (e) { showStatus('Error: ' + e.message, 'error'); }
 }
 
@@ -149,7 +152,8 @@ function editConcejal(i) {
   if (c.foto) {
     const cfg = GitHubAPI.getConfig();
     const p = document.getElementById('cc-foto-preview');
-    p.src = `https://raw.githubusercontent.com/${cfg.owner}/${cfg.repo}/${cfg.branch}/${c.foto}`; p.style.display = 'block';
+    p.src = `https://raw.githubusercontent.com/${cfg.owner}/${cfg.repo}/${cfg.branch}/${c.foto}`;
+    p.style.display = 'block';
   }
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
@@ -160,7 +164,8 @@ async function deleteConcejal(i) {
   DATA.concejales.splice(i, 1);
   try {
     await GitHubAPI.putFile('data/concejales.json', JSON.stringify(DATA.concejales, null, 2), `Delete concejal ${nombre}`);
-    showStatus('Eliminado', 'success'); await loadAllData();
+    showStatus('Eliminado', 'success');
+    await loadAllData();
   } catch (e) { showStatus('Error: ' + e.message, 'error'); }
 }
 
@@ -177,7 +182,7 @@ function renderConcejales() {
   cont.innerHTML = '<h3 style="margin:20px 0 10px; color:var(--primary);">Concejales cargados (' + DATA.concejales.length + ')</h3>' +
     DATA.concejales.map((c, i) => `
       <div class="item-card">
-        ${c.foto ? `<img src="https://raw.githubusercontent.com/${cfg.owner}/${cfg.repo}/${cfg.branch}/${c.foto}">` : '<div style="width:50px;height:50px;background:#ddd;border-radius:4px;"></div>'}
+        ${c.foto ? `<img src="https://raw.githubusercontent.com/${cfg.owner}/${cfg.repo}/${cfg.branch}/${c.foto}">` : '<div style="width:60px;height:60px;background:#ddd;border-radius:4px;"></div>'}
         <div class="item-info">
           <h4>${c.nombre}</h4>
           <small>${c.bloque} · Mandato ${c.mandato || '?'}${c.cargo ? ' · ' + c.cargo : ''}</small>
@@ -190,7 +195,6 @@ function renderConcejales() {
     `).join('');
 }
 
-// ========= BANNERS =========
 async function saveBanner() {
   const idx = parseInt(document.getElementById('bn-edit-index').value);
   const titulo = document.getElementById('bn-titulo').value.trim();
@@ -209,7 +213,9 @@ async function saveBanner() {
     const item = { titulo, subtitulo, imagen: imgPath };
     if (idx >= 0) DATA.banners[idx] = item; else DATA.banners.push(item);
     await GitHubAPI.putFile('data/banners.json', JSON.stringify(DATA.banners, null, 2), idx >= 0 ? `Update banner` : `Add banner`);
-    showStatus('✅ Banner guardado', 'success'); resetBannerForm(); await loadAllData();
+    showStatus('✅ Banner guardado', 'success');
+    resetBannerForm();
+    await loadAllData();
   } catch (e) { showStatus('Error: ' + e.message, 'error'); }
 }
 
@@ -221,15 +227,19 @@ function editBanner(i) {
   if (b.imagen) {
     const cfg = GitHubAPI.getConfig();
     const p = document.getElementById('bn-imagen-preview');
-    p.src = `https://raw.githubusercontent.com/${cfg.owner}/${cfg.repo}/${cfg.branch}/${b.imagen}`; p.style.display = 'block';
+    p.src = `https://raw.githubusercontent.com/${cfg.owner}/${cfg.repo}/${cfg.branch}/${b.imagen}`;
+    p.style.display = 'block';
   }
 }
 
 async function deleteBanner(i) {
   if (!confirm('¿Eliminar este banner?')) return;
   DATA.banners.splice(i, 1);
-  try { await GitHubAPI.putFile('data/banners.json', JSON.stringify(DATA.banners, null, 2), 'Delete banner'); showStatus('Eliminado', 'success'); await loadAllData(); } 
-  catch (e) { showStatus('Error: ' + e.message, 'error'); }
+  try {
+    await GitHubAPI.putFile('data/banners.json', JSON.stringify(DATA.banners, null, 2), 'Delete banner');
+    showStatus('Eliminado', 'success');
+    await loadAllData();
+  } catch (e) { showStatus('Error: ' + e.message, 'error'); }
 }
 
 function resetBannerForm() {
@@ -258,7 +268,6 @@ function renderBanners() {
     `).join('');
 }
 
-// ========= NOTICIAS =========
 async function saveNoticia() {
   const idx = parseInt(document.getElementById('nt-edit-index').value);
   const titulo = document.getElementById('nt-titulo').value.trim();
@@ -280,7 +289,9 @@ async function saveNoticia() {
     const item = { titulo, resumen, contenido, fecha, imagen: imgPath, link };
     if (idx >= 0) DATA.noticias[idx] = item; else DATA.noticias.unshift(item);
     await GitHubAPI.putFile('data/noticias.json', JSON.stringify(DATA.noticias, null, 2), idx >= 0 ? `Update noticia` : `Add noticia`);
-    showStatus('✅ Noticia guardada', 'success'); resetNoticiaForm(); await loadAllData();
+    showStatus('✅ Noticia guardada', 'success');
+    resetNoticiaForm();
+    await loadAllData();
   } catch (e) { showStatus('Error: ' + e.message, 'error'); }
 }
 
@@ -295,15 +306,19 @@ function editNoticia(i) {
   if (n.imagen) {
     const cfg = GitHubAPI.getConfig();
     const p = document.getElementById('nt-imagen-preview');
-    p.src = `https://raw.githubusercontent.com/${cfg.owner}/${cfg.repo}/${cfg.branch}/${n.imagen}`; p.style.display = 'block';
+    p.src = `https://raw.githubusercontent.com/${cfg.owner}/${cfg.repo}/${cfg.branch}/${n.imagen}`;
+    p.style.display = 'block';
   }
 }
 
 async function deleteNoticia(i) {
   if (!confirm('¿Eliminar esta noticia?')) return;
   DATA.noticias.splice(i, 1);
-  try { await GitHubAPI.putFile('data/noticias.json', JSON.stringify(DATA.noticias, null, 2), 'Delete noticia'); showStatus('Eliminada', 'success'); await loadAllData(); } 
-  catch (e) { showStatus('Error: ' + e.message, 'error'); }
+  try {
+    await GitHubAPI.putFile('data/noticias.json', JSON.stringify(DATA.noticias, null, 2), 'Delete noticia');
+    showStatus('Eliminada', 'success');
+    await loadAllData();
+  } catch (e) { showStatus('Error: ' + e.message, 'error'); }
 }
 
 function resetNoticiaForm() {
@@ -332,57 +347,59 @@ function renderNoticias() {
     `).join('');
 }
 
-// ========= TEMAS DE SESIÓN =========
-async function saveTema() {
-  const idx = parseInt(document.getElementById('tm-edit-index').value);
-  const titulo = document.getElementById('tm-titulo').value.trim();
-  const descripcion = document.getElementById('tm-descripcion').value.trim();
-  const tipo = document.getElementById('tm-tipo').value;
-  const estado = document.getElementById('tm-estado').value;
-  if (!titulo) return showStatus('El título es obligatorio', 'error');
+async function saveBloque() {
+  const idx = parseInt(document.getElementById('bl-edit-index').value);
+  const nombre = document.getElementById('bl-nombre').value.trim();
+  const presidente = document.getElementById('bl-presidente').value.trim();
+  const integrantes = document.getElementById('bl-integrantes').value.split('\n').map(s => s.trim()).filter(Boolean);
+  if (!nombre) return showStatus('El nombre es obligatorio', 'error');
   try {
     showStatus('Guardando...', 'info');
-    const item = { titulo, descripcion, tipo, estado };
-    if (idx >= 0) DATA.temas[idx] = item; else DATA.temas.push(item);
-    await GitHubAPI.putFile('data/temas_sesion.json', JSON.stringify(DATA.temas, null, 2), idx >= 0 ? `Update tema de sesión` : `Add tema de sesión`);
-    showStatus('✅ Tema guardado', 'success'); resetTemaForm(); await loadAllData();
+    const item = { nombre, presidente, integrantes };
+    if (idx >= 0) DATA.bloques[idx] = item; else DATA.bloques.push(item);
+    await GitHubAPI.putFile('data/bloques.json', JSON.stringify(DATA.bloques, null, 2), idx >= 0 ? `Update bloque` : `Add bloque`);
+    showStatus('✅ Bloque guardado', 'success');
+    resetBloqueForm();
+    await loadAllData();
   } catch (e) { showStatus('Error: ' + e.message, 'error'); }
 }
 
-function editTema(i) {
-  const t = DATA.temas[i];
-  document.getElementById('tm-titulo').value = t.titulo;
-  document.getElementById('tm-descripcion').value = t.descripcion || '';
-  document.getElementById('tm-tipo').value = t.tipo || 'Ordenanza';
-  document.getElementById('tm-estado').value = t.estado || 'A tratar';
-  document.getElementById('tm-edit-index').value = i;
+function editBloque(i) {
+  const b = DATA.bloques[i];
+  document.getElementById('bl-nombre').value = b.nombre;
+  document.getElementById('bl-presidente').value = b.presidente || '';
+  document.getElementById('bl-integrantes').value = (b.integrantes || []).join('\n');
+  document.getElementById('bl-edit-index').value = i;
 }
 
-async function deleteTema(i) {
-  if (!confirm('¿Eliminar este tema?')) return;
-  DATA.temas.splice(i, 1);
-  try { await GitHubAPI.putFile('data/temas_sesion.json', JSON.stringify(DATA.temas, null, 2), 'Delete tema de sesión'); showStatus('Eliminado', 'success'); await loadAllData(); } 
-  catch (e) { showStatus('Error: ' + e.message, 'error'); }
+async function deleteBloque(i) {
+  if (!confirm('¿Eliminar este bloque?')) return;
+  DATA.bloques.splice(i, 1);
+  try {
+    await GitHubAPI.putFile('data/bloques.json', JSON.stringify(DATA.bloques, null, 2), 'Delete bloque');
+    showStatus('Eliminado', 'success');
+    await loadAllData();
+  } catch (e) { showStatus('Error: ' + e.message, 'error'); }
 }
 
-function resetTemaForm() {
-  ['tm-titulo','tm-descripcion','tm-tipo','tm-estado'].forEach(id => document.getElementById(id).value = '');
-  document.getElementById('tm-edit-index').value = -1;
+function resetBloqueForm() {
+  ['bl-nombre','bl-presidente','bl-integrantes'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('bl-edit-index').value = -1;
 }
 
-function renderTemas() {
-  const cont = document.getElementById('listaTemas');
-  if (!DATA.temas.length) { cont.innerHTML = '<p style="color:#888;">No hay temas cargados.</p>'; return; }
-  cont.innerHTML = '<h3 style="margin:20px 0 10px; color:var(--primary);">Temas cargados (' + DATA.temas.length + ')</h3>' +
-    DATA.temas.map((t, i) => `
+function renderBloques() {
+  const cont = document.getElementById('listaBloques');
+  if (!DATA.bloques.length) { cont.innerHTML = '<p style="color:#888;">No hay bloques.</p>'; return; }
+  cont.innerHTML = '<h3 style="margin:20px 0 10px; color:var(--primary);">Bloques cargados (' + DATA.bloques.length + ')</h3>' +
+    DATA.bloques.map((b, i) => `
       <div class="item-card">
         <div class="item-info">
-          <h4>${t.titulo}</h4>
-          <small>${t.tipo} · ${t.estado}${t.descripcion ? ' · ' + t.descripcion.substring(0, 60) + '...' : ''}</small>
+          <h4>${b.nombre}</h4>
+          <small>Presidente: ${b.presidente || '—'} · ${b.integrantes.length} integrantes</small>
         </div>
         <div class="item-actions">
-          <button class="btn" onclick="editTema(${i})">Editar</button>
-          <button class="btn btn-danger" onclick="deleteTema(${i})">Borrar</button>
+          <button class="btn" onclick="editBloque(${i})">Editar</button>
+          <button class="btn btn-danger" onclick="deleteBloque(${i})">Borrar</button>
         </div>
       </div>
     `).join('');
