@@ -126,6 +126,7 @@ if (noticias && noticias.length) {
 // ====== TEMAS DE SESIÓN ======
 const temas = await loadJSON('data/temas_sesion.json');
 if (temas && temas.length) {
+  // Sección: Temas a tratar (próxima sesión)
   const cont = document.getElementById('temas-sesion-lista');
   if (cont) {
     const temasATratar = temas.filter(t => t.estado === 'A tratar');
@@ -137,10 +138,27 @@ if (temas && temas.length) {
             <strong style="color:var(--text); font-size:1rem;">${t.titulo}</strong>
             ${t.descripcion ? '<br><small style="color:var(--text-light); display:block; margin-top:6px;">' + t.descripcion + '</small>' : ''}
           </li>
-        `).join('') + 
-        '</ul>';
+        `).join('') + '</ul>';
     } else {
       cont.innerHTML = '<p style="color:var(--text-light); text-align:center;">No hay temas programados para la próxima sesión.</p>';
+    }
+  }
+
+  // Sección: Temas aprobados (legislación sancionada)
+  const contAprobados = document.getElementById('temas-aprobados-lista');
+  if (contAprobados) {
+    const temasAprobados = temas.filter(t => t.estado === 'Aprobado');
+    if (temasAprobados.length) {
+      contAprobados.innerHTML = '<ul style="list-style:none; padding:0;">' + 
+        temasAprobados.map(t => `
+          <li style="padding:15px 0; border-bottom:1px solid var(--border);">
+            <span style="display:inline-block; background:#27ae60; color:white; padding:3px 10px; border-radius:12px; font-size:0.75rem; font-weight:600; margin-right:10px;">✅ ${t.tipo}</span>
+            <strong style="color:var(--text); font-size:1rem;">${t.titulo}</strong>
+            ${t.descripcion ? '<br><small style="color:var(--text-light); display:block; margin-top:6px;">' + t.descripcion + '</small>' : ''}
+          </li>
+        `).join('') + '</ul>';
+    } else {
+      contAprobados.innerHTML = '<p style="color:var(--text-light); text-align:center;">Aún no hay temas aprobados en esta sesión.</p>';
     }
   }
 }
