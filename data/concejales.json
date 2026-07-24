@@ -5,5 +5,47 @@
     "mandato": "2027",
     "cargo": "Presidente del HCD",
     "foto": "assets/img/concejales/marcelo-rubio.jpg"
+  },
+  {
+    "nombre": "Cecilia Rodríguez",
+    "bloque": "La Libertad Avanza + Frente Cambia Mendoza",
+    "mandato": "2030",
+    "cargo": "",
+    "foto": ""
+  },
+  {
+    "nombre": "Carla Ernani",
+    "bloque": "La Libertad Avanza + Frente Cambia Mendoza",
+    "mandato": "2030",
+    "cargo": "",
+    "foto": ""
+  },
+  {
+    "nombre": "Tomás Dris",
+    "bloque": "La Libertad Avanza + Frente Cambia Mendoza",
+    "mandato": "2030",
+    "cargo": "",
+    "foto": ""
+  },
+  {
+    "nombre": "L. Villarreal Occhionero",
+    "bloque": "La Libertad Avanza + Frente Cambia Mendoza",
+    "mandato": "2030",
+    "cargo": "",
+    "foto": ""
+  },
+  {
+    "nombre": "Cielo Daou",
+    "bloque": "Frente Cambia Mendoza",
+    "mandato": "2027",
+    "cargo": "",
+    "foto": ""
+  },
+  {
+    "nombre": "Rafael Bazán",
+    "bloque": "Frente Cambia Mendoza",
+    "mandato": "2030",
+    "cargo": "",
+    "foto": ""
   }
 ]

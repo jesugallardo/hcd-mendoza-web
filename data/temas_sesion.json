@@ -1,0 +1,20 @@
+[
+  {
+    "titulo": "Prueba 1",
+    "descripcion": "Prueba 1 de temas",
+    "tipo": "Ordenanza",
+    "estado": "Aprobado"
+  },
+  {
+    "titulo": "Pruebaa 1000000",
+    "descripcion": "Pruebaaaaa 10000",
+    "tipo": "Ordenanza",
+    "estado": "Aprobado"
+  },
+  {
+    "titulo": "Prueba 1",
+    "descripcion": "Pruebaa 1000000",
+    "tipo": "Ordenanza",
+    "estado": "A tratar"
+  }
+]
