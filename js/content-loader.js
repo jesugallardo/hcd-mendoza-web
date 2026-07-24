@@ -12,10 +12,10 @@
   async function loadJSON(path) {
     try {
       const r = await fetch(`${BASE}/${path}?t=${Date.now()}`);
-      if (!r.ok) return null; // Devuelve null si es 404 (archivo no existe)
+      if (!r.ok) return null;
       return await r.json();
-    } catch (e) { 
-      return null; 
+    } catch (e) {
+      return null;
     }
   }
   
@@ -72,30 +72,24 @@
         const presidente = miembros.find(m => m.cargo && m.cargo.toLowerCase().includes('presidente'));
         
         return `
-          <div class="bloque-item" style="margin-bottom: 40px;">
-            <h3 style="font-size: 1.1rem; margin-bottom: 15px; color: var(--primary); border-left: 4px solid var(--accent); padding-left: 10px;">
-              Bloque ${bloqueNombre}
-            </h3>
-            
-            ${presidente ? `<p style="margin-bottom: 15px; font-size: 0.9rem; background: var(--bg); padding: 10px 15px; border-radius: 6px;"><strong>Presidente de Bloque:</strong> ${presidente.nombre} · Mandato hasta ${presidente.mandato}</p>` : ''}
-            
-            <div class="carousel-container" style="position: relative;">
-              <button class="carousel-btn prev" onclick="moveCarousel(this.parentElement.querySelector('.cc-wrapper'), -1)" style="position: absolute; left: -15px; top: 50%; transform: translateY(-50%); z-index: 10; background: var(--primary); color: white; border: none; width: 40px; height: 40px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 5px rgba(0,0,0,0.2);">❮</button>
-              
-              <div class="cc-wrapper" style="display: flex; overflow-x: auto; scroll-snap-type: x mandatory; gap: 20px; padding: 10px 5px 20px 5px; scroll-behavior: smooth;">
+          <div class="bloque-item">
+            <h3>Bloque ${bloqueNombre}</h3>
+            ${presidente ? `<p class="bloque-pres"><strong>Presidente:</strong> ${presidente.nombre} · Mandato hasta ${presidente.mandato}</p>` : ''}
+            <div class="carousel-container">
+              <button class="carousel-btn prev" onclick="moveCarousel(this.parentElement.querySelector('.cc-wrapper'), -1)">❮</button>
+              <div class="cc-wrapper">
                 ${miembros.map(c => `
-                  <div class="cc-slide" style="flex: 0 0 220px; scroll-snap-align: start;">
-                    <div class="concejal-card" style="background: white; padding: 25px 20px; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); border: 1px solid var(--border); text-align: center; height: 100%; transition: transform 0.2s;">
-                      ${c.foto ? `<img src="${BASE}/${c.foto}" style="width:80px;height:80px;border-radius:50%;object-fit:cover;margin-bottom:10px;border: 3px solid var(--primary);">` : '<div class="avatar" style="width:80px;height:80px;border-radius:50%;background:var(--bg);margin:0 auto 10px;display:flex;align-items:center;justify-content:center;font-size:2rem;color:var(--text-light);border: 3px solid var(--border);">👤</div>'}
-                      <h3 style="font-size: 1rem; margin-bottom: 6px;">${c.nombre}</h3>
-                      ${c.cargo ? `<div style="font-size:11px;color:var(--accent);font-weight:600;margin-bottom:6px;">${c.cargo}</div>` : ''}
-                      <div style="font-size:11px;color:#999;">Mandato hasta ${c.mandato || '—'}</div>
+                  <div class="cc-slide">
+                    <div class="concejal-card">
+                      ${c.foto ? `<img src="${BASE}/${c.foto}">` : '<div class="avatar"></div>'}
+                      <h4>${c.nombre}</h4>
+                      ${c.cargo ? `<div class="cargo">${c.cargo}</div>` : ''}
+                      <div class="meta">Mandato hasta ${c.mandato || '—'}</div>
                     </div>
                   </div>
                 `).join('')}
               </div>
-              
-              <button class="carousel-btn next" onclick="moveCarousel(this.parentElement.querySelector('.cc-wrapper'), 1)" style="position: absolute; right: -15px; top: 50%; transform: translateY(-50%); z-index: 10; background: var(--primary); color: white; border: none; width: 40px; height: 40px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 5px rgba(0,0,0,0.2);">❯</button>
+              <button class="carousel-btn next" onclick="moveCarousel(this.parentElement.querySelector('.cc-wrapper'), 1)">❯</button>
             </div>
           </div>
         `;
@@ -106,64 +100,19 @@
   // ====== NOTICIAS ======
   const noticias = await loadJSON('data/noticias.json');
   if (noticias && noticias.length) {
-    const cont = document.querySelector('#noticias .grid-3');
+    const cont = document.getElementById('noticias-container');
     if (cont) {
       cont.innerHTML = noticias.slice(0, 6).map(n => `
         <article class="noticia-card">
-          ${n.imagen ? `<img src="${BASE}/${n.imagen}" style="width:100%;height:160px;object-fit:cover;border-radius:4px;margin-bottom:12px;">` : ''}
-          <span class="fecha">${formatDate(n.fecha)}</span>
-          <h3>${n.titulo}</h3>
-          <p>${n.resumen || ''}</p>
-          <a class="leer-mas" href="${n.link || '#'}">Leer más →</a>
+          ${n.imagen ? `<img src="${BASE}/${n.imagen}">` : ''}
+          <div class="noticia-content">
+            <span class="fecha">${formatDate(n.fecha)}</span>
+            <h3>${n.titulo}</h3>
+            <p>${n.resumen || ''}</p>
+            <a class="leer-mas" href="${n.link || '#'}">Leer más →</a>
+          </div>
         </article>
       `).join('');
-    }
-  }
-  
-  // ====== BLOQUES (Acordeón) ======
-  let bloques = await loadJSON('data/bloques.json');
-  
-  // Datos de prueba por defecto si no hay archivo o está vacío
-  if (!bloques || !bloques.length) {
-    bloques = [
-      { nombre: "La Libertad Avanza + Frente Cambia Mendoza", presidente: "Cecilia Rodríguez", integrantes: ["Maximiliano Garrido", "L. Villarreal Occhionero", "Carla Ernani", "Tomás Dris"] },
-      { nombre: "Frente Cambia Mendoza", presidente: "Marcelo Rubio", integrantes: ["Cielo Daou", "Rafael Bazán", "Ernesto Giménez"] },
-      { nombre: "Fuerza Justicialista Mendoza", presidente: "Gustavo Caleau", integrantes: [] },
-      { nombre: "Partido Verde", presidente: "Ricardo García", integrantes: [] },
-      { nombre: "Coalición Cívica + ARI", presidente: "Gustavo Gutiérrez", integrantes: [] }
-    ];
-  }
-
-  if (bloques && bloques.length) {
-    const cont = document.querySelector('#bloques-list-acordeon'); // Asegurate que tu HTML tenga este ID o cambiá el selector
-    if (cont) {
-      cont.innerHTML = bloques.map(b => `
-        <div class="bloque-item" style="background:#fff; border:1px solid var(--border); border-radius:6px; margin-bottom:10px;">
-          <button class="bloque-toggle-btn" style="width:100%; text-align:left; padding:15px; background:none; border:none; cursor:pointer; font-weight:600; display:flex; justify-content:space-between; align-items:center;">
-            <span>Bloque ${b.nombre}</span>
-            <span>Ver Integrantes ▾</span>
-          </button>
-          <div class="bloque-content" style="display:none; padding:15px; border-top:1px solid var(--border);">
-            ${b.presidente ? `<p><strong>Presidente: </strong>${b.presidente}</p>` : ''}
-            <ul style="list-style:none; padding:0;">${(b.integrantes || []).map(i => `<li style="padding:4px 0;">• ${i}</li>`).join('')}</ul>
-          </div>
-        </div>
-      `).join('');
-      
-      // Activar el acordeón de bloques
-      cont.querySelectorAll('.bloque-toggle-btn').forEach(btn => {
-        btn.addEventListener('click', () => {
-          const content = btn.nextElementSibling;
-          const arrow = btn.querySelector('span:last-child');
-          if (content.style.display === 'none') {
-            content.style.display = 'block';
-            arrow.textContent = 'Ver Integrantes ▴';
-          } else {
-            content.style.display = 'none';
-            arrow.textContent = 'Ver Integrantes ▾';
-          }
-        });
-      });
     }
   }
   

@@ -3,208 +3,153 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Honorable Concejo Deliberante de la Ciudad de Mendoza</title>
+  <title>Honorable Concejo Deliberante - Ciudad de Mendoza</title>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
   <style>
-    :root {
-      --primary: #004b87;
-      --primary-dark: #003366;
-      --accent: #e67e22;
-      --bg: #f8fafc;
-      --card-bg: #ffffff;
-      --text: #2c3e50;
-      --text-light: #64748b;
-      --border: #e2e8f0;
-      --base-font-size: 14px;
-      --shadow: 0 1px 3px rgba(0,0,0,0.1);
-      --shadow-md: 0 4px 6px rgba(0,0,0,0.1);
-    }
+    :root { --primary: #004b87; --primary-dark: #003366; --accent: #e67e22; --bg: #f8fafc; --card: #fff; --text: #2c3e50; --text-light: #64748b; --border: #e2e8f0; }
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    html { font-size: var(--base-font-size); }
-    body { font-family: 'Open Sans', sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; }
+    body { font-family: 'Open Sans', sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; font-size: 14px; }
     h1, h2, h3, h4 { font-family: 'Montserrat', sans-serif; font-weight: 600; color: var(--primary); }
-    a { text-decoration: none; color: inherit; transition: all 0.3s; }
+    a { text-decoration: none; color: inherit; transition: 0.3s; }
     
-    header { background: white; box-shadow: var(--shadow); position: sticky; top: 0; z-index: 1000; }
+    /* HEADER & NAV (Con efecto scroll) */
+    header { background: var(--card); box-shadow: 0 1px 3px rgba(0,0,0,0.1); position: sticky; top: 0; z-index: 1000; transition: all 0.3s ease; }
+    header.scrolled { padding: 5px 0; box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
+    header.scrolled .header-top { display: none; }
+    header.scrolled .logo h1 { font-size: 1.1rem; }
+    header.scrolled .logo span { font-size: 0.75rem; }
+    
     .header-top { background: var(--primary); color: white; padding: 8px 0; font-size: 0.85rem; }
-    .header-top .container { display: flex; justify-content: space-between; align-items: center; }
-    .header-main { padding: 20px 0; }
-    .header-main .container { display: flex; justify-content: space-between; align-items: center; }
-    .logo h1 { font-size: 1.4rem; color: var(--primary); margin: 0; line-height: 1.2; }
-    .logo span { font-size: 0.85rem; color: var(--text-light); display: block; }
+    .header-main { padding: 15px 0; }
+    .header-main .container, .header-top .container { max-width: 1140px; margin: 0 auto; padding: 0 20px; display: flex; justify-content: space-between; align-items: center; }
+    .logo h1 { font-size: 1.4rem; margin: 0; line-height: 1.2; transition: font-size 0.3s; }
+    .logo span { font-size: 0.85rem; color: var(--text-light); display: block; transition: font-size 0.3s; }
     
-    nav { background: white; border-top: 1px solid var(--border); }
+    nav { background: var(--card); border-top: 1px solid var(--border); }
     nav .container { display: flex; }
-    nav a { color: var(--text); padding: 15px 20px; display: block; font-weight: 500; font-size: 0.9rem; }
+    nav a { color: var(--text); padding: 12px 18px; display: block; font-weight: 500; font-size: 0.9rem; }
     nav a:hover { color: var(--primary); background: var(--bg); }
     .dropdown { position: relative; }
-    .dropdown-content { display: none; position: absolute; background: white; min-width: 220px; box-shadow: var(--shadow-md); z-index: 100; top: 100%; left: 0; border: 1px solid var(--border); }
-    .dropdown-content a { color: var(--text); padding: 10px 20px; border-bottom: 1px solid var(--border); font-size: 0.85rem; }
-    .dropdown-content a:hover { background: var(--bg); color: var(--primary); }
+    .dropdown-content { display: none; position: absolute; background: var(--card); min-width: 220px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); z-index: 100; top: 100%; left: 0; border: 1px solid var(--border); border-radius: 0 0 6px 6px; }
+    .dropdown-content a { padding: 10px 18px; border-bottom: 1px solid var(--border); font-size: 0.85rem; }
+    .dropdown-content a:hover { background: var(--bg); color: var(--primary); padding-left: 22px; }
     .dropdown:hover .dropdown-content { display: block; }
 
-    /* Carrusel de banners */
+    /* HERO */
     .hero { position: relative; height: 550px; overflow: hidden; background: var(--primary); }
-    .slides-wrapper { display: flex; height: 100%; position: relative; }
-    .slide { 
-      flex: 0 0 100%; 
-      position: relative; 
-      background-size: cover; 
-      background-position: center; 
-      display: none; 
-      align-items: center; 
-      justify-content: center; 
-      text-align: center; 
-    }
+    .slides-wrapper { display: flex; height: 100%; }
+    .slide { flex: 0 0 100%; position: relative; background-size: cover; background-position: center; display: none; align-items: center; justify-content: center; text-align: center; }
     .slide.is-active { display: flex; }
-    .slide::before { 
-      content: ''; 
-      position: absolute; 
-      inset: 0; 
-      background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.3)); 
-    }
-    .hero-content { 
-      position: relative; 
-      z-index: 1; 
-      padding: 40px; 
-      max-width: 900px; 
-      color: white; 
-    }
+    .slide::before { content: ''; position: absolute; inset: 0; background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.3)); }
+    .hero-content { position: relative; z-index: 1; padding: 40px; max-width: 900px; color: white; }
     .hero-content h2 { font-size: 3rem; color: white; margin-bottom: 20px; line-height: 1.2; }
     .hero-content p { font-size: 1.3rem; opacity: 0.95; max-width: 800px; margin: 0 auto; }
 
-    .carousel-arrow { 
-      position: absolute; 
-      top: 50%; 
-      transform: translateY(-50%); 
-      background: rgba(255,255,255,0.9); 
-      color: var(--primary); 
-      border: none; 
-      width: 50px; 
-      height: 50px; 
-      border-radius: 50%; 
-      font-size: 1.5rem; 
-      cursor: pointer; 
-      z-index: 10; 
-      transition: all 0.3s; 
-      display: flex; 
-      align-items: center; 
-      justify-content: center; 
-    }
+    /* CARRUSEL CONTROLES */
+    .carousel-arrow { position: absolute; top: 50%; transform: translateY(-50%); background: rgba(255,255,255,0.9); color: var(--primary); border: none; width: 50px; height: 50px; border-radius: 50%; font-size: 1.5rem; cursor: pointer; z-index: 10; display: flex; align-items: center; justify-content: center; transition: 0.3s; }
     .carousel-arrow:hover { background: white; transform: translateY(-50%) scale(1.1); }
-    .carousel-arrow.prev { left: 30px; }
-    .carousel-arrow.next { right: 30px; }
-
-    .carousel-dots { 
-      position: absolute; 
-      bottom: 30px; 
-      left: 50%; 
-      transform: translateX(-50%); 
-      display: flex; 
-      gap: 10px; 
-      z-index: 10; 
-    }
-    .carousel-dot { 
-      width: 12px; 
-      height: 12px; 
-      border-radius: 50%; 
-      background: rgba(255,255,255,0.5); 
-      border: none; 
-      cursor: pointer; 
-      transition: all 0.3s; 
-    }
+    .carousel-arrow.prev { left: 30px; } .carousel-arrow.next { right: 30px; }
+    .carousel-dots { position: absolute; bottom: 30px; left: 50%; transform: translateX(-50%); display: flex; gap: 10px; z-index: 10; }
+    .carousel-dot { width: 12px; height: 12px; border-radius: 50%; background: rgba(255,255,255,0.5); border: none; cursor: pointer; transition: 0.3s; }
     .carousel-dot.active { background: white; transform: scale(1.3); }
 
+    /* LAYOUT GENERAL */
     .container { max-width: 1140px; margin: 0 auto; padding: 0 20px; }
     section { padding: 50px 0; }
     .section-title { font-size: 1.6rem; margin-bottom: 30px; padding-left: 15px; border-left: 4px solid var(--accent); }
-
     .grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 25px; }
-    .card { background: var(--card-bg); padding: 25px; border-radius: 8px; box-shadow: var(--shadow); border: 1px solid var(--border); }
+    .card { background: var(--card); padding: 25px; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); border: 1px solid var(--border); transition: transform 0.2s; }
+    .card:hover { transform: translateY(-3px); box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
     .card h3 { font-size: 1.1rem; margin-bottom: 12px; }
-    .card p { color: var(--text-light); font-size: 0.9rem; line-height: 1.6; margin-bottom: 15px; }
+    .card p, .card li { color: var(--text-light); font-size: 0.9rem; line-height: 1.6; margin-bottom: 10px; }
     .card ul { list-style: none; padding: 0; }
-    .card ul li { padding: 8px 0; color: var(--text-light); font-size: 0.9rem; }
-    .card ul li:before { content: "✓ "; color: var(--accent); font-weight: bold; margin-right: 5px; }
-    .btn-card { display: inline-block; color: var(--primary); font-weight: 600; font-size: 0.85rem; border-bottom: 2px solid var(--accent); padding-bottom: 2px; }
+    .card ul li::before { content: "✓ "; color: var(--accent); font-weight: bold; margin-right: 5px; }
+    .btn-card { display: inline-block; color: var(--primary); font-weight: 600; font-size: 0.85rem; border-bottom: 2px solid var(--accent); padding-bottom: 2px; margin-top: 10px; }
+    .btn-card:hover { color: var(--accent); }
 
-    .concejales-section { background: white; }
-    .cc-wrapper { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; gap: 20px; padding: 15px 5px 25px 5px; }
+    /* ORGANIGRAMA */
+    .org-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; max-width: 900px; margin: 0 auto 30px; }
+    .org-card { background: var(--card); padding: 25px; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); border: 1px solid var(--border); text-align: center; }
+    .org-card.pres { border-top: 4px solid var(--accent); max-width: 300px; margin: 0 auto 30px; }
+    .org-card .avatar { width: 80px; height: 80px; border-radius: 50%; background: var(--bg); margin: 0 auto 15px; display: flex; align-items: center; justify-content: center; font-size: 2.5rem; border: 3px solid var(--border); }
+    .org-card h3 { font-size: 1.1rem; margin-bottom: 5px; }
+    .org-card .cargo { color: var(--accent); font-weight: 600; font-size: 0.85rem; margin-bottom: 5px; }
+    .org-card .meta { color: var(--text-light); font-size: 0.8rem; }
+    .sec-title { text-align: center; font-size: 0.9rem; color: var(--text-light); margin-bottom: 20px; font-weight: 600; letter-spacing: 1px; }
+
+    /* BLOQUES Y CARRUSELES */
+    .bloque-item { margin-bottom: 40px; }
+    .bloque-item h3 { font-size: 1.1rem; margin-bottom: 15px; border-left: 4px solid var(--accent); padding-left: 10px; }
+    .bloque-pres { background: var(--bg); padding: 10px 15px; border-radius: 6px; margin-bottom: 15px; font-size: 0.9rem; }
+    .carousel-container { position: relative; }
+    .cc-wrapper { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; gap: 20px; padding: 10px 5px 20px; scroll-behavior: smooth; }
     .cc-wrapper::-webkit-scrollbar { height: 5px; }
     .cc-wrapper::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
-    .cc-slide { flex: 0 0 260px; scroll-snap-align: start; }
-    .concejal-card { background: white; padding: 25px 20px; border-radius: 8px; box-shadow: var(--shadow); border: 1px solid var(--border); text-align: center; }
-    .concejal-card img { width: 90px; height: 90px; border-radius: 50%; object-fit: cover; margin-bottom: 15px; border: 3px solid var(--primary); }
-    .concejal-card .avatar { width: 90px; height: 90px; border-radius: 50%; background: var(--bg); margin: 0 auto 15px; display: flex; align-items: center; justify-content: center; font-size: 2.5rem; color: var(--text-light); border: 3px solid var(--border); }
-    .concejal-card h3 { font-size: 1rem; margin-bottom: 6px; }
-    .concejal-card .bloque { color: var(--accent); font-weight: 600; font-size: 0.85rem; margin-bottom: 6px; }
+    .cc-slide { flex: 0 0 220px; scroll-snap-align: start; }
+    .concejal-card { background: var(--card); padding: 20px; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); border: 1px solid var(--border); text-align: center; height: 100%; transition: transform 0.2s; }
+    .concejal-card:hover { transform: translateY(-3px); border-color: var(--primary); }
+    .concejal-card img, .concejal-card .avatar { width: 80px; height: 80px; border-radius: 50%; object-fit: cover; margin: 0 auto 10px; border: 3px solid var(--primary); display: flex; align-items: center; justify-content: center; font-size: 2rem; color: var(--text-light); background: var(--bg); }
+    .concejal-card h4 { font-size: 1rem; margin-bottom: 5px; }
+    .concejal-card .cargo { color: var(--accent); font-weight: 600; font-size: 0.8rem; margin-bottom: 5px; }
+    .concejal-card .meta { font-size: 0.75rem; color: var(--text-light); }
+    .carousel-btn { position: absolute; top: 50%; transform: translateY(-50%); background: var(--primary); color: white; border: none; width: 40px; height: 40px; border-radius: 50%; cursor: pointer; z-index: 10; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
+    .carousel-btn:hover { background: var(--primary-dark); }
+    .carousel-btn.prev { left: -15px; } .carousel-btn.next { right: -15px; }
 
+    /* NOTICIAS */
     .noticias-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 25px; }
-    .noticia-card { background: white; border-radius: 8px; overflow: hidden; box-shadow: var(--shadow); border: 1px solid var(--border); }
-    .noticia-card img { width: 100%; height: 180px; object-fit: cover; }
+    .noticia-card { background: var(--card); border-radius: 8px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.1); border: 1px solid var(--border); }
+    .noticia-card img { width: 100%; height: 160px; object-fit: cover; }
     .noticia-content { padding: 20px; }
     .noticia-card .fecha { font-size: 0.8rem; color: var(--text-light); margin-bottom: 8px; display: block; }
     .noticia-card h3 { font-size: 1.05rem; margin-bottom: 10px; line-height: 1.4; }
     .noticia-card p { font-size: 0.85rem; color: var(--text-light); margin-bottom: 12px; }
     .leer-mas { color: var(--accent); font-weight: 600; font-size: 0.85rem; }
 
+    /* BOLETIN */
     .boletin-card { background: var(--primary); color: white; padding: 40px; border-radius: 8px; text-align: center; }
     .boletin-card h3 { color: white; font-size: 1.4rem; margin-bottom: 10px; }
-    .boletin-card p { opacity: 0.9; margin-bottom: 25px; font-size: 0.95rem; }
+    .boletin-card p { opacity: 0.9; margin-bottom: 25px; }
     .boletin-form { max-width: 450px; margin: 0 auto; display: flex; gap: 10px; }
-    .boletin-form input { flex: 1; padding: 10px 15px; border: none; border-radius: 4px; font-size: 0.9rem; }
-    .boletin-form button { padding: 10px 20px; background: var(--accent); color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: 600; font-size: 0.9rem; }
+    .boletin-form input { flex: 1; padding: 10px 15px; border: none; border-radius: 4px; }
+    .boletin-form button { padding: 10px 20px; background: var(--accent); color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: 600; }
+    .boletin-form button:hover { background: #d35400; }
 
+    /* FOOTER & MAPA */
     footer { background: var(--primary-dark); color: white; padding: 40px 0 20px; }
     .footer-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 30px; margin-bottom: 30px; }
-    .footer-section h3 { color: white; font-size: 1rem; margin-bottom: 15px; }
+    .footer-section h3 { color: white; font-size: 1rem; margin-bottom: 15px; border-bottom: 2px solid var(--accent); display: inline-block; padding-bottom: 5px; }
     .footer-section p, .footer-section a { color: rgba(255,255,255,0.7); line-height: 1.8; font-size: 0.85rem; }
     .footer-section a { display: block; margin-bottom: 6px; }
+    .footer-section a:hover { color: white; padding-left: 5px; }
     .footer-bottom { border-top: 1px solid rgba(255,255,255,0.1); padding-top: 20px; text-align: center; color: rgba(255,255,255,0.5); font-size: 0.8rem; }
+    .map-container iframe { width: 100%; height: 150px; border: 0; border-radius: 6px; margin-top: 10px; }
+
+    /* BOTÓN VOLVER ARRIBA */
+    #backToTop { position: fixed; bottom: 30px; right: 30px; background: var(--accent); color: white; width: 45px; height: 45px; border-radius: 50%; border: none; font-size: 1.5rem; cursor: pointer; display: none; align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(0,0,0,0.2); z-index: 999; transition: 0.3s; }
+    #backToTop:hover { background: #d35400; transform: translateY(-3px); }
 
     @media (max-width: 768px) {
-      .hero { height: 400px; }
-      .hero-content h2 { font-size: 2rem; }
-      .hero-content p { font-size: 1rem; }
-      .carousel-arrow { width: 40px; height: 40px; font-size: 1.2rem; }
-      nav .container { flex-direction: column; }
+      .hero { height: 400px; } .hero-content h2 { font-size: 2rem; } .hero-content p { font-size: 1rem; }
+      nav .container { flex-direction: column; } .boletin-form { flex-direction: column; }
+      .carousel-btn { display: none; } /* En móvil se usa el swipe táctil */
     }
   </style>
 </head>
 <body>
 
-<header>
-  <div class="header-top">
-    <div class="container">
-      <span>📞 (54) 261-449-5100 | contacto@concejomendoza.gob.ar</span>
-    </div>
-  </div>
+<header id="mainHeader">
+  <div class="header-top"><div class="container"><span>📞 (54) 261-449-5100 | contacto@concejomendoza.gob.ar</span></div></div>
   <div class="header-main">
     <div class="container">
-      <div class="logo">
-        <h1>Honorable Concejo Deliberante</h1>
-        <span>de la Ciudad de Mendoza</span>
-      </div>
+      <div class="logo"><h1>Honorable Concejo Deliberante</h1><span>de la Ciudad de Mendoza</span></div>
     </div>
   </div>
   <nav>
     <div class="container">
-      <div class="dropdown">
-        <a href="#institucional">Institucional ▾</a>
-        <div class="dropdown-content">
-          <a href="#institucional">El Concejo</a>
-          <a href="#concejales">Nuestros Concejales</a>
-          <a href="#institucional">Reglamento Interno</a>
-        </div>
-      </div>
-      <div class="dropdown">
-        <a href="#actividad">Actividad Legislativa </a>
-        <div class="dropdown-content">
-          <a href="#actividad">Material de Sesión</a>
-          <a href="#actividad">Sesiones</a>
-        </div>
-      </div>
-      <a href="#noticias">Noticias</a>
-      <a href="#contacto">Contacto</a>
+      <div class="dropdown"><a href="#institucional">Institucional ▾</a><div class="dropdown-content"><a href="#institucional">El Concejo</a><a href="#concejales">Concejales</a><a href="#institucional">Reglamento</a></div></div>
+      <div class="dropdown"><a href="#actividad">Actividad Legislativa ▾</a><div class="dropdown-content"><a href="#actividad">Material de Sesión</a><a href="#actividad">Sesiones</a></div></div>
+      <a href="#noticias">Noticias</a><a href="#contacto">Contacto</a>
     </div>
   </nav>
 </header>
@@ -212,10 +157,7 @@
 <div class="hero">
   <div class="slides-wrapper">
     <div class="slide is-active" style="background-image: url('https://images.unsplash.com/photo-1575320181282-9afab399332c?auto=format&fit=crop&w=1200');">
-      <div class="hero-content">
-        <h2>Gestión Legislativa Abierta</h2>
-        <p>Accedé a toda la información pública sobre proyectos, ordenanzas y las actividades del Concejo Deliberante de la Ciudad de Mendoza.</p>
-      </div>
+      <div class="hero-content"><h2>Gestión Legislativa Abierta</h2><p>Accedé a toda la información pública sobre proyectos, ordenanzas y actividades del Concejo.</p></div>
     </div>
   </div>
   <button class="carousel-arrow prev" onclick="changeSlide(-1)">❮</button>
@@ -223,65 +165,40 @@
   <div class="carousel-dots" id="carouselDots"></div>
 </div>
 
-<div class="container">
+<main class="container">
   <section id="institucional">
     <h2 class="section-title">Institucional</h2>
     <div class="grid-2">
-      <div class="card">
-        <h3>El Honorable Concejo Deliberante</h3>
-        <p>Organizado de acuerdo a lo dispuesto por la Constitución de la Provincia de Mendoza y la Ley Orgánica de Municipalidades Nº 1079, nuestro Concejo Deliberante es el ámbito democrático donde se debaten y sancionan las normativas de la capital mendocina.</p>
-        <p>Está integrado por 12 concejales y concejalas que representan a los vecinos de la ciudad, renovándose por mitades de manera democrática cada dos años.</p>
-      </div>
-      <div class="card">
-        <h3>Atribuciones Legislativas</h3>
-        <ul>
-          <li>Dictar ordenanzas de urbanismo, servicios públicos y tasas.</li>
-          <li>Evaluar y aprobar el Presupuesto de Gastos de la Ciudad.</li>
-          <li>Ejercer control institucional sobre el Departamento Ejecutivo.</li>
-        </ul>
-      </div>
+      <div class="card"><h3>El Honorable Concejo Deliberante</h3><p>Organizado según la Constitución de la Provincia de Mendoza y la Ley Orgánica de Municipalidades Nº 1079. Ámbito democrático de 12 concejales que se renuevan por mitades cada dos años.</p></div>
+      <div class="card"><h3>Atribuciones Legislativas</h3><ul><li>Dictar ordenanzas de urbanismo, servicios y tasas.</li><li>Aprobar el Presupuesto de Gastos de la Ciudad.</li><li>Ejercer control institucional sobre el Departamento Ejecutivo.</li></ul></div>
     </div>
   </section>
-</div>
 
-<section id="concejales" class="concejales-section">
-  <div class="container">
-    <h2 class="section-title">Nuestros Concejales</h2>
-    <div class="cc-wrapper">
-      <div class="cc-slide">
-        <div class="concejal-card">
-          <div class="avatar">👤</div>
-          <h3>Cargando concejales...</h3>
-        </div>
+  <section id="concejales" style="background: white; padding: 50px 20px; margin: 0 -20px;">
+    <div class="container">
+      <h2 class="section-title">Autoridades y Composición</h2>
+      <div class="org-card pres"><div class="avatar">👤</div><h3>Marcelo Rubio</h3><div class="cargo">Presidente del HCD</div><div class="meta">Frente Cambia Mendoza · Mandato hasta 2027</div></div>
+      <div class="sec-title">SECRETARÍAS ADMINISTRATIVAS (NO ELECTIVAS)</div>
+      <div class="org-grid">
+        <div class="org-card"><h4>Leandro Le Donne</h4><div class="cargo">Secretario Habilitado</div></div>
+        <div class="org-card"><h4>Federico Navarro Cavagnaro</h4><div class="cargo">Secretario Legislativo</div></div>
+        <div class="org-card"><h4>Emanuel Italiano</h4><div class="cargo">Prosecretario</div></div>
       </div>
+      <h2 class="section-title" style="margin-top: 40px;">Composición por Bloques Políticos</h2>
+      <div id="bloques-list"></div>
     </div>
-  </div>
-</section>
+  </section>
 
-<div class="container">
   <section id="noticias">
     <h2 class="section-title">Actualidad y Novedades</h2>
-    <div class="noticias-grid">
-      <div class="noticia-card">
-        <div class="noticia-content">
-          <span class="fecha">Cargando noticias...</span>
-        </div>
-      </div>
-    </div>
+    <div class="noticias-grid" id="noticias-container"><div class="noticia-card"><div class="noticia-content"><span class="fecha">Cargando noticias...</span></div></div></div>
   </section>
 
   <section id="actividad">
     <h2 class="section-title">Actividad Legislativa</h2>
     <div class="grid-2">
-      <div class="card">
-        <h3>Normativa</h3>
-        <p>Accedé al marco regulatorio general, ordenanzas vigentes, decretos y resoluciones que rigen en el territorio de la Ciudad de Mendoza.</p>
-        <a href="#" class="btn-card">Consultar Normativas Oficiales →</a>
-      </div>
-      <div class="card">
-        <h3>Sesiones</h3>
-        <p>Las sesiones ordinarias del Honorable Concejo Deliberante se llevan a cabo todos los <strong>martes a partir de las 10:30 hs.</strong></p>
-      </div>
+      <div class="card"><h3>Normativa</h3><p>Accedé al marco regulatorio general, ordenanzas vigentes, decretos y resoluciones.</p><a href="https://apex.ciudaddemendoza.gov.ar/apex/produccion/f?p=204:3005" class="btn-card" target="_blank">Consultar Normativas Oficiales →</a></div>
+      <div class="card"><h3>Sesiones</h3><p>Las sesiones ordinarias del Honorable Concejo Deliberante se llevan a cabo todos los <strong>martes a partir de las 10:30 hs.</strong></p></div>
     </div>
   </section>
 
@@ -289,79 +206,68 @@
     <div class="boletin-card">
       <h3>Suscribite al Boletín</h3>
       <p>Recibí por correo electrónico las novedades legislativas, sesiones y noticias del Concejo Municipal.</p>
-      <form class="boletin-form" onsubmit="event.preventDefault(); alert('¡Gracias por suscribirte!');">
-        <input type="email" placeholder="Tu correo electrónico" required>
-        <button type="submit">Suscribirme</button>
-      </form>
+      <form class="boletin-form" onsubmit="event.preventDefault(); alert('¡Gracias por suscribirte!');"><input type="email" placeholder="Tu correo electrónico" required><button type="submit">Suscribirme</button></form>
     </div>
   </section>
-</div>
+</main>
 
 <footer id="contacto">
   <div class="container">
     <div class="footer-grid">
       <div class="footer-section">
         <h3>Contacto</h3>
-        <p> 9 de Julio 500 — Mendoza<br>📞 (54) 261-449-5100<br> contacto@concejomendoza.gob.ar</p>
+        <p>📍 9 de Julio 500 — Mendoza<br>📞 (54) 261-449-5100<br>✉ contacto@concejomendoza.gob.ar</p>
+        <div class="map-container">
+          <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3350.837258789123!2d-68.845833!3d-32.889444!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x967e090000000001%3A0x0!2s9%20de%20Julio%20500%2C%20Mendoza!5e0!3m2!1ses!2sar!4v1600000000000" allowfullscreen="" loading="lazy"></iframe>
+        </div>
       </div>
       <div class="footer-section">
         <h3>Enlaces Rápidos</h3>
-        <a href="#institucional">Institucional</a>
-        <a href="#concejales">Nuestros Concejales</a>
-        <a href="#noticias">Noticias</a>
+        <a href="#institucional">Institucional</a><a href="#concejales">Nuestros Concejales</a><a href="#noticias">Noticias</a>
+      </div>
+      <div class="footer-section">
+        <h3>Seguinos</h3>
+        <p>Redes sociales del Concejo Deliberante</p>
       </div>
     </div>
-    <div class="footer-bottom">
-      <p>© 2026 Informática - Concejo Municipal de la Ciudad de Mendoza</p>
-    </div>
+    <div class="footer-bottom"><p>© 2026 Informática - Concejo Municipal de la Ciudad de Mendoza</p></div>
+    <button id="backToTop" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">↑</button>
   </div>
 </footer>
 
 <script src="js/content-loader.js"></script>
 <script>
-// Carrusel de banners
-let currentSlide = 0;
-let slideInterval;
+// 1. Efecto de achicar el header al hacer scroll
+window.addEventListener('scroll', () => {
+  const header = document.getElementById('mainHeader');
+  const btn = document.getElementById('backToTop');
+  if (window.scrollY > 50) { header.classList.add('scrolled'); btn.style.display = 'flex'; } 
+  else { header.classList.remove('scrolled'); btn.style.display = 'none'; }
+});
 
+// 2. Carrusel de banners
+let currentSlide = 0, slideInterval;
 function showSlide(index) {
-  const slides = document.querySelectorAll('.slide');
-  const dots = document.querySelectorAll('.carousel-dot');
-  
-  if (slides.length === 0) return;
-  
-  slides.forEach(slide => slide.classList.remove('is-active'));
-  dots.forEach(dot => dot.classList.remove('active'));
-  
+  const slides = document.querySelectorAll('.slide'), dots = document.querySelectorAll('.carousel-dot');
+  if (!slides.length) return;
+  slides.forEach(s => s.classList.remove('is-active'));
+  dots.forEach(d => d.classList.remove('active'));
   currentSlide = (index + slides.length) % slides.length;
   slides[currentSlide].classList.add('is-active');
   if (dots[currentSlide]) dots[currentSlide].classList.add('active');
 }
-
-function changeSlide(direction) {
-  showSlide(currentSlide + direction);
-  resetInterval();
-}
-
-function resetInterval() {
-  clearInterval(slideInterval);
-  slideInterval = setInterval(() => changeSlide(1), 6000);
-}
-
-document.addEventListener('DOMContentLoaded', function() {
-  const slides = document.querySelectorAll('.slide');
-  const dotsContainer = document.getElementById('carouselDots');
-  
+function changeSlide(dir) { showSlide(currentSlide + dir); resetInterval(); }
+function resetInterval() { clearInterval(slideInterval); slideInterval = setInterval(() => changeSlide(1), 6000); }
+document.addEventListener('DOMContentLoaded', () => {
+  const slides = document.querySelectorAll('.slide'), dotsCont = document.getElementById('carouselDots');
   if (slides.length > 1) {
-    slides.forEach((_, i) => {
-      const dot = document.createElement('button');
-      dot.className = 'carousel-dot' + (i === 0 ? ' active' : '');
-      dot.onclick = () => { showSlide(i); resetInterval(); };
-      dotsContainer.appendChild(dot);
-    });
-    
+    slides.forEach((_, i) => { const dot = document.createElement('button'); dot.className = 'carousel-dot' + (i === 0 ? ' active' : ''); dot.onclick = () => { showSlide(i); resetInterval(); }; dotsCont.appendChild(dot); });
     resetInterval();
   }
 });
+
+// 3. Función global para mover los carruseles de concejales
+window.moveCarousel = function(wrapper, direction) { wrapper.scrollBy({ left: direction * 240, behavior: 'smooth' }); };
 </script>
 </body>
 </html>
