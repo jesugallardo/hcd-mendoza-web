@@ -1,12 +1,6 @@
 [
   {
     "titulo": "Prueba 1",
-    "descripcion": "Prueba 1234",
-    "tipo": "Ordenanza",
-    "estado": "Aprobado"
-  },
-  {
-    "titulo": "Prueba 1",
     "descripcion": "Prueba 1 de temas",
     "tipo": "Ordenanza",
     "estado": "Aprobado"
