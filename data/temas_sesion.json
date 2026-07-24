@@ -10,5 +10,11 @@
     "descripcion": "Pruebaaaaa 10000",
     "tipo": "Ordenanza",
     "estado": "Aprobado"
+  },
+  {
+    "titulo": "Prueba 1",
+    "descripcion": "Pruebaa 1000000",
+    "tipo": "Ordenanza",
+    "estado": "A tratar"
   }
 ]
