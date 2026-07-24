@@ -189,10 +189,16 @@
     </div>
   </section>
 
-  <section id="noticias">
-    <h2 class="section-title">Actualidad y Novedades</h2>
-    <div class="noticias-grid" id="noticias-container"><div class="noticia-card"><div class="noticia-content"><span class="fecha">Cargando noticias...</span></div></div></div>
-  </section>
+ <section id="noticias">
+  <h2 class="section-title">Actualidad y Novedades</h2>
+  <div class="grid-3" id="noticias-container">
+    <div class="noticia-card">
+      <div class="noticia-content">
+        <span class="fecha">Cargando noticias...</span>
+      </div>
+    </div>
+  </div>
+</section>
 
   <section id="actividad">
     <h2 class="section-title">Actividad Legislativa</h2>
@@ -201,6 +207,19 @@
       <div class="card"><h3>Sesiones</h3><p>Las sesiones ordinarias del Honorable Concejo Deliberante se llevan a cabo todos los <strong>martes a partir de las 10:30 hs.</strong></p></div>
     </div>
   </section>
+  
+<!-- Temas de la Próxima Sesión -->
+<section id="temas-sesion" style="background:var(--primary); color:white; padding:50px 0;">
+  <div class="container">
+    <h2 class="section-title" style="color:white; border-left-color:var(--accent);">📋 Temas de la Próxima Sesión</h2>
+    <p style="margin-bottom:30px; opacity:0.9;">Conocé los proyectos y expedientes que se tratarán en la próxima sesión (martes 10:30 hs).</p>
+    <div style="background:white; border-radius:8px; padding:30px; box-shadow:0 4px 12px rgba(0,0,0,0.1);">
+      <div id="temas-sesion-lista">
+        <p style="color:var(--text-light); text-align:center;">Cargando temas...</p>
+      </div>
+    </div>
+  </div>
+</section>
 
   <section id="boletin">
     <div class="boletin-card">

@@ -6,7 +6,8 @@ let DATA = {
   concejales: [],
   banners: [],
   noticias: [],
-  bloques: []
+  bloques: [],
+  temas: []
 };
 
 window.addEventListener('DOMContentLoaded', () => {
@@ -95,16 +96,18 @@ async function showPanel() {
 
 async function loadAllData() {
   try {
-    const [c, b, n, bl] = await Promise.all([
+    const [c, b, n, bl, t] = await Promise.all([
       GitHubAPI.getFile('data/concejales.json'),
       GitHubAPI.getFile('data/banners.json'),
       GitHubAPI.getFile('data/noticias.json'),
-      GitHubAPI.getFile('data/bloques.json')
+      GitHubAPI.getFile('data/bloques.json'),
+      GitHubAPI.getFile('data/temas_sesion.json')
     ]);
     DATA.concejales = c.content ? JSON.parse(c.content) : [];
     DATA.banners = b.content ? JSON.parse(b.content) : [];
     DATA.noticias = n.content ? JSON.parse(n.content) : [];
     DATA.bloques = bl.content ? JSON.parse(bl.content) : [];
+    DATA.temas = t.content ? JSON.parse(t.content) : [];
     renderAll();
   } catch (e) { showStatus('Error cargando datos: ' + e.message, 'error'); }
 }
@@ -114,8 +117,8 @@ function renderAll() {
   renderBanners();
   renderNoticias();
   renderBloques();
+  renderTemas();
 }
-
 async function saveConcejal() {
   const idx = parseInt(document.getElementById('cc-edit-index').value);
   const nombre = document.getElementById('cc-nombre').value.trim();
@@ -389,7 +392,11 @@ function resetBloqueForm() {
 
 function renderBloques() {
   const cont = document.getElementById('listaBloques');
-  if (!DATA.bloques.length) { cont.innerHTML = '<p style="color:#888;">No hay bloques.</p>'; return; }
+  if (!cont) return; // Si no existe el elemento, no hace nada
+  if (!DATA.bloques.length) { 
+    cont.innerHTML = '<p style="color:#888;">No hay bloques.</p>'; 
+    return; 
+  }
   cont.innerHTML = '<h3 style="margin:20px 0 10px; color:var(--primary);">Bloques cargados (' + DATA.bloques.length + ')</h3>' +
     DATA.bloques.map((b, i) => `
       <div class="item-card">
@@ -400,6 +407,73 @@ function renderBloques() {
         <div class="item-actions">
           <button class="btn" onclick="editBloque(${i})">Editar</button>
           <button class="btn btn-danger" onclick="deleteBloque(${i})">Borrar</button>
+        </div>
+      </div>
+    `).join('');
+}
+// ========= TEMAS DE SESIÓN =========
+async function saveTema() {
+  const idx = parseInt(document.getElementById('tm-edit-index').value);
+  const titulo = document.getElementById('tm-titulo').value.trim();
+  const descripcion = document.getElementById('tm-descripcion').value.trim();
+  const tipo = document.getElementById('tm-tipo').value;
+  const estado = document.getElementById('tm-estado').value;
+  
+  if (!titulo) return showStatus('El título es obligatorio', 'error');
+  
+  try {
+    showStatus('Guardando...', 'info');
+    const item = { titulo, descripcion, tipo, estado };
+    if (idx >= 0) DATA.temas[idx] = item; else DATA.temas.push(item);
+    
+    // Esta línea es la que CREA el archivo JSON en GitHub automáticamente
+    await GitHubAPI.putFile('data/temas_sesion.json', JSON.stringify(DATA.temas, null, 2),
+      idx >= 0 ? 'Update tema' : 'Add tema');
+    
+    showStatus('✅ Tema guardado', 'success');
+    resetTemaForm();
+    await loadAllData();
+  } catch (e) { showStatus('Error: ' + e.message, 'error'); }
+}
+
+function editTema(i) {
+  const t = DATA.temas[i];
+  document.getElementById('tm-titulo').value = t.titulo;
+  document.getElementById('tm-descripcion').value = t.descripcion || '';
+  document.getElementById('tm-tipo').value = t.tipo || 'Ordenanza';
+  document.getElementById('tm-estado').value = t.estado || 'A tratar';
+  document.getElementById('tm-edit-index').value = i;
+}
+
+async function deleteTema(i) {
+  if (!confirm('¿Eliminar este tema?')) return;
+  DATA.temas.splice(i, 1);
+  try {
+    await GitHubAPI.putFile('data/temas_sesion.json', JSON.stringify(DATA.temas, null, 2), 'Delete tema');
+    showStatus('Eliminado', 'success');
+    await loadAllData();
+  } catch (e) { showStatus('Error: ' + e.message, 'error'); }
+}
+
+function resetTemaForm() {
+  ['tm-titulo','tm-descripcion','tm-tipo','tm-estado'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('tm-edit-index').value = -1;
+}
+
+function renderTemas() {
+  const cont = document.getElementById('listaTemas');
+  if (!cont) return;
+  if (!DATA.temas.length) { cont.innerHTML = '<p style="color:#888;">No hay temas cargados.</p>'; return; }
+  cont.innerHTML = '<h3 style="margin:20px 0 10px; color:var(--primary);">Temas cargados (' + DATA.temas.length + ')</h3>' +
+    DATA.temas.map((t, i) => `
+      <div class="item-card">
+        <div class="item-info">
+          <h4>${t.titulo}</h4>
+          <small>${t.tipo} · ${t.estado}${t.descripcion ? ' · ' + t.descripcion.substring(0, 60) + '...' : ''}</small>
+        </div>
+        <div class="item-actions">
+          <button class="btn" onclick="editTema(${i})">Editar</button>
+          <button class="btn btn-danger" onclick="deleteTema(${i})">Borrar</button>
         </div>
       </div>
     `).join('');

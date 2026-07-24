@@ -97,24 +97,24 @@
     }
   }
   
-  // ====== NOTICIAS ======
-  const noticias = await loadJSON('data/noticias.json');
-  if (noticias && noticias.length) {
-    const cont = document.getElementById('noticias-container');
-    if (cont) {
-      cont.innerHTML = noticias.slice(0, 6).map(n => `
-        <article class="noticia-card">
-          ${n.imagen ? `<img src="${BASE}/${n.imagen}">` : ''}
-          <div class="noticia-content">
-            <span class="fecha">${formatDate(n.fecha)}</span>
-            <h3>${n.titulo}</h3>
-            <p>${n.resumen || ''}</p>
-            <a class="leer-mas" href="${n.link || '#'}">Leer más →</a>
-          </div>
-        </article>
-      `).join('');
-    }
+// ====== NOTICIAS ======
+const noticias = await loadJSON('data/noticias.json');
+if (noticias && noticias.length) {
+  const cont = document.getElementById('noticias-container') || document.querySelector('#noticias .grid-3');
+  if (cont) {
+    cont.innerHTML = noticias.slice(0, 6).map(n => `
+      <article class="noticia-card">
+        ${n.imagen ? `<img src="${BASE}/${n.imagen}">` : ''}
+        <div class="noticia-content">
+          <span class="fecha">${formatDate(n.fecha)}</span>
+          <h3>${n.titulo}</h3>
+          <p>${n.resumen || ''}</p>
+          <a class="leer-mas" href="${n.link || '#'}">Leer más →</a>
+        </div>
+      </article>
+    `).join('');
   }
+}
   
   function formatDate(iso) {
     if (!iso) return '';
@@ -123,6 +123,27 @@
     return `${parseInt(d)} de ${meses[parseInt(m)-1]}, ${y}`;
   }
 
+// ====== TEMAS DE SESIÓN ======
+const temas = await loadJSON('data/temas_sesion.json');
+if (temas && temas.length) {
+  const cont = document.getElementById('temas-sesion-lista');
+  if (cont) {
+    const temasATratar = temas.filter(t => t.estado === 'A tratar');
+    if (temasATratar.length) {
+      cont.innerHTML = '<ul style="list-style:none; padding:0;">' + 
+        temasATratar.map(t => `
+          <li style="padding:15px 0; border-bottom:1px solid var(--border);">
+            <span style="display:inline-block; background:var(--primary); color:white; padding:3px 10px; border-radius:12px; font-size:0.75rem; font-weight:600; margin-right:10px;">${t.tipo}</span>
+            <strong style="color:var(--text); font-size:1rem;">${t.titulo}</strong>
+            ${t.descripcion ? '<br><small style="color:var(--text-light); display:block; margin-top:6px;">' + t.descripcion + '</small>' : ''}
+          </li>
+        `).join('') + 
+        '</ul>';
+    } else {
+      cont.innerHTML = '<p style="color:var(--text-light); text-align:center;">No hay temas programados para la próxima sesión.</p>';
+    }
+  }
+}
   // Función global para mover los carruseles con las flechas
   window.moveCarousel = function(wrapper, direction) {
     const scrollAmount = 240;
