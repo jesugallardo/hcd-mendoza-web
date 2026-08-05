@@ -32,14 +32,14 @@
     "bloque": "Frente Cambia Mendoza",
     "mandato": "2027",
     "cargo": "",
-    "foto": ""
+    "foto": "assets/img/concejales/cielo-daou.png"
   },
   {
     "nombre": "Rafael Bazán",
     "bloque": "Frente Cambia Mendoza",
     "mandato": "2030",
     "cargo": "",
-    "foto": ""
+    "foto": "assets/img/concejales/rafael-baz-n.png"
   },
   {
     "nombre": "Marcelo Rubio",
@@ -47,5 +47,19 @@
     "mandato": "2027",
     "cargo": "Presidente del HCD",
     "foto": "assets/img/concejales/marcelo-rubio.PNG"
+  },
+  {
+    "nombre": "Emanuel Italiano",
+    "bloque": "Frente Cambia Mendoza",
+    "mandato": "",
+    "cargo": "Prosecretario",
+    "foto": "assets/img/concejales/emanuel-italiano.PNG"
+  },
+  {
+    "nombre": "Leandro Le Donne",
+    "bloque": "Frente Cambia Mendoza",
+    "mandato": "",
+    "cargo": "Secretario Habilitado",
+    "foto": "assets/img/concejales/leandro-le-donne.PNG"
   }
 ]
