@@ -8,24 +8,22 @@
   const REPO = 'hcd-mendoza-web';
   const BRANCH = 'main';
   const BASE = `https://raw.githubusercontent.com/${OWNER}/${REPO}/${BRANCH}`;
-  
+
   async function loadJSON(path) {
     try {
       const r = await fetch(`${BASE}/${path}?t=${Date.now()}`);
       if (!r.ok) return null;
       return await r.json();
-    } catch (e) {
-      return null;
-    }
+    } catch (e) { return null; }
   }
-  
+
   // ====== BANNERS ======
   const banners = await loadJSON('data/banners.json');
   if (banners && banners.length) {
-    const wrapper = document.querySelector('.slides-wrapper');
+    const wrapper = document.getElementById('hero-slides');
     if (wrapper) {
       wrapper.innerHTML = banners.map((b, i) => `
-        <div class="slide ${i === 0 ? 'is-active' : ''}" style="background-image:url('${BASE}/${b.imagen}'); background-size:cover; background-position:center;">
+        <div class="slide ${i === 0 ? 'is-active' : ''}" style="background-image:url('${BASE}/${b.imagen}');">
           <div class="hero-content">
             <h2>${b.titulo}</h2>
             <p>${b.subtitulo || ''}</p>
@@ -34,43 +32,54 @@
       `).join('');
     }
   }
-  
-  // ====== CONCEJALES (Agrupados por Bloque con Carrusel) ======
-  let concejales = await loadJSON('data/concejales.json');
-  
-  // Datos de prueba por defecto si no hay archivo o está vacío
-  if (!concejales || !concejales.length) {
-    concejales = [
-      { nombre: "Cecilia Rodríguez", bloque: "La Libertad Avanza + Frente Cambia Mendoza", mandato: "2030", cargo: "Presidente de Bloque", foto: "" },
-      { nombre: "Maximiliano Garrido", bloque: "La Libertad Avanza + Frente Cambia Mendoza", mandato: "2030", cargo: "Integrante", foto: "" },
-      { nombre: "L. Villarreal Occhionero", bloque: "La Libertad Avanza + Frente Cambia Mendoza", mandato: "2030", cargo: "Integrante", foto: "" },
-      { nombre: "Carla Ernani", bloque: "La Libertad Avanza + Frente Cambia Mendoza", mandato: "2030", cargo: "Integrante", foto: "" },
-      { nombre: "Tomás Dris", bloque: "La Libertad Avanza + Frente Cambia Mendoza", mandato: "2030", cargo: "Integrante", foto: "" },
-      { nombre: "Marcelo Rubio", bloque: "Frente Cambia Mendoza", mandato: "2027", cargo: "Presidente del Bloque", foto: "" },
-      { nombre: "Cielo Daou", bloque: "Frente Cambia Mendoza", mandato: "2027", cargo: "Integrante", foto: "" },
-      { nombre: "Rafael Bazán", bloque: "Frente Cambia Mendoza", mandato: "2027", cargo: "Integrante", foto: "" },
-      { nombre: "Ernesto Giménez", bloque: "Frente Cambia Mendoza", mandato: "2027", cargo: "Integrante", foto: "" },
-      { nombre: "Gustavo Caleau", bloque: "Fuerza Justicialista Mendoza", mandato: "2030", cargo: "Monobloque", foto: "" },
-      { nombre: "Ricardo García", bloque: "Partido Verde", mandato: "2027", cargo: "Integrante", foto: "" },
-      { nombre: "Gustavo Gutiérrez", bloque: "Coalición Cívica + ARI", mandato: "2027", cargo: "Monobloque", foto: "" }
-    ];
-  }
 
-  if (concejales && concejales.length) {
-    // 1. Agrupar concejales por bloque
-    const bloquesMap = {};
-    concejales.forEach(c => {
-      if (!bloquesMap[c.bloque]) bloquesMap[c.bloque] = [];
-      bloquesMap[c.bloque].push(c);
+  // ====== CONCEJALES ======
+  const concejales = await loadJSON('data/concejales.json');
+  if (!concejales || !concejales.length) {
+    // Si no hay concejales cargados, ocultamos la sección de autoridades
+    const sec = document.getElementById('concejales');
+    if (sec) sec.style.display = 'none';
+  } else {
+    // 1. Organigrama: detectar por cargo exacto y actualizar fotos/nombres
+    const cargosOrganigrama = {
+      'Presidente del HCD': 'org-presidente',
+      'Secretario Habilitado': 'org-secretario-1',
+      'Secretario Legislativo': 'org-secretario-2',
+      'Prosecretario': 'org-secretario-3'
+    };
+
+    Object.entries(cargosOrganigrama).forEach(([cargo, id]) => {
+      const concejal = concejales.find(c => c.cargo && c.cargo.trim() === cargo);
+      const el = document.getElementById(id);
+      if (el && concejal) {
+        const avatar = el.querySelector('.avatar');
+        const nombre = el.querySelector('h3, h4');
+        const meta = el.querySelector('.meta');
+        if (avatar) {
+          avatar.innerHTML = concejal.foto
+            ? `<img src="${BASE}/${concejal.foto}?t=${Date.now()}" alt="${concejal.nombre}">`
+            : '👤';
+        }
+        if (nombre) nombre.textContent = concejal.nombre;
+        if (meta && concejal.bloque && concejal.mandato) {
+          meta.textContent = `${concejal.bloque} · Mandato hasta ${concejal.mandato}`;
+        }
+      }
     });
 
-    // 2. Renderizar un carrusel por cada bloque
+    // 2. Bloques políticos: TODOS los concejales (incluidos los del organigrama)
+    const bloquesMap = {};
+    concejales.forEach(c => {
+      const bloque = c.bloque || 'Sin bloque';
+      if (!bloquesMap[bloque]) bloquesMap[bloque] = [];
+      bloquesMap[bloque].push(c);
+    });
+
     const container = document.getElementById('bloques-list');
-    if (container) {
+    if (container && Object.keys(bloquesMap).length) {
       container.innerHTML = Object.keys(bloquesMap).map(bloqueNombre => {
         const miembros = bloquesMap[bloqueNombre];
         const presidente = miembros.find(m => m.cargo && m.cargo.toLowerCase().includes('presidente'));
-        
         return `
           <div class="bloque-item">
             <h3>Bloque ${bloqueNombre}</h3>
@@ -81,7 +90,7 @@
                 ${miembros.map(c => `
                   <div class="cc-slide">
                     <div class="concejal-card">
-                      ${c.foto ? `<img src="${BASE}/${c.foto}">` : '<div class="avatar"></div>'}
+                      <div class="avatar">${c.foto ? `<img src="${BASE}/${c.foto}?t=${Date.now()}">` : '👤'}</div>
                       <h4>${c.nombre}</h4>
                       ${c.cargo ? `<div class="cargo">${c.cargo}</div>` : ''}
                       <div class="meta">Mandato hasta ${c.mandato || '—'}</div>
@@ -89,98 +98,76 @@
                   </div>
                 `).join('')}
               </div>
-              <button class="carousel-btn next" onclick="moveCarousel(this.parentElement.querySelector('.cc-wrapper'), 1)">❯</button>
+              <button class="carousel-btn next" onclick="moveCarousel(this.parentElement.querySelector('.cc-wrapper'), 1)"></button>
             </div>
           </div>
         `;
       }).join('');
     }
   }
-// ====== ACTUALIZAR ORGANIGRAMA CON FOTOS REALES ======
-const miembrosOrganigrama = [
-  { nombre: 'Marcelo Rubio', selector: '.org-card.pres .avatar' },
-  { nombre: 'Leandro Le Donne', selector: '.org-card:nth-child(1) .avatar' },
-  { nombre: 'Federico Navarro Cavagnaro', selector: '.org-card:nth-child(2) .avatar' },
-  { nombre: 'Emanuel Italiano', selector: '.org-card:nth-child(3) .avatar' }
-];
 
-miembrosOrganigrama.forEach(miembro => {
-  const concejal = concejales.find(c => c.nombre.trim() === miembro.nombre);
-  if (concejal && concejal.foto) {
-    const avatar = document.querySelector(`#concejales ${miembro.selector}`);
-    if (avatar) {
-      avatar.innerHTML = `<img src="${BASE}/${concejal.foto}" alt="${miembro.nombre}" style="width:80px;height:80px;border-radius:50%;object-fit:cover;border:3px solid var(--primary);">`;
+  // ====== NOTICIAS ======
+  const noticias = await loadJSON('data/noticias.json');
+  const contNoticias = document.getElementById('noticias-container');
+  if (contNoticias) {
+    if (noticias && noticias.length) {
+      contNoticias.innerHTML = noticias.slice(0, 6).map(n => `
+        <article class="noticia-card">
+          ${n.imagen ? `<img src="${BASE}/${n.imagen}?t=${Date.now()}">` : ''}
+          <div class="noticia-content">
+            <span class="fecha">${formatDate(n.fecha)}</span>
+            <h3>${n.titulo}</h3>
+            <p>${n.resumen || ''}</p>
+            <a class="leer-mas" href="${n.link || '#'}" target="_blank">Leer más →</a>
+          </div>
+        </article>
+      `).join('');
+    } else {
+      contNoticias.innerHTML = '<p class="empty-msg">Aún no hay noticias publicadas.</p>';
     }
   }
-});
-// ====== NOTICIAS ======
-const noticias = await loadJSON('data/noticias.json');
-if (noticias && noticias.length) {
-  const cont = document.getElementById('noticias-container') || document.querySelector('#noticias .grid-3');
-  if (cont) {
-    cont.innerHTML = noticias.slice(0, 6).map(n => `
-      <article class="noticia-card">
-        ${n.imagen ? `<img src="${BASE}/${n.imagen}">` : ''}
-        <div class="noticia-content">
-          <span class="fecha">${formatDate(n.fecha)}</span>
-          <h3>${n.titulo}</h3>
-          <p>${n.resumen || ''}</p>
-          <a class="leer-mas" href="${n.link || '#'}">Leer más →</a>
-        </div>
-      </article>
-    `).join('');
+
+  // ====== TEMAS DE SESIÓN ======
+  const temas = await loadJSON('data/temas_sesion.json');
+
+  const contTemas = document.getElementById('temas-sesion-lista');
+  if (contTemas) {
+    const temasATratar = (temas || []).filter(t => t.estado === 'A tratar');
+    if (temasATratar.length) {
+      contTemas.innerHTML = '<ul>' +
+        temasATratar.map(t => `
+          <li>
+            <span class="tipo-badge">${t.tipo}</span>
+            <strong>${t.titulo}</strong>
+            ${t.descripcion ? `<small>${t.descripcion}</small>` : ''}
+          </li>
+        `).join('') + '</ul>';
+    } else {
+      contTemas.innerHTML = '<p class="empty-msg">No hay temas programados para la próxima sesión.</p>';
+    }
   }
-}
-  
+
+  const contAprobados = document.getElementById('temas-aprobados-lista');
+  if (contAprobados) {
+    const temasAprobados = (temas || []).filter(t => t.estado === 'Aprobado');
+    if (temasAprobados.length) {
+      contAprobados.innerHTML = '<ul>' +
+        temasAprobados.map(t => `
+          <li>
+            <span class="tipo-badge aprobado">✅ ${t.tipo}</span>
+            <strong>${t.titulo}</strong>
+            ${t.descripcion ? `<small>${t.descripcion}</small>` : ''}
+          </li>
+        `).join('') + '</ul>';
+    } else {
+      contAprobados.innerHTML = '<p class="empty-msg">Aún no hay temas aprobados.</p>';
+    }
+  }
+
   function formatDate(iso) {
     if (!iso) return '';
     const [y, m, d] = iso.split('-');
     const meses = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
     return `${parseInt(d)} de ${meses[parseInt(m)-1]}, ${y}`;
   }
-
-// ====== TEMAS DE SESIÓN ======
-const temas = await loadJSON('data/temas_sesion.json');
-if (temas && temas.length) {
-  // Sección: Temas a tratar (próxima sesión)
-  const cont = document.getElementById('temas-sesion-lista');
-  if (cont) {
-    const temasATratar = temas.filter(t => t.estado === 'A tratar');
-    if (temasATratar.length) {
-      cont.innerHTML = '<ul style="list-style:none; padding:0;">' + 
-        temasATratar.map(t => `
-          <li style="padding:15px 0; border-bottom:1px solid var(--border);">
-            <span style="display:inline-block; background:var(--primary); color:white; padding:3px 10px; border-radius:12px; font-size:0.75rem; font-weight:600; margin-right:10px;">${t.tipo}</span>
-            <strong style="color:var(--text); font-size:1rem;">${t.titulo}</strong>
-            ${t.descripcion ? '<br><small style="color:var(--text-light); display:block; margin-top:6px;">' + t.descripcion + '</small>' : ''}
-          </li>
-        `).join('') + '</ul>';
-    } else {
-      cont.innerHTML = '<p style="color:var(--text-light); text-align:center;">No hay temas programados para la próxima sesión.</p>';
-    }
-  }
-
-  // Sección: Temas aprobados (legislación sancionada)
-  const contAprobados = document.getElementById('temas-aprobados-lista');
-  if (contAprobados) {
-    const temasAprobados = temas.filter(t => t.estado === 'Aprobado');
-    if (temasAprobados.length) {
-      contAprobados.innerHTML = '<ul style="list-style:none; padding:0;">' + 
-        temasAprobados.map(t => `
-          <li style="padding:15px 0; border-bottom:1px solid var(--border);">
-            <span style="display:inline-block; background:#27ae60; color:white; padding:3px 10px; border-radius:12px; font-size:0.75rem; font-weight:600; margin-right:10px;">✅ ${t.tipo}</span>
-            <strong style="color:var(--text); font-size:1rem;">${t.titulo}</strong>
-            ${t.descripcion ? '<br><small style="color:var(--text-light); display:block; margin-top:6px;">' + t.descripcion + '</small>' : ''}
-          </li>
-        `).join('') + '</ul>';
-    } else {
-      contAprobados.innerHTML = '<p style="color:var(--text-light); text-align:center;">Aún no hay temas aprobados en esta sesión.</p>';
-    }
-  }
-}
-  // Función global para mover los carruseles con las flechas
-  window.moveCarousel = function(wrapper, direction) {
-    const scrollAmount = 240;
-    wrapper.scrollBy({ left: direction * scrollAmount, behavior: 'smooth' });
-  };
 })();
