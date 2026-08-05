@@ -32,7 +32,7 @@
     "bloque": "Frente Cambia Mendoza",
     "mandato": "2027",
     "cargo": "",
-    "foto": "assets/img/concejales/cielo-daou.png"
+    "foto": ""
   },
   {
     "nombre": "Rafael Bazán",
@@ -47,5 +47,12 @@
     "mandato": "2027",
     "cargo": "Presidente del HCD",
     "foto": "assets/img/concejales/marcelo-rubio.PNG"
+  },
+  {
+    "nombre": "Leandro Le Donne",
+    "bloque": "Frente Cambia Mendoza",
+    "mandato": "",
+    "cargo": "",
+    "foto": "assets/img/concejales/leandro-le-donne.PNG"
   }
 ]
