@@ -96,7 +96,23 @@
       }).join('');
     }
   }
-  
+// ====== ACTUALIZAR ORGANIGRAMA CON FOTOS REALES ======
+const miembrosOrganigrama = [
+  { nombre: 'Marcelo Rubio', selector: '.org-card.pres .avatar' },
+  { nombre: 'Leandro Le Donne', selector: '.org-card:nth-child(1) .avatar' },
+  { nombre: 'Federico Navarro Cavagnaro', selector: '.org-card:nth-child(2) .avatar' },
+  { nombre: 'Emanuel Italiano', selector: '.org-card:nth-child(3) .avatar' }
+];
+
+miembrosOrganigrama.forEach(miembro => {
+  const concejal = concejales.find(c => c.nombre.trim() === miembro.nombre);
+  if (concejal && concejal.foto) {
+    const avatar = document.querySelector(`#concejales ${miembro.selector}`);
+    if (avatar) {
+      avatar.innerHTML = `<img src="${BASE}/${concejal.foto}" alt="${miembro.nombre}" style="width:80px;height:80px;border-radius:50%;object-fit:cover;border:3px solid var(--primary);">`;
+    }
+  }
+});
 // ====== NOTICIAS ======
 const noticias = await loadJSON('data/noticias.json');
 if (noticias && noticias.length) {
