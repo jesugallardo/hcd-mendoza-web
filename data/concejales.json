@@ -32,7 +32,7 @@
     "bloque": "Frente Cambia Mendoza",
     "mandato": "2027",
     "cargo": "",
-    "foto": ""
+    "foto": "assets/img/concejales/cielo-daou.png"
   },
   {
     "nombre": "Rafael Bazán",
@@ -61,5 +61,12 @@
     "mandato": "",
     "cargo": "Prosecretario",
     "foto": "assets/img/concejales/emanuel-italiano.PNG"
+  },
+  {
+    "nombre": "Federico Navarro Cavagnaro",
+    "bloque": "Frente Cambia Mendoza",
+    "mandato": "",
+    "cargo": "Secretario Legislativo",
+    "foto": "assets/img/concejales/federico-navarro-cavagnaro.PNG"
   }
 ]
