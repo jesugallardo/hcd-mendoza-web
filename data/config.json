@@ -2,9 +2,9 @@
   "site": {
     "nombre": "Honorable Concejo Deliberante",
     "subtitulo": "de la Ciudad de Mendoza",
-    "logoTipo": "emoji",
+    "logoTipo": "imagen",
     "logoEmoji": "🏛️",
-    "logoImagen": "",
+    "logoImagen": "assets/img/logo.png",
     "copyright": "© 2026 Informática — Concejo Municipal de la Ciudad de Mendoza",
     "seoTitulo": "Honorable Concejo Deliberante — Ciudad de Mendoza",
     "seoDescripcion": "Sitio oficial del Honorable Concejo Deliberante de la Ciudad de Mendoza."
