@@ -1,16 +1,54 @@
 {
-  "heroHeight": "lg",
+  "site": {
+    "nombre": "Honorable Concejo Deliberante",
+    "subtitulo": "de la Ciudad de Mendoza",
+    "logoTipo": "emoji",
+    "logoEmoji": "🏛️",
+    "logoImagen": "",
+    "copyright": "© 2026 Informática — Concejo Municipal de la Ciudad de Mendoza",
+    "seoTitulo": "Honorable Concejo Deliberante — Ciudad de Mendoza",
+    "seoDescripcion": "Sitio oficial del Honorable Concejo Deliberante de la Ciudad de Mendoza."
+  },
+  "anuncio": {
+    "visible": false,
+    "texto": "",
+    "link": "",
+    "color": "#c9a227",
+    "textoColor": "#122a44"
+  },
+  "hero": {
+    "altura": "md",
+    "titulo": "Gestión Legislativa Abierta",
+    "subtitulo": "Accedé a toda la información pública sobre proyectos, ordenanzas y actividades del Concejo.",
+    "autoplay": 6000,
+    "overlay": "medio",
+    "mostrarFlechas": true,
+    "mostrarDots": true
+  },
   "sections": [
+    {
+      "id": "accesos-rapidos",
+      "name": "Accesos Rápidos",
+      "titleKey": "accesos_titulo",
+      "defaultTitle": "Accesos Rápidos",
+      "visible": false,
+      "order": 1,
+      "size": "normal"
+    },
     {
       "id": "institucional",
       "name": "Institucional",
+      "titleKey": "institucional_titulo",
+      "defaultTitle": "Institucional",
       "visible": true,
-      "order": 1,
+      "order": 2,
       "size": "normal"
     },
     {
       "id": "noticias",
       "name": "Noticias",
+      "titleKey": "noticias_titulo",
+      "defaultTitle": "Actualidad y Novedades",
       "visible": true,
       "order": 3,
       "size": "normal"
@@ -18,6 +56,8 @@
     {
       "id": "actividad",
       "name": "Actividad Legislativa",
+      "titleKey": "actividad_titulo",
+      "defaultTitle": "Actividad Legislativa",
       "visible": true,
       "order": 4,
       "size": "normal"
@@ -25,20 +65,64 @@
     {
       "id": "temas-sesion",
       "name": "Temas de Sesión",
+      "titleKey": "temas_titulo",
+      "defaultTitle": "📋 Temas de la Próxima Sesión",
       "visible": true,
-      "order": 2,
+      "order": 5,
       "size": "normal"
     },
     {
       "id": "contacto",
       "name": "Contacto",
+      "titleKey": "contacto_titulo",
+      "defaultTitle": "Contacto",
       "visible": true,
-      "order": 5,
+      "order": 6,
       "size": "normal"
     }
   ],
+  "textos": {
+    "hero_titulo": "Gestión Legislativa Abierta",
+    "hero_subtitulo": "Accedé a toda la información pública sobre proyectos, ordenanzas y actividades del Concejo."
+  },
+  "contacto": {
+    "telefono": "(54) 261-449-5100",
+    "email": "contacto@concejomendoza.gob.ar",
+    "direccion": "9 de Julio 500 — Mendoza",
+    "horario": "Lunes a Viernes de 8:00 a 14:00 hs"
+  },
+  "redes": {
+    "facebook": {
+      "url": "",
+      "visible": false
+    },
+    "instagram": {
+      "url": "",
+      "visible": false
+    },
+    "twitter": {
+      "url": "",
+      "visible": false
+    },
+    "youtube": {
+      "url": "",
+      "visible": false
+    },
+    "whatsapp": {
+      "url": "",
+      "visible": false
+    }
+  },
+  "enlaces": [],
+  "layout": {
+    "ancho": "normal",
+    "fuente": "default",
+    "mostrarBackTop": true,
+    "modoOscuroPublico": false,
+    "fondosAlternados": true
+  },
   "theme": {
-    "primary": "#1a5b25",
-    "accent": "#266dc9"
+    "primary": "#1a3a5c",
+    "accent": "#c9a227"
   }
 }
