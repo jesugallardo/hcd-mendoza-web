@@ -1,5 +1,5 @@
 {
-  "heroHeight": "md",
+  "heroHeight": "lg",
   "sections": [
     {
       "id": "institucional",
@@ -12,21 +12,21 @@
       "id": "noticias",
       "name": "Noticias",
       "visible": true,
-      "order": 2,
+      "order": 3,
       "size": "normal"
     },
     {
       "id": "actividad",
       "name": "Actividad Legislativa",
       "visible": true,
-      "order": 3,
+      "order": 4,
       "size": "normal"
     },
     {
       "id": "temas-sesion",
       "name": "Temas de Sesión",
       "visible": true,
-      "order": 4,
+      "order": 2,
       "size": "normal"
     },
     {
