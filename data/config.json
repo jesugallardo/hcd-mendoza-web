@@ -1,0 +1,44 @@
+{
+  "heroHeight": "md",
+  "sections": [
+    {
+      "id": "institucional",
+      "name": "Institucional",
+      "visible": true,
+      "order": 1,
+      "size": "normal"
+    },
+    {
+      "id": "noticias",
+      "name": "Noticias",
+      "visible": true,
+      "order": 2,
+      "size": "normal"
+    },
+    {
+      "id": "actividad",
+      "name": "Actividad Legislativa",
+      "visible": true,
+      "order": 3,
+      "size": "normal"
+    },
+    {
+      "id": "temas-sesion",
+      "name": "Temas de Sesión",
+      "visible": true,
+      "order": 4,
+      "size": "normal"
+    },
+    {
+      "id": "contacto",
+      "name": "Contacto",
+      "visible": true,
+      "order": 5,
+      "size": "normal"
+    }
+  ],
+  "theme": {
+    "primary": "#5b531a",
+    "accent": "#266dc9"
+  }
+}
