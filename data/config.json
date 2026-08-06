@@ -2,9 +2,9 @@
   "site": {
     "nombre": "Honorable Concejo Deliberante",
     "subtitulo": "de la Ciudad de Mendoza",
-    "logoTipo": "imagen",
-    "logoEmoji": "",
-    "logoImagen": "assets/img/logo.png",
+    "logoTipo": "emoji",
+    "logoEmoji": "🏛️",
+    "logoImagen": "",
     "copyright": "© 2026 Informática — Concejo Municipal de la Ciudad de Mendoza",
     "seoTitulo": "Honorable Concejo Deliberante — Ciudad de Mendoza",
     "seoDescripcion": "Sitio oficial del Honorable Concejo Deliberante de la Ciudad de Mendoza."
@@ -17,13 +17,25 @@
     "textoColor": "#122a44"
   },
   "hero": {
-    "altura": "lg",
+    "altura": "md",
     "titulo": "Gestión Legislativa Abierta",
     "subtitulo": "Accedé a toda la información pública sobre proyectos, ordenanzas y actividades del Concejo.",
-    "autoplay": 3000,
+    "autoplay": 6000,
     "overlay": "medio",
     "mostrarFlechas": true,
     "mostrarDots": true
+  },
+  "carrusel": {
+    "tamaño": "mediano",
+    "autoplay": 4000,
+    "nombrePos": "abajo",
+    "efecto": "coverflow",
+    "mostrarCargo": true,
+    "mostrarFlechas": true,
+    "mostrarDots": true,
+    "mostrarEnlace": true,
+    "enlaceTexto": "Ver todos los concejales →",
+    "enlaceUrl": "#concejales"
   },
   "sections": [
     {
@@ -31,7 +43,7 @@
       "name": "Accesos Rápidos",
       "titleKey": "accesos_titulo",
       "defaultTitle": "Accesos Rápidos",
-      "visible": true,
+      "visible": false,
       "order": 1,
       "size": "normal"
     },
@@ -116,7 +128,7 @@
   "enlaces": [],
   "layout": {
     "ancho": "normal",
-    "fuente": "moderna",
+    "fuente": "default",
     "mostrarBackTop": true,
     "modoOscuroPublico": false,
     "fondosAlternados": true
