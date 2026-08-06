@@ -1,173 +1,353 @@
 /**
  * content-loader.js
- * Carga dinámica de contenido desde GitHub
- * Usuario: jesugallardo | Repo: hcd-mendoza-web | Rama: main
+ * Carga contenido + aplica personalización + carrusel coverflow configurable.
  */
 (async function() {
-  const OWNER = 'jesugallardo';
-  const REPO = 'hcd-mendoza-web';
-  const BRANCH = 'main';
-  const BASE = `https://raw.githubusercontent.com/${OWNER}/${REPO}/${BRANCH}`;
+    const OWNER = 'jesugallardo';
+    const REPO = 'hcd-mendoza-web';
+    const BRANCH = 'main';
+    const BASE = `https://raw.githubusercontent.com/${OWNER}/${REPO}/${BRANCH}`;
 
-  async function loadJSON(path) {
-    try {
-      const r = await fetch(`${BASE}/${path}?t=${Date.now()}`);
-      if (!r.ok) return null;
-      return await r.json();
-    } catch (e) { return null; }
-  }
-
-  // ====== BANNERS ======
-  const banners = await loadJSON('data/banners.json');
-  if (banners && banners.length) {
-    const wrapper = document.getElementById('hero-slides');
-    if (wrapper) {
-      wrapper.innerHTML = banners.map((b, i) => `
-        <div class="slide ${i === 0 ? 'is-active' : ''}" style="background-image:url('${BASE}/${b.imagen}');">
-          <div class="hero-content">
-            <h2>${b.titulo}</h2>
-            <p>${b.subtitulo || ''}</p>
-          </div>
-        </div>
-      `).join('');
+    async function loadJSON(path) {
+        try {
+            const r = await fetch(`${BASE}/${path}?t=${Date.now()}`);
+            if (r.status === 404) return { ok:false, notFound:true, data:null };
+            if (!r.ok) return { ok:false, notFound:false, data:null };
+            return { ok:true, notFound:false, data:await r.json() };
+        } catch(e) { return { ok:false, notFound:false, data:null }; }
     }
-  }
+    function setStateLoading(el, msg){ if(el) el.innerHTML = `<div class="loading"><div class="spinner"></div>${msg}</div>`; }
+    function setStateError(el, fn){ if(!el) return; el.innerHTML = `<div class="loading state-error">⚠️ No se pudo cargar.<br><button class="btn" type="button">↻ Reintentar</button></div>`; const b=el.querySelector('button'); if(b) b.addEventListener('click', fn); }
+    function setStateEmpty(el, msg){ if(el) el.innerHTML = `<p class="empty-msg">${msg}</p>`; }
+    function esc(s){ return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+    function imgUrl(p){ if(!p) return ''; return /^https?:\/\//.test(p)?p:`${BASE}/${p}?t=${Date.now()}`; }
+    function formatDate(iso){ if(!iso) return ''; const [y,m,d]=String(iso).split('-'); const meses=['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre']; const mi=parseInt(m,10)-1; if(isNaN(mi)||mi<0||mi>11) return iso; return `${parseInt(d,10)} de ${meses[mi]}, ${y}`; }
+    window.hcdImgError = function(img){ img.onerror=null; img.src='data:image/svg+xml,'+encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200"><rect width="100%" height="100%" fill="#e1e4e8"/><text x="50%" y="50%" font-size="60" text-anchor="middle" dominant-baseline="middle">🏛️</text></svg>'); };
 
-  // ====== CONCEJALES ======
-  const concejales = await loadJSON('data/concejales.json');
-  if (!concejales || !concejales.length) {
-    // Si no hay concejales cargados, ocultamos la sección de autoridades
-    const sec = document.getElementById('concejales');
-    if (sec) sec.style.display = 'none';
-  } else {
-    // 1. Organigrama: detectar por cargo exacto y actualizar fotos/nombres
-    const cargosOrganigrama = {
-      'Presidente del HCD': 'org-presidente',
-      'Secretario Habilitado': 'org-secretario-1',
-      'Secretario Legislativo': 'org-secretario-2',
-      'Prosecretario': 'org-secretario-3'
-    };
+    /* ===== Opciones por defecto del carrusel ===== */
+    const CF_DEFAULT = { tamaño:'mediano', autoplay:4000, nombrePos:'abajo', efecto:'coverflow', mostrarCargo:true, mostrarFlechas:true, mostrarDots:true, mostrarEnlace:true, enlaceTexto:'Ver todos los concejales →', enlaceUrl:'#concejales' };
+    let cfOpts = { ...CF_DEFAULT };
 
-    Object.entries(cargosOrganigrama).forEach(([cargo, id]) => {
-      const concejal = concejales.find(c => c.cargo && c.cargo.trim() === cargo);
-      const el = document.getElementById(id);
-      if (el && concejal) {
-        const avatar = el.querySelector('.avatar');
-        const nombre = el.querySelector('h3, h4');
-        const meta = el.querySelector('.meta');
-        if (avatar) {
-          avatar.innerHTML = concejal.foto
-            ? `<img src="${BASE}/${concejal.foto}?t=${Date.now()}" alt="${concejal.nombre}">`
-            : '👤';
+    /* ================= 1. CONFIG DE PERSONALIZACIÓN ================= */
+    const cfgRes = await loadJSON('data/config.json');
+    const cfg = (cfgRes.ok && cfgRes.data) ? cfgRes.data : null;
+    if (cfg) {
+        if (cfg.carrusel) cfOpts = { ...CF_DEFAULT, ...cfg.carrusel };
+
+        if (cfg.theme) {
+            if (cfg.theme.primary) document.documentElement.style.setProperty('--primary', cfg.theme.primary);
+            if (cfg.theme.accent) document.documentElement.style.setProperty('--gold', cfg.theme.accent);
         }
-        if (nombre) nombre.textContent = concejal.nombre;
-        if (meta && concejal.bloque && concejal.mandato) {
-          meta.textContent = `${concejal.bloque} · Mandato hasta ${concejal.mandato}`;
+        if (cfg.site) {
+            if (cfg.site.seoTitulo) document.getElementById('seo-title').textContent = cfg.site.seoTitulo;
+            if (cfg.site.seoDescripcion) document.getElementById('seo-desc').setAttribute('content', cfg.site.seoDescripcion);
+            if (cfg.site.nombre) {
+                document.getElementById('site-name').textContent = cfg.site.nombre;
+                document.getElementById('footer-name').textContent = cfg.site.nombre;
+            }
+            if (cfg.site.subtitulo) document.getElementById('site-subtitle').textContent = cfg.site.subtitulo;
+            if (cfg.site.copyright) document.getElementById('footer-copyright').textContent = cfg.site.copyright;
+            const logoEl = document.getElementById('site-logo');
+            if (logoEl) {
+                if (cfg.site.logoTipo === 'imagen' && cfg.site.logoImagen) {
+                    logoEl.innerHTML = `<img src="${imgUrl(cfg.site.logoImagen)}" alt="${esc(cfg.site.nombre)}">`;
+                } else if (cfg.site.logoEmoji) {
+                    logoEl.textContent = cfg.site.logoEmoji;
+                }
+            }
         }
-      }
-    });
+        if (cfg.anuncio && cfg.anuncio.visible && cfg.anuncio.texto) {
+            const bar = document.getElementById('anuncio-bar');
+            bar.style.background = cfg.anuncio.color || '#c9a227';
+            bar.style.color = cfg.anuncio.textoColor || '#122a44';
+            bar.innerHTML = cfg.anuncio.link
+                ? `<a href="${esc(cfg.anuncio.link)}" target="_blank" rel="noopener">${esc(cfg.anuncio.texto)}</a>`
+                : esc(cfg.anuncio.texto);
+            bar.classList.add('visible');
+        }
+        if (cfg.hero) {
+            const hero = document.getElementById('hero');
+            if (cfg.hero.altura) { hero.classList.remove('hero-sm','hero-md','hero-lg','hero-full'); hero.classList.add('hero-'+cfg.hero.altura); }
+            if (cfg.hero.overlay) { hero.classList.remove('overlay-light','overlay-medio','overlay-dark'); if(cfg.hero.overlay!=='medio') hero.classList.add('overlay-'+cfg.hero.overlay); }
+            hero.classList.toggle('no-flechas', cfg.hero.mostrarFlechas === false);
+            hero.classList.toggle('no-dots', cfg.hero.mostrarDots === false);
+            if (typeof cfg.hero.autoplay === 'number' && typeof window.setHeroDelay === 'function') window.setHeroDelay(cfg.hero.autoplay);
+        }
+        if (cfg.textos) {
+            document.querySelectorAll('[data-text]').forEach(el => {
+                const key = el.dataset.text;
+                if (cfg.textos[key]) el.textContent = cfg.textos[key];
+            });
+        }
+        if (cfg.contacto) {
+            const c = cfg.contacto;
+            document.querySelectorAll('[data-contact="tel"]').forEach(e => e.textContent = c.telefono || '');
+            document.querySelectorAll('[data-contact="mail"]').forEach(e => e.textContent = c.email || '');
+            document.querySelectorAll('[data-contact="dir"]').forEach(e => e.textContent = c.direccion || '');
+            document.querySelectorAll('[data-contact="horario"]').forEach(e => e.textContent = c.horario || '');
+            document.querySelectorAll('[data-contact="tel-link"]').forEach(e => e.href = 'tel:' + (c.telefono||'').replace(/[^+\d]/g,''));
+            document.querySelectorAll('[data-contact="mail-link"]').forEach(e => e.href = 'mailto:' + (c.email||''));
+        }
+        if (cfg.redes) {
+            const icons = { facebook:'📘', instagram:'📷', twitter:'🐦', youtube:'▶️', whatsapp:'💬' };
+            const cont = document.getElementById('footer-redes');
+            const activos = Object.entries(cfg.redes).filter(([k,v]) => v.visible && v.url);
+            if (cont && activos.length) {
+                cont.innerHTML = activos.map(([k,v]) =>
+                    `<a href="${esc(v.url)}" target="_blank" rel="noopener" aria-label="${k}">${icons[k]||'🔗'}</a>`
+                ).join('');
+            }
+        }
+        if (cfg.enlaces && cfg.enlaces.length) {
+            const visibles = cfg.enlaces.filter(e => e.visible && e.titulo);
+            const grid = document.getElementById('accesos-grid');
+            if (grid && visibles.length) {
+                grid.innerHTML = visibles.map(e =>
+                    `<a class="acceso-card" href="${esc(e.url||'#')}" ${e.url&&e.url.startsWith('http')?'target="_blank" rel="noopener"':''}>
+                        <div class="acceso-ico">${esc(e.icono||'🔗')}</div>
+                        <h4>${esc(e.titulo)}</h4>
+                    </a>`
+                ).join('');
+            }
+        }
+        if (cfg.layout) {
+            const L = cfg.layout;
+            if (L.ancho === 'ancho') document.body.classList.add('layout-ancho');
+            if (L.ancho === 'full') document.body.classList.add('layout-full');
+            if (L.fondosAlternados === false) document.body.classList.add('no-alternado');
+            const fonts = {
+                'default':'"Segoe UI",system-ui,-apple-system,sans-serif',
+                'serif':'Georgia,"Times New Roman",serif',
+                'moderna':'"Roboto","Helvetica Neue",sans-serif',
+                'institucional':'"Merriweather",Georgia,serif'
+            };
+            if (L.fuente && L.fuente !== 'default') {
+                if (L.fuente === 'moderna' || L.fuente === 'institucional') {
+                    const fam = L.fuente === 'moderna' ? 'Roboto:wght@400;600;700' : 'Merriweather:wght@400;700';
+                    const link = document.createElement('link');
+                    link.rel = 'stylesheet';
+                    link.href = `https://fonts.googleapis.com/css2?family=${fam}&display=swap`;
+                    document.head.appendChild(link);
+                }
+                document.body.style.fontFamily = fonts[L.fuente] || fonts.default;
+            }
+            if (L.mostrarBackTop === false) document.getElementById('backTop').style.display = 'none';
+            if (L.modoOscuroPublico) {
+                const btn = document.getElementById('publicDarkToggle');
+                btn.classList.add('visible');
+                if (localStorage.getItem('hcd_public_dark') === '1') {
+                    document.body.classList.add('public-dark');
+                    btn.textContent = '☀️';
+                }
+            }
+        }
+        if (cfg.sections && cfg.sections.length) {
+            const main = document.getElementById('main-content');
+            [...cfg.sections].sort((a,b)=>a.order-b.order).forEach(sec => {
+                const el = document.getElementById(sec.id);
+                if (!el) return;
+                if (sec.id === 'accesos-rapidos') {
+                    const hay = (cfg.enlaces||[]).some(e => e.visible && e.titulo);
+                    el.classList.toggle('section-hidden', !sec.visible || !hay);
+                } else {
+                    el.classList.toggle('section-hidden', !sec.visible);
+                }
+                el.classList.remove('section-normal','section-large','section-featured');
+                if (sec.size && sec.size !== 'normal') el.classList.add('section-'+sec.size);
+                if (main && el.parentNode === main) main.appendChild(el);
+            });
+        }
+    }
 
-    // 2. Bloques políticos: TODOS los concejales (incluidos los del organigrama)
-    const bloquesMap = {};
-    concejales.forEach(c => {
-      const bloque = c.bloque || 'Sin bloque';
-      if (!bloquesMap[bloque]) bloquesMap[bloque] = [];
-      bloquesMap[bloque].push(c);
-    });
-
-    const container = document.getElementById('bloques-list');
-    if (container && Object.keys(bloquesMap).length) {
-      container.innerHTML = Object.keys(bloquesMap).map(bloqueNombre => {
-        const miembros = bloquesMap[bloqueNombre];
-        const presidente = miembros.find(m => m.cargo && m.cargo.toLowerCase().includes('presidente'));
-        return `
-          <div class="bloque-item">
-            <h3>Bloque ${bloqueNombre}</h3>
-            ${presidente ? `<p class="bloque-pres"><strong>Presidente:</strong> ${presidente.nombre} · Mandato hasta ${presidente.mandato}</p>` : ''}
-            <div class="carousel-container">
-              <button class="carousel-btn prev" onclick="moveCarousel(this.parentElement.querySelector('.cc-wrapper'), -1)">❮</button>
-              <div class="cc-wrapper">
-                ${miembros.map(c => `
-                  <div class="cc-slide">
-                    <div class="concejal-card">
-                      <div class="avatar">${c.foto ? `<img src="${BASE}/${c.foto}?t=${Date.now()}">` : '👤'}</div>
-                      <h4>${c.nombre}</h4>
-                      ${c.cargo ? `<div class="cargo">${c.cargo}</div>` : ''}
-                      <div class="meta">Mandato hasta ${c.mandato || '—'}</div>
+    /* ================= 2. BANNERS ================= */
+    const bannersRes = await loadJSON('data/banners.json');
+    if (bannersRes.ok && Array.isArray(bannersRes.data) && bannersRes.data.length) {
+        const wrapper = document.getElementById('hero-slides');
+        if (wrapper) {
+            wrapper.innerHTML = bannersRes.data.map((b,i)=>`
+                <div class="slide ${i===0?'is-active':''}" style="background-image:url('${imgUrl(b.imagen)}');">
+                    <div class="hero-content">
+                        <h2>${esc(b.titulo)}</h2>
+                        <p>${esc(b.subtitulo||'')}</p>
                     </div>
-                  </div>
-                `).join('')}
-              </div>
-              <button class="carousel-btn next" onclick="moveCarousel(this.parentElement.querySelector('.cc-wrapper'), 1)"></button>
-            </div>
-          </div>
-        `;
-      }).join('');
+                </div>`).join('');
+            if (typeof window.refreshHero === 'function') window.refreshHero();
+        }
     }
-  }
 
-  // ====== NOTICIAS ======
-  const noticias = await loadJSON('data/noticias.json');
-  const contNoticias = document.getElementById('noticias-container');
-  if (contNoticias) {
-    if (noticias && noticias.length) {
-      contNoticias.innerHTML = noticias.slice(0, 6).map(n => `
-        <article class="noticia-card">
-          ${n.imagen ? `<img src="${BASE}/${n.imagen}?t=${Date.now()}">` : ''}
-          <div class="noticia-content">
-            <span class="fecha">${formatDate(n.fecha)}</span>
-            <h3>${n.titulo}</h3>
-            <p>${n.resumen || ''}</p>
-            <a class="leer-mas" href="${n.link || '#'}" target="_blank">Leer más →</a>
-          </div>
-        </article>
-      `).join('');
-    } else {
-      contNoticias.innerHTML = '<p class="empty-msg">Aún no hay noticias publicadas.</p>';
+    /* ================= 3. CONCEJALES ================= */
+    async function loadConcejales() {
+        const bloquesList = document.getElementById('bloques-list');
+        setStateLoading(bloquesList, 'Cargando bloques...');
+        const res = await loadJSON('data/concejales.json');
+        if (!res.ok) { if(res.notFound) setStateEmpty(bloquesList,'Aún no hay concejales cargados.'); else setStateError(bloquesList, loadConcejales); return; }
+        const concejales = res.data || [];
+        if (!concejales.length) { setStateEmpty(bloquesList,'Aún no hay concejales cargados.'); return; }
+
+        // Organigrama
+        const cargosOrganigrama = { 'Presidente del HCD':'org-presidente','Secretario Habilitado':'org-secretario-1','Secretario Legislativo':'org-secretario-2','Prosecretario':'org-secretario-3' };
+        Object.entries(cargosOrganigrama).forEach(([cargo,id])=>{
+            const concejal = concejales.find(c=>c.cargo && c.cargo.trim()===cargo);
+            const el = document.getElementById(id);
+            if(!el) return;
+            const avatar=el.querySelector('.avatar'), nombre=el.querySelector('h3,h4'), meta=el.querySelector('.meta');
+            if(concejal){
+                if(avatar) avatar.innerHTML = concejal.foto?`<img src="${imgUrl(concejal.foto)}" alt="${esc(concejal.nombre)}" onerror="hcdImgError(this)">`:'👤';
+                if(nombre) nombre.textContent = concejal.nombre;
+                if(meta) meta.textContent = [concejal.bloque, concejal.mandato?`Mandato hasta ${concejal.mandato}`:''].filter(Boolean).join(' · ')||'—';
+            }
+        });
+
+        // Bloques con carrusel coverflow
+        const bloquesMap = {};
+        concejales.forEach(c=>{ const b=c.bloque||'Sin bloque'; if(!bloquesMap[b]) bloquesMap[b]=[]; bloquesMap[b].push(c); });
+
+        if(bloquesList){
+            let html = Object.keys(bloquesMap).map(bn=>{
+                const miembros = bloquesMap[bn];
+                const pres = miembros.find(m=>m.cargo && m.cargo.toLowerCase().includes('presidente'));
+                return `<div class="bloque-item">
+                    <h3>Bloque ${esc(bn)}</h3>
+                    ${pres?`<p class="bloque-pres"><strong>Presidente:</strong> ${esc(pres.nombre)} · Mandato hasta ${esc(pres.mandato||'—')}</p>`:''}
+                    <div class="cf-carousel">
+                        <button class="cf-arrow prev" type="button" aria-label="Anterior">❮</button>
+                        <div class="cf-stage">
+                            ${miembros.map(c=>`
+                                <div class="cf-slide">
+                                    ${c.foto
+                                        ? `<img src="${imgUrl(c.foto)}" alt="${esc(c.nombre)}" onerror="hcdImgError(this)">`
+                                        : `<div class="cf-noimg">👤</div>`}
+                                    <div class="cf-name">
+                                        <strong>${esc(c.nombre)}</strong>
+                                        ${cfOpts.mostrarCargo && c.cargo?`<small>${esc(c.cargo)}</small>`:''}
+                                    </div>
+                                </div>`).join('')}
+                        </div>
+                        <button class="cf-arrow next" type="button" aria-label="Siguiente">❯</button>
+                        <div class="cf-dots"></div>
+                    </div>
+                </div>`;
+            }).join('');
+
+            // Enlace "Ver todos los concejales"
+            if (cfOpts.mostrarEnlace) {
+                html += `<a class="cf-ver-todos" href="${esc(cfOpts.enlaceUrl||'#concejales')}">${esc(cfOpts.enlaceTexto||'Ver todos los concejales →')}</a>`;
+            }
+            bloquesList.innerHTML = html;
+
+            // Aplica clases de configuración + inicializa cada carrusel
+            const sizeClass = { 'pequeño':'cf-sm','pequeno':'cf-sm','mediano':'cf-md','grande':'cf-lg' }[cfOpts.tamaño] || 'cf-md';
+            bloquesList.querySelectorAll('.cf-carousel').forEach(root => {
+                root.classList.add(sizeClass);
+                root.classList.add('name-' + (cfOpts.nombrePos || 'abajo'));
+                if (cfOpts.mostrarFlechas === false) root.classList.add('no-flechas');
+                if (cfOpts.mostrarDots === false) root.classList.add('no-dots');
+                initCoverflow(root, cfOpts);
+            });
+        }
     }
-  }
 
-  // ====== TEMAS DE SESIÓN ======
-  const temas = await loadJSON('data/temas_sesion.json');
+    /* ===== Carrusel coverflow con autoplay ===== */
+    function initCoverflow(root, opts) {
+        const slides = Array.from(root.querySelectorAll('.cf-slide'));
+        const dotsWrap = root.querySelector('.cf-dots');
+        if (!slides.length) return;
+        const flat = (opts.efecto === 'plano');
+        let active = 0, timer = null;
 
-  const contTemas = document.getElementById('temas-sesion-lista');
-  if (contTemas) {
-    const temasATratar = (temas || []).filter(t => t.estado === 'A tratar');
-    if (temasATratar.length) {
-      contTemas.innerHTML = '<ul>' +
-        temasATratar.map(t => `
-          <li>
-            <span class="tipo-badge">${t.tipo}</span>
-            <strong>${t.titulo}</strong>
-            ${t.descripcion ? `<small>${t.descripcion}</small>` : ''}
-          </li>
-        `).join('') + '</ul>';
-    } else {
-      contTemas.innerHTML = '<p class="empty-msg">No hay temas programados para la próxima sesión.</p>';
+        dotsWrap.innerHTML = '';
+        slides.forEach((_, i) => {
+            const d = document.createElement('button');
+            d.className = 'cf-dot';
+            d.type = 'button';
+            d.setAttribute('aria-label', 'Ir al concejal ' + (i+1));
+            d.addEventListener('click', () => { active = i; update(); restart(); });
+            dotsWrap.appendChild(d);
+        });
+        const dots = Array.from(dotsWrap.children);
+
+        function update() {
+            slides.forEach((s, i) => {
+                const off = i - active;
+                const abs = Math.abs(off);
+                s.style.zIndex = 100 - abs;
+                s.style.pointerEvents = abs > 2 ? 'none' : 'auto';
+                if (off === 0) {
+                    s.style.transform = 'translateX(0) rotateY(0deg) scale(1)';
+                    s.style.opacity = '1';
+                } else if (flat) {
+                    s.style.transform = `translateX(${off * 78}%) scale(${abs===1?'.85':'.72'})`;
+                    s.style.opacity = abs===1 ? '.45' : (abs===2 ? '.2' : '0');
+                } else if (abs === 1) {
+                    s.style.transform = `translateX(${off * 75}%) rotateY(${off * -35}deg) scale(.84)`;
+                    s.style.opacity = '.45';
+                } else if (abs === 2) {
+                    s.style.transform = `translateX(${off * 95}%) rotateY(${off * -45}deg) scale(.72)`;
+                    s.style.opacity = '.2';
+                } else {
+                    s.style.transform = `translateX(${off * 110}%) rotateY(${off * -50}deg) scale(.6)`;
+                    s.style.opacity = '0';
+                }
+            });
+            dots.forEach((d, i) => d.classList.toggle('active', i === active));
+        }
+        function next(){ active = (active + 1) % slides.length; update(); }
+        function prev(){ active = (active - 1 + slides.length) % slides.length; update(); }
+        function start(){ stop(); if (opts.autoplay > 0 && slides.length > 1) timer = setInterval(next, opts.autoplay); }
+        function stop(){ if (timer) { clearInterval(timer); timer = null; } }
+        function restart(){ start(); }
+
+        root.querySelector('.cf-arrow.prev').addEventListener('click', () => { prev(); restart(); });
+        root.querySelector('.cf-arrow.next').addEventListener('click', () => { next(); restart(); });
+        slides.forEach((s, i) => s.addEventListener('click', () => { if (i !== active) { active = i; update(); restart(); } }));
+
+        // Pausa al pasar el mouse (mejor UX con autoplay)
+        root.addEventListener('mouseenter', stop);
+        root.addEventListener('mouseleave', start);
+
+        update();
+        start();
     }
-  }
 
-  const contAprobados = document.getElementById('temas-aprobados-lista');
-  if (contAprobados) {
-    const temasAprobados = (temas || []).filter(t => t.estado === 'Aprobado');
-    if (temasAprobados.length) {
-      contAprobados.innerHTML = '<ul>' +
-        temasAprobados.map(t => `
-          <li>
-            <span class="tipo-badge aprobado">✅ ${t.tipo}</span>
-            <strong>${t.titulo}</strong>
-            ${t.descripcion ? `<small>${t.descripcion}</small>` : ''}
-          </li>
-        `).join('') + '</ul>';
-    } else {
-      contAprobados.innerHTML = '<p class="empty-msg">Aún no hay temas aprobados.</p>';
+    await loadConcejales();
+
+    /* ================= 4. NOTICIAS ================= */
+    async function loadNoticias() {
+        const cont = document.getElementById('noticias-container');
+        setStateLoading(cont,'Cargando noticias...');
+        const res = await loadJSON('data/noticias.json');
+        if(!res.ok){ if(res.notFound) setStateEmpty(cont,'Aún no hay noticias publicadas.'); else setStateError(cont, loadNoticias); return; }
+        const noticias = res.data||[];
+        if(!noticias.length){ setStateEmpty(cont,'Aún no hay noticias publicadas.'); return; }
+        cont.innerHTML = noticias.slice(0,6).map(n=>`
+            <article class="noticia-card">
+                ${n.imagen?`<img src="${imgUrl(n.imagen)}" alt="${esc(n.titulo)}" onerror="hcdImgError(this)">`:''}
+                <div class="noticia-content">
+                    <span class="fecha">${formatDate(n.fecha)}</span>
+                    <h3>${esc(n.titulo)}</h3>
+                    <p>${esc(n.resumen||'')}</p>
+                    <a class="leer-mas" href="${n.link?esc(n.link):'#'}" ${n.link?'target="_blank" rel="noopener"':''}>Leer más →</a>
+                </div>
+            </article>`).join('');
     }
-  }
+    await loadNoticias();
 
-  function formatDate(iso) {
-    if (!iso) return '';
-    const [y, m, d] = iso.split('-');
-    const meses = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
-    return `${parseInt(d)} de ${meses[parseInt(m)-1]}, ${y}`;
-  }
+    /* ================= 5. TEMAS ================= */
+    async function loadTemas() {
+        const ct = document.getElementById('temas-sesion-lista');
+        const ca = document.getElementById('temas-aprobados-lista');
+        setStateLoading(ct,'Cargando temas...'); setStateLoading(ca,'Cargando temas aprobados...');
+        const res = await loadJSON('data/temas_sesion.json');
+        if(!res.ok){
+            if(res.notFound){ setStateEmpty(ct,'No hay temas programados.'); setStateEmpty(ca,'Aún no hay temas aprobados.'); }
+            else { setStateError(ct,loadTemas); setStateError(ca,loadTemas); }
+            return;
+        }
+        const temas = res.data||[];
+        const aTratar = temas.filter(t=>t.estado==='A tratar'||t.estado==='En comisión');
+        const aprobados = temas.filter(t=>t.estado==='Aprobado');
+        if(ct) ct.innerHTML = aTratar.length ? '<ul>'+aTratar.map(t=>`<li><span class="tipo-badge">${esc(t.tipo||'Tema')}</span><strong>${esc(t.titulo)}</strong>${t.descripcion?`<small>${esc(t.descripcion)}</small>`:''}</li>`).join('')+'</ul>' : '<p class="empty-msg">No hay temas programados para la próxima sesión.</p>';
+        if(ca) ca.innerHTML = aprobados.length ? '<ul>'+aprobados.map(t=>`<li><span class="tipo-badge aprobado">✅ ${esc(t.tipo||'Tema')}</span><strong>${esc(t.titulo)}</strong>${t.descripcion?`<small>${esc(t.descripcion)}</small>`:''}</li>`).join('')+'</ul>' : '<p class="empty-msg">Aún no hay temas aprobados.</p>';
+    }
+    await loadTemas();
 })();

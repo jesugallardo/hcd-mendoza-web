@@ -1,356 +1,404 @@
 <!DOCTYPE html>
-<html lang="es" data-theme="light">
+<html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Panel Admin - HCD Mendoza</title>
-  <style>
-    :root {
-      --primary: #004b87;
-      --primary-dark: #003366;
-      --accent: #e67e22;
-      --bg: #f4f6f9;
-      --card-bg: #ffffff;
-      --text: #2c3e50;
-      --text-light: #6c757d;
-      --border: #dee2e6;
-      --shadow: 0 2px 8px rgba(0,0,0,0.08);
-    }
-    [data-theme="dark"] {
-      --primary: #003366;
-      --primary-dark: #001f3f;
-      --accent: #d35400;
-      --bg: #121212;
-      --card-bg: #1e1e1e;
-      --text: #e0e0e0;
-      --text-light: #a0a0a0;
-      --border: #333333;
-      --shadow: 0 2px 8px rgba(0,0,0,0.3);
-    }
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; font-size: 14px; transition: background 0.3s, color 0.3s; }
-    .container { max-width: 1000px; margin: 0 auto; padding: 20px; }
-    
-    .accessibility-bar { background: var(--primary-dark); color: white; padding: 6px 20px; text-align: right; margin-bottom: 20px; border-radius: 0 0 8px 8px; }
-    .accessibility-bar button { background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: white; padding: 4px 10px; border-radius: 4px; cursor: pointer; font-size: 0.85rem; margin-left: 10px; }
-    .accessibility-bar button:hover { background: rgba(255,255,255,0.2); }
-
-    #loginScreen { max-width: 500px; margin: 40px auto; background: var(--card-bg); padding: 30px; border-radius: 8px; box-shadow: var(--shadow); }
-    #loginScreen h2 { margin-bottom: 10px; color: var(--primary); }
-    #loginScreen > p { color: var(--text-light); margin-bottom: 25px; font-size: 0.9rem; }
-    .form-group { margin-bottom: 15px; }
-    .form-group label { display: block; margin-bottom: 5px; font-weight: 600; color: var(--text); font-size: 0.85rem; }
-    .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 9px 12px; border: 1px solid var(--border); border-radius: 4px; font-size: 13px; background: var(--card-bg); color: var(--text); }
-    .form-group input:focus, .form-group select:focus, .form-group textarea:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 2px rgba(0,75,135,0.1); }
-    .token-wrapper { display: flex; gap: 8px; }
-    .token-wrapper input { flex: 1; }
-    .help-text { font-size: 0.8rem; color: var(--text-light); margin-top: 5px; }
-    .help-text a { color: var(--primary); text-decoration: none; }
-    
-    .btn { padding: 9px 18px; border: none; border-radius: 4px; cursor: pointer; font-size: 13px; font-weight: 600; transition: all 0.2s; }
-    .btn-primary { background: var(--primary); color: white; }
-    .btn-primary:hover { background: var(--primary-dark); }
-    .btn-secondary { background: #95a5a6; color: white; }
-    .btn-secondary:hover { background: #7f8c8d; }
-    .btn-danger { background: #e74c3c; color: white; }
-    .btn-danger:hover { background: #c0392b; }
-    .btn-toggle { background: var(--bg); color: var(--text); border: 1px solid var(--border); }
-    .btn-small { padding: 5px 10px; font-size: 12px; }
-    
-    #adminPanel { display: none; }
-    .panel-header { background: var(--card-bg); padding: 20px; border-radius: 8px; margin-bottom: 20px; box-shadow: var(--shadow); display: flex; justify-content: space-between; align-items: center; }
-    .panel-header h2 { color: var(--primary); font-size: 1.2rem; }
-    .repo-info { color: var(--text-light); font-size: 0.85rem; }
-    
-    .tabs { display: flex; gap: 5px; margin-bottom: 20px; background: var(--card-bg); padding: 5px; border-radius: 8px; box-shadow: var(--shadow); }
-    .tab { flex: 1; padding: 10px; border: none; background: none; cursor: pointer; color: var(--text-light); font-weight: 600; border-radius: 6px; transition: all 0.2s; font-size: 0.9rem; }
-    .tab:hover { background: var(--bg); }
-    .tab.active { background: var(--primary); color: white; }
-    
-    .panel-section { display: none; background: var(--card-bg); padding: 25px; border-radius: 8px; box-shadow: var(--shadow); }
-    .panel-section.active { display: block; }
-    .panel-section h3 { margin-bottom: 20px; color: var(--primary); padding-bottom: 10px; border-bottom: 2px solid var(--border); font-size: 1.1rem; }
-    
-    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
-    .form-group textarea { width: 100%; padding: 9px 12px; border: 1px solid var(--border); border-radius: 4px; font-size: 13px; font-family: inherit; resize: vertical; min-height: 80px; background: var(--card-bg); color: var(--text); }
-    .form-actions { display: flex; gap: 10px; margin-top: 20px; }
-    
-    .image-preview { width: 80px; height: 80px; border-radius: 4px; object-fit: cover; margin-top: 8px; border: 2px solid var(--border); display: none; }
-    
-    .item-list { margin-top: 25px; }
-    .item-card { display: flex; align-items: center; gap: 15px; padding: 12px; background: var(--bg); border-radius: 6px; margin-bottom: 10px; border: 1px solid var(--border); }
-    .item-card img { width: 50px; height: 50px; border-radius: 4px; object-fit: cover; }
-    .item-info { flex: 1; }
-    .item-info h4 { color: var(--text); margin-bottom: 3px; font-size: 0.95rem; }
-    .item-info small { color: var(--text-light); font-size: 0.8rem; }
-    .item-actions { display: flex; gap: 6px; }
-    
-    .status-bar { position: fixed; bottom: 20px; right: 20px; padding: 10px 18px; border-radius: 6px; color: white; font-weight: 600; font-size: 0.9rem; box-shadow: 0 4px 12px rgba(0,0,0,0.15); transform: translateY(100px); opacity: 0; transition: all 0.3s; z-index: 1000; }
-    .status-bar.show { transform: translateY(0); opacity: 1; }
-    .status-bar.success { background: #27ae60; }
-    .status-bar.error { background: #e74c3c; }
-    .status-bar.info { background: var(--primary); }
-    
-    .alert-box { background: #fff3cd; border-left: 4px solid #ffc107; padding: 10px 15px; margin-bottom: 20px; border-radius: 4px; display: flex; justify-content: space-between; align-items: center; font-size: 0.85rem; }
-    .alert-box strong { color: #856404; }
-    [data-theme="dark"] .alert-box { background: #3d3512; }
-    [data-theme="dark"] .alert-box strong { color: #ffd966; }
-    
-    @media (max-width: 768px) {
-      .form-row { grid-template-columns: 1fr; }
-      .tabs { flex-direction: column; }
-      .item-card { flex-direction: column; align-items: flex-start; }
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel Admin — HCD Mendoza</title>
+    <meta name="robots" content="noindex, nofollow">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🔐</text></svg>">
+    <style>
+        :root { --primary:#1a3a5c; --primary-dark:#122a44; --gold:#c9a227; --bg:#f5f6f8; --surface:#fff; --border:#e1e4e8; --text:#24292e; --text-muted:#586069; --danger:#c0392b; --radius:10px; --shadow:0 2px 8px rgba(20,40,70,.08); }
+        body.dark { --bg:#0f1419; --surface:#1a2129; --border:#2b3440; --text:#e6edf3; --text-muted:#9aa7b3; }
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body { font-family:"Segoe UI",system-ui,sans-serif; background:var(--bg); color:var(--text); line-height:1.6; }
+        .top-actions { display:flex; justify-content:flex-end; padding:1rem 1.5rem 0; }
+        .icon-btn { background:var(--surface); border:1px solid var(--border); color:var(--text); border-radius:8px; padding:.45rem .8rem; cursor:pointer; font-size:1rem; }
+        #loginScreen { display:flex; align-items:center; justify-content:center; min-height:80vh; padding:1.5rem; }
+        .login-card { background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); box-shadow:var(--shadow); padding:2.2rem; width:100%; max-width:480px; }
+        .login-card h1 { color:var(--primary); font-size:1.4rem; margin-bottom:.4rem; }
+        body.dark .login-card h1 { color:var(--gold); }
+        .login-card .sub { color:var(--text-muted); font-size:.9rem; margin-bottom:1.5rem; }
+        .field { margin-bottom:1rem; }
+        .field label { display:block; font-size:.85rem; font-weight:600; margin-bottom:.3rem; }
+        .field input, .field select, .field textarea { width:100%; padding:.6rem .7rem; border:1px solid var(--border); border-radius:8px; background:var(--bg); color:var(--text); font-size:.95rem; font-family:inherit; }
+        .field input:focus, .field select:focus, .field textarea:focus { outline:2px solid var(--gold); border-color:var(--gold); }
+        .hint { font-size:.8rem; color:var(--text-muted); margin-top:.35rem; }
+        .hint a { color:var(--primary); }
+        body.dark .hint a { color:var(--gold); }
+        .token-wrap { position:relative; }
+        .token-wrap input { padding-right:2.5rem; }
+        .token-eye { position:absolute; right:.6rem; top:50%; transform:translateY(-50%); background:none; border:none; cursor:pointer; font-size:1rem; color:var(--text-muted); }
+        .btn-row { display:flex; gap:.7rem; margin-top:1.4rem; flex-wrap:wrap; }
+        .btn { background:var(--primary); color:#fff; border:none; border-radius:8px; padding:.65rem 1.2rem; cursor:pointer; font-weight:600; font-size:.95rem; }
+        .btn:hover { background:var(--primary-dark); }
+        .btn.secondary { background:var(--surface); color:var(--text); border:1px solid var(--border); }
+        .btn.btn-danger { background:var(--danger); }
+        .btn.sm { padding:.45rem .8rem; font-size:.85rem; }
+        .link-btn { background:none; border:none; color:var(--danger); cursor:pointer; font-size:.85rem; text-decoration:underline; }
+        #adminPanel { display:none; max-width:1100px; margin:0 auto; padding:1.5rem; }
+        .panel-header { background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:1.2rem 1.5rem; margin-bottom:1.2rem; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:1rem; box-shadow:var(--shadow); }
+        .panel-header h2 { color:var(--primary); font-size:1.2rem; }
+        body.dark .panel-header h2 { color:var(--gold); }
+        #repoInfo { font-size:.85rem; color:var(--text-muted); }
+        .tabs { display:flex; gap:.4rem; margin-bottom:1.2rem; flex-wrap:wrap; }
+        .tab { background:var(--surface); border:1px solid var(--border); color:var(--text); padding:.6rem 1.1rem; border-radius:8px; cursor:pointer; font-weight:600; font-size:.9rem; }
+        .tab.active { background:var(--primary); color:#fff; border-color:var(--primary); }
+        body.dark .tab.active { background:var(--gold); color:var(--primary-dark); border-color:var(--gold); }
+        .panel-section { display:none; background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:1.5rem; box-shadow:var(--shadow); }
+        .panel-section.active { display:block; }
+        .panel-section h3 { color:var(--primary); margin-bottom:1rem; }
+        body.dark .panel-section h3 { color:var(--gold); }
+        .form-grid { display:grid; grid-template-columns:1fr 1fr; gap:1rem; }
+        .form-grid .full { grid-column:1/-1; }
+        img.preview { max-width:180px; max-height:120px; border-radius:8px; margin-top:.6rem; display:none; border:1px solid var(--border); object-fit:cover; }
+        .item-card { display:flex; align-items:center; gap:1rem; background:var(--bg); border:1px solid var(--border); border-radius:8px; padding:.8rem 1rem; margin-bottom:.7rem; flex-wrap:wrap; }
+        .item-card img { width:60px; height:60px; object-fit:cover; border-radius:6px; }
+        .item-info { flex:1; min-width:200px; }
+        .item-info h4 { color:var(--text); font-size:.95rem; }
+        .item-info small { color:var(--text-muted); font-size:.8rem; }
+        .item-actions { display:flex; gap:.5rem; }
+        .item-actions .btn { padding:.45rem .8rem; font-size:.85rem; }
+        .status-bar { position:fixed; bottom:1.5rem; left:50%; transform:translateX(-50%) translateY(20px); background:var(--primary); color:#fff; padding:.7rem 1.4rem; border-radius:999px; font-size:.9rem; opacity:0; pointer-events:none; transition:opacity .3s,transform .3s; z-index:200; box-shadow:var(--shadow); }
+        .status-bar.show { opacity:1; transform:translateX(-50%) translateY(0); }
+        .status-bar.success { background:#1a7a3a; }
+        .status-bar.error { background:var(--danger); }
+        .counter { font-size:.8rem; color:var(--text-muted); }
+        .counter.warn { color:var(--gold); font-weight:700; }
+        /* Editor de secciones / enlaces */
+        .section-item, .enlace-item { background:var(--surface); border:1px solid var(--border); border-radius:8px; padding:.9rem 1rem; margin-bottom:.7rem; display:flex; align-items:center; gap:.8rem; cursor:move; transition:all .2s; flex-wrap:wrap; }
+        .section-item.dragging, .enlace-item.dragging { opacity:.4; }
+        .drag-handle { font-size:1.1rem; color:var(--text-muted); cursor:grab; }
+        .section-item .section-info { flex:1; min-width:140px; }
+        .section-item .section-info h4 { font-size:.92rem; }
+        .section-controls, .enlace-controls { display:flex; gap:.5rem; align-items:center; flex-wrap:wrap; }
+        .section-controls select, .enlace-controls select { padding:.4rem; border:1px solid var(--border); border-radius:4px; background:var(--bg); color:var(--text); font-size:.85rem; }
+        input[type="checkbox"].chk { width:20px; height:20px; cursor:pointer; }
+        /* Tarjetas del editor de personalización (reflejo de la web) */
+        .custom-card { border:1px solid var(--border); border-radius:var(--radius); margin-bottom:1.2rem; background:var(--bg); overflow:hidden; }
+        .custom-card > summary { list-style:none; cursor:pointer; padding:1rem 1.25rem; font-weight:700; color:var(--primary); background:var(--surface); display:flex; align-items:center; gap:.7rem; user-select:none; }
+        body.dark .custom-card > summary { color:var(--gold); }
+        .custom-card > summary::-webkit-details-marker { display:none; }
+        .custom-card > summary::after { content:'▸'; margin-left:auto; transition:transform .2s; }
+        .custom-card[open] > summary::after { transform:rotate(90deg); }
+        .custom-card .card-body { padding:1.25rem; }
+        .switch-row { display:flex; align-items:center; gap:.8rem; margin-bottom:.8rem; }
+        .switch-row label { font-size:.9rem; }
+        .save-strip { position:sticky; top:0; z-index:50; background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:.8rem 1.2rem; display:flex; justify-content:space-between; align-items:center; margin-bottom:1.2rem; box-shadow:var(--shadow); }
+        @media (max-width:720px) { .form-grid { grid-template-columns:1fr; } }
+    </style>
 </head>
 <body>
-
-<div class="accessibility-bar">
-  <button onclick="toggleTheme()" id="themeBtn">🌙 Modo Oscuro</button>
-</div>
-
-<div class="container">
-  <div id="loginScreen">
-    <h2>🔐 Panel Admin HCD Mendoza</h2>
-    <p>Ingresá tus credenciales de GitHub para gestionar el contenido del sitio.</p>
-    
-    <div class="alert-box">
-      <strong>⚠️ ¿Error 401 o problemas de conexión?</strong>
-      <button type="button" class="btn btn-danger btn-small" onclick="limpiarDatosGuardados()">🗑️ Borrar datos</button>
+    <div class="top-actions">
+        <button class="icon-btn" id="themeToggle" type="button" aria-label="Cambiar modo oscuro">🌙 Modo Oscuro</button>
     </div>
 
-    <div class="form-group">
-      <label>Usuario / Organización de GitHub</label>
-      <input type="text" id="ghOwner" placeholder="Ej: jesugallardo">
-    </div>
-    <div class="form-group">
-      <label>Nombre del Repositorio</label>
-      <input type="text" id="ghRepo" placeholder="Ej: hcd-mendoza-web">
-    </div>
-    <div class="form-group">
-      <label>Rama (branch)</label>
-      <input type="text" id="ghBranch" placeholder="Ej: main" value="main">
-    </div>
-    <div class="form-group">
-      <label>Personal Access Token (con permisos repo)</label>
-      <div class="token-wrapper">
-        <input type="password" id="ghToken" placeholder="ghp_...">
-        <button type="button" class="btn btn-toggle" onclick="toggleTokenVisibility()" title="Ver token">👁️</button>
-      </div>
-      <p class="help-text">Creá uno en: <a href="https://github.com/settings/tokens" target="_blank">github.com/settings/tokens</a> → "Generate new token (classic)" → marcar repo.</p>
-    </div>
-    
-    <div style="display: flex; gap: 10px; margin-top: 20px;">
-      <button class="btn btn-primary" onclick="doLogin()" style="flex: 2;">Ingresar</button>
-      <button class="btn btn-secondary" onclick="testConnection()" style="flex: 1;">Probar conexión</button>
-    </div>
-  </div>
-
-  <div id="adminPanel">
-    <div class="panel-header">
-      <div>
-        <h2>📋 Panel de Administración</h2>
-        <div class="repo-info" id="repoInfo">Cargando...</div>
-      </div>
-      <button class="btn btn-danger btn-small" onclick="logout()">Cerrar sesión</button>
-    </div>
-
-    <div class="tabs">
-      <button class="tab active" data-tab="concejales" onclick="switchTab('concejales')">👥 Concejales</button>
-      <button class="tab" data-tab="banners" onclick="switchTab('banners')">🖼️ Banners</button>
-      <button class="tab" data-tab="noticias" onclick="switchTab('noticias')">📰 Noticias</button>
-      <button class="tab" data-tab="temas" onclick="switchTab('temas')">📋 Temas Sesión</button>
-    </div>
-
-    <!-- CONCEJALES -->
-    <div id="sec-concejales" class="panel-section active">
-      <h3>Gestión de Concejales</h3>
-      <input type="hidden" id="cc-edit-index" value="-1">
-      <div class="form-group">
-        <label>Nombre completo *</label>
-        <input type="text" id="cc-nombre" placeholder="Ej: Marcelo Rubio">
-      </div>
-      <div class="form-row">
-        <div class="form-group">
-          <label>Bloque político *</label>
-          <select id="cc-bloque" required>
-            <option value="" disabled selected>Seleccioná un bloque...</option>
-            <option value="La Libertad Avanza + Frente Cambia Mendoza">La Libertad Avanza + Frente Cambia Mendoza</option>
-            <option value="Frente Cambia Mendoza">Frente Cambia Mendoza</option>
-            <option value="Fuerza Justicialista Mendoza">Fuerza Justicialista Mendoza</option>
-            <option value="Partido Verde">Partido Verde</option>
-            <option value="Coalición Cívica + ARI">Coalición Cívica + ARI</option>
-          </select>
+    <div id="loginScreen">
+        <div class="login-card">
+            <h1>🔐 Panel Admin HCD Mendoza</h1>
+            <p class="sub">Ingresá tus credenciales de GitHub para gestionar el contenido del sitio.</p>
+            <div class="field"><label for="ghOwner">Usuario / Organización de GitHub</label><input type="text" id="ghOwner" placeholder="ej: jesugallardo"></div>
+            <div class="field"><label for="ghRepo">Nombre del Repositorio</label><input type="text" id="ghRepo" placeholder="ej: hcd-mendoza-web"></div>
+            <div class="field"><label for="ghBranch">Rama (branch)</label><input type="text" id="ghBranch" value="main"></div>
+            <div class="field">
+                <label for="ghToken">Personal Access Token (con permisos repo)</label>
+                <div class="token-wrap">
+                    <input type="password" id="ghToken" placeholder="ghp_...">
+                    <button class="token-eye" type="button" id="tokenEye" aria-label="Mostrar token">👁️</button>
+                </div>
+                <p class="hint">Creá uno en: <a href="https://github.com/settings/tokens" target="_blank" rel="noopener">github.com/settings/tokens</a> → "Generate new token (classic)" → marcar <strong>repo</strong>.</p>
+            </div>
+            <div class="btn-row">
+                <button class="btn" type="button" onclick="doLogin()">Ingresar</button>
+                <button class="btn secondary" type="button" onclick="testConnection()">Probar conexión</button>
+                <button class="link-btn" type="button" onclick="clearData()" style="margin-left:auto;">🗑️ Borrar datos</button>
+            </div>
         </div>
-        <div class="form-group">
-          <label>Mandato hasta</label>
-          <input type="text" id="cc-mandato" placeholder="Ej: 2027">
-        </div>
-      </div>
-      <div class="form-group">
-        <label>Cargo especial (opcional)</label>
-        <input type="text" id="cc-cargo" placeholder="Ej: Presidente del HCD">
-      </div>
-      <div class="form-group">
-        <label>Foto del concejal (JPG/PNG)</label>
-        <input type="file" id="cc-foto" accept="image/*">
-        <img id="cc-foto-preview" class="image-preview" alt="Preview">
-      </div>
-      <div class="form-actions">
-        <button class="btn btn-primary" onclick="saveConcejal()">💾 Guardar concejal</button>
-        <button class="btn btn-secondary" onclick="resetConcejalForm()">Cancelar</button>
-      </div>
-      <div id="listaConcejales" class="item-list"></div>
     </div>
 
-    <!-- BANNERS -->
-    <div id="sec-banners" class="panel-section">
-      <h3>Banners del Slider Principal</h3>
-      <input type="hidden" id="bn-edit-index" value="-1">
-      <div class="form-group">
-        <label>Título del banner *</label>
-        <input type="text" id="bn-titulo" placeholder="Ej: Gestión Legislativa Abierta">
-      </div>
-      <div class="form-group">
-        <label>Subtítulo / Descripción</label>
-        <input type="text" id="bn-subtitulo" placeholder="Ej: Accedé a toda la información pública...">
-      </div>
-      <div class="form-group">
-        <label>Imagen de fondo (recomendado 1920x550)</label>
-        <input type="file" id="bn-imagen" accept="image/*">
-        <img id="bn-imagen-preview" class="image-preview" alt="Preview" style="width: 150px; height: 60px;">
-      </div>
-      <div class="form-actions">
-        <button class="btn btn-primary" onclick="saveBanner()">💾 Guardar banner</button>
-        <button class="btn btn-secondary" onclick="resetBannerForm()">Cancelar</button>
-      </div>
-      <div id="listaBanners" class="item-list"></div>
+    <div id="adminPanel">
+        <div class="panel-header">
+            <div><h2>📋 Panel de Administración</h2><span id="repoInfo">Cargando...</span></div>
+            <div><button class="btn secondary" type="button" onclick="logout()">Cerrar sesión</button></div>
+        </div>
+
+        <div class="tabs" role="tablist">
+            <button class="tab active" type="button" data-tab="concejales">👥 Concejales</button>
+            <button class="tab" type="button" data-tab="bloques">🧩 Bloques</button>
+            <button class="tab" type="button" data-tab="banners">🖼️ Banners</button>
+            <button class="tab" type="button" data-tab="noticias">📰 Noticias</button>
+            <button class="tab" type="button" data-tab="temas">📋 Temas Sesión</button>
+            <button class="tab" type="button" data-tab="personalizacion">🎨 Personalización</button>
+        </div>
+
+        <!-- CONCEJALES -->
+        <div class="panel-section active" id="sec-concejales">
+            <h3>Gestión de Concejales <span class="counter" id="cc-counter"></span></h3>
+            <div class="form-grid">
+                <div class="field"><label for="cc-nombre">Nombre completo *</label><input type="text" id="cc-nombre"></div>
+                <div class="field">
+                    <label for="cc-bloque">Bloque político *</label>
+                    <select id="cc-bloque" onchange="onBloqueSelectChange()"><option value="">Seleccioná un bloque...</option></select>
+                    <input type="text" id="cc-bloque-nuevo" placeholder="Nombre del nuevo bloque" style="display:none;margin-top:.5rem;">
+                </div>
+                <div class="field"><label for="cc-mandato">Mandato hasta</label><select id="cc-mandato"><option value="">—</option></select></div>
+                <div class="field">
+                    <label for="cc-cargo">Cargo especial (opcional)</label>
+                    <select id="cc-cargo"><option value="">Concejal (sin cargo especial)</option><option>Presidente del HCD</option><option>Secretario Habilitado</option><option>Secretario Legislativo</option><option>Prosecretario</option></select>
+                </div>
+                <div class="field full"><label for="cc-foto">Foto del concejal</label><input type="file" id="cc-foto" accept="image/*"><img class="preview" id="cc-foto-preview" alt="Vista previa"></div>
+            </div>
+            <input type="hidden" id="cc-edit-index" value="-1">
+            <div class="btn-row"><button class="btn" type="button" onclick="saveConcejal()">💾 Guardar concejal</button><button class="btn secondary" type="button" onclick="resetConcejalForm()">Cancelar</button></div>
+            <div id="listaConcejales" style="margin-top:1.5rem;"></div>
+        </div>
+
+        <!-- BLOQUES -->
+        <div class="panel-section" id="sec-bloques">
+            <h3>Gestión de Bloques Políticos</h3>
+            <div class="form-grid">
+                <div class="field"><label for="bl-nombre">Nombre del bloque *</label><input type="text" id="bl-nombre"></div>
+                <div class="field"><label for="bl-presidente">Presidente del bloque</label><input type="text" id="bl-presidente"></div>
+                <div class="field full"><label for="bl-integrantes">Integrantes (uno por línea)</label><textarea id="bl-integrantes" rows="4"></textarea></div>
+            </div>
+            <input type="hidden" id="bl-edit-index" value="-1">
+            <div class="btn-row"><button class="btn" type="button" onclick="saveBloque()">💾 Guardar bloque</button><button class="btn secondary" type="button" onclick="resetBloqueForm()">Cancelar</button></div>
+            <div id="listaBloques" style="margin-top:1.5rem;"></div>
+        </div>
+
+        <!-- BANNERS -->
+        <div class="panel-section" id="sec-banners">
+            <h3>Banners del Slider Principal</h3>
+            <div class="form-grid">
+                <div class="field"><label for="bn-titulo">Título del banner *</label><input type="text" id="bn-titulo"></div>
+                <div class="field"><label for="bn-subtitulo">Subtítulo / Descripción</label><input type="text" id="bn-subtitulo"></div>
+                <div class="field full"><label for="bn-imagen">Imagen de fondo (recomendado 1920x550)</label><input type="file" id="bn-imagen" accept="image/*"><img class="preview" id="bn-imagen-preview" alt="Vista previa"></div>
+            </div>
+            <input type="hidden" id="bn-edit-index" value="-1">
+            <div class="btn-row"><button class="btn" type="button" onclick="saveBanner()">💾 Guardar banner</button><button class="btn secondary" type="button" onclick="resetBannerForm()">Cancelar</button></div>
+            <div id="listaBanners" style="margin-top:1.5rem;"></div>
+        </div>
+
+        <!-- NOTICIAS -->
+        <div class="panel-section" id="sec-noticias">
+            <h3>Gestión de Noticias</h3>
+            <div class="form-grid">
+                <div class="field"><label for="nt-titulo">Título *</label><input type="text" id="nt-titulo"></div>
+                <div class="field"><label for="nt-fecha">Fecha *</label><input type="date" id="nt-fecha"></div>
+                <div class="field full"><label for="nt-resumen">Resumen (corto) *</label><textarea id="nt-resumen" rows="2"></textarea></div>
+                <div class="field full"><label for="nt-contenido">Contenido completo *</label><textarea id="nt-contenido" rows="6"></textarea></div>
+                <div class="field"><label for="nt-imagen">Imagen destacada (opcional)</label><input type="file" id="nt-imagen" accept="image/*"><img class="preview" id="nt-imagen-preview" alt="Vista previa"></div>
+                <div class="field"><label for="nt-link">Enlace externo (opcional)</label><input type="url" id="nt-link" placeholder="https://..."></div>
+            </div>
+            <input type="hidden" id="nt-edit-index" value="-1">
+            <div class="btn-row"><button class="btn" type="button" onclick="saveNoticia()">💾 Guardar noticia</button><button class="btn secondary" type="button" onclick="resetNoticiaForm()">Cancelar</button></div>
+            <div id="listaNoticias" style="margin-top:1.5rem;"></div>
+        </div>
+
+        <!-- TEMAS -->
+        <div class="panel-section" id="sec-temas">
+            <h3>Temas a Tratar en la Próxima Sesión</h3>
+            <div class="form-grid">
+                <div class="field full"><label for="tm-titulo">Título del tema *</label><input type="text" id="tm-titulo"></div>
+                <div class="field full"><label for="tm-descripcion">Descripción / Expediente</label><textarea id="tm-descripcion" rows="3"></textarea></div>
+                <div class="field"><label for="tm-tipo">Tipo de proyecto</label><select id="tm-tipo"><option>Ordenanza</option><option>Decreto</option><option>Resolución</option><option>Comunicación</option><option>Nota</option></select></div>
+                <div class="field"><label for="tm-estado">Estado</label><select id="tm-estado"><option>A tratar</option><option>Aprobado</option><option>Rechazado</option><option>En comisión</option></select></div>
+            </div>
+            <input type="hidden" id="tm-edit-index" value="-1">
+            <div class="btn-row"><button class="btn" type="button" onclick="saveTema()">💾 Guardar tema</button><button class="btn secondary" type="button" onclick="resetTemaForm()">Cancelar</button></div>
+            <div id="listaTemas" style="margin-top:1.5rem;"></div>
+        </div>
+
+        <!-- ====================================================
+             PERSONALIZACIÓN (reflejo de la web, de arriba a abajo)
+        ==================================================== -->
+        <div class="panel-section" id="sec-personalizacion">
+            <h3>🎨 Editor de Diseño de Página</h3>
+            <p style="color:var(--text-muted);margin-bottom:1.2rem;">Cada tarjeta representa una parte del sitio, de arriba hacia abajo. Modificá y luego presioná "Guardar Configuración".</p>
+
+            <div class="save-strip">
+                <span style="font-weight:600;">💾 Aplicar cambios</span>
+                <div style="display:flex;gap:.6rem;">
+                    <button class="btn secondary sm" type="button" onclick="window.open('index.html','_blank')">👁️ Vista previa</button>
+                    <button class="btn secondary sm" type="button" onclick="resetSiteConfig()">🔄 Restablecer</button>
+                    <button class="btn sm" type="button" onclick="saveSiteConfig()">💾 Guardar Configuración</button>
+                </div>
+            </div>
+
+            <!-- 📢 BARRA DE ANUNCIO -->
+            <details class="custom-card" open>
+                <summary>📢 Barra de Anuncio (parte superior)</summary>
+                <div class="card-body">
+                    <div class="switch-row"><input type="checkbox" class="chk" id="an-visible"><label for="an-visible">Mostrar barra de anuncio</label></div>
+                    <div class="form-grid">
+                        <div class="field full"><label for="an-texto">Texto del anuncio</label><input type="text" id="an-texto" placeholder="Ej: Sesión especial este viernes a las 10 hs"></div>
+                        <div class="field"><label for="an-link">Enlace (opcional)</label><input type="url" id="an-link" placeholder="https://..."></div>
+                        <div class="field"><label for="an-color">Color de fondo</label><input type="color" id="an-color" value="#c9a227"></div>
+                    </div>
+                </div>
+            </details>
+
+            <!-- 🏛️ IDENTIDAD Y HEADER -->
+            <details class="custom-card" open>
+                <summary>🏛️ Identidad del Sitio (header)</summary>
+                <div class="card-body">
+                    <div class="form-grid">
+                        <div class="field"><label for="si-nombre">Nombre del sitio</label><input type="text" id="si-nombre"></div>
+                        <div class="field"><label for="si-subtitulo">Subtítulo</label><input type="text" id="si-subtitulo"></div>
+                        <div class="field">
+                            <label for="si-logoTipo">Tipo de logo</label>
+                            <select id="si-logoTipo" onchange="toggleLogoFields()">
+                                <option value="emoji">Emoji</option>
+                                <option value="imagen">Imagen</option>
+                            </select>
+                        </div>
+                        <div class="field" id="logoEmojiField"><label for="si-logoEmoji">Emoji del logo</label><input type="text" id="si-logoEmoji" maxlength="4"></div>
+                        <div class="field" id="logoImgField" style="display:none;"><label for="si-logoImagen">Subir logo (PNG)</label><input type="file" id="si-logoImagen" accept="image/*"><img class="preview" id="si-logo-preview" alt="Logo"></div>
+                        <div class="field full"><label for="si-copyright">Texto del copyright (footer)</label><input type="text" id="si-copyright"></div>
+                    </div>
+                </div>
+            </details>
+
+            <!-- 🖼️ HERO / BANNER -->
+            <details class="custom-card" open>
+                <summary>🖼️ Banner Principal (hero)</summary>
+                <div class="card-body">
+                    <div class="form-grid">
+                        <div class="field"><label for="he-altura">Altura del banner</label>
+                            <select id="he-altura"><option value="sm">Pequeño (280px)</option><option value="md">Mediano (420px)</option><option value="lg">Grande (560px)</option><option value="full">Pantalla completa (85vh)</option></select>
+                        </div>
+                        <div class="field"><label for="he-autoplay">Velocidad del autoplay</label>
+                            <select id="he-autoplay"><option value="0">Desactivado</option><option value="3000">Rápido (3s)</option><option value="6000">Normal (6s)</option><option value="9000">Lento (9s)</option></select>
+                        </div>
+                        <div class="field"><label for="he-overlay">Oscuridad del overlay</label>
+                            <select id="he-overlay"><option value="light">Claro</option><option value="medio">Medio</option><option value="dark">Oscuro</option></select>
+                        </div>
+                        <div class="field" style="display:flex;flex-direction:column;gap:.6rem;justify-content:center;">
+                            <div class="switch-row" style="margin:0;"><input type="checkbox" class="chk" id="he-flechas"><label for="he-flechas">Mostrar flechas</label></div>
+                            <div class="switch-row" style="margin:0;"><input type="checkbox" class="chk" id="he-dots"><label for="he-dots">Mostrar puntos</label></div>
+                        </div>
+                        <div class="field"><label for="he-titulo">Texto por defecto (sin banners): Título</label><input type="text" id="he-titulo"></div>
+                        <div class="field"><label for="he-subtitulo">Subtítulo</label><input type="text" id="he-subtitulo"></div>
+                    </div>
+                </div>
+            </details>
+
+            <!-- 📄 SECCIONES -->
+            <details class="custom-card" open>
+                <summary>📄 Secciones de la Página (orden, visibilidad y títulos)</summary>
+                <div class="card-body">
+                    <p style="color:var(--text-muted);font-size:.85rem;margin-bottom:1rem;">Arrastrá con ☰ para reordenar. Editá el título de cada sección.</p>
+                    <div id="sections-editor"></div>
+                </div>
+            </details>
+                        <!-- 🎠 CARRUSEL DE CONCEJALES -->
+            <details class="custom-card" open>
+                <summary>🎠 Carrusel de Concejales</summary>
+                <div class="card-body">
+                    <div class="form-grid">
+                        <div class="field"><label for="ca-tamano">Tamaño de las tarjetas</label>
+                            <select id="ca-tamano">
+                                <option value="pequeño">Pequeño (220×280)</option>
+                                <option value="mediano">Mediano (300×380)</option>
+                                <option value="grande">Grande (380×480)</option>
+                            </select>
+                        </div>
+                        <div class="field"><label for="ca-autoplay">Rotación automática</label>
+                            <select id="ca-autoplay">
+                                <option value="0">Desactivada</option>
+                                <option value="3000">Cada 3 segundos</option>
+                                <option value="4000">Cada 4 segundos</option>
+                                <option value="6000">Cada 6 segundos</option>
+                            </select>
+                        </div>
+                        <div class="field"><label for="ca-nombrepos">Posición del nombre</label>
+                            <select id="ca-nombrepos">
+                                <option value="abajo">Abajo (sobre la foto)</option>
+                                <option value="arriba">Arriba (sobre la foto)</option>
+                                <option value="oculto">Oculto</option>
+                            </select>
+                        </div>
+                        <div class="field"><label for="ca-efecto">Efecto de transición</label>
+                            <select id="ca-efecto">
+                                <option value="coverflow">Coverflow 3D (rotado)</option>
+                                <option value="plano">Plano (sin rotación)</option>
+                            </select>
+                        </div>
+                        <div class="field full" style="display:flex;gap:1.6rem;flex-wrap:wrap;">
+                            <div class="switch-row" style="margin:0;"><input type="checkbox" class="chk" id="ca-cargo"><label for="ca-cargo">Mostrar cargo</label></div>
+                            <div class="switch-row" style="margin:0;"><input type="checkbox" class="chk" id="ca-flechas"><label for="ca-flechas">Flechas</label></div>
+                            <div class="switch-row" style="margin:0;"><input type="checkbox" class="chk" id="ca-dots"><label for="ca-dots">Puntos</label></div>
+                            <div class="switch-row" style="margin:0;"><input type="checkbox" class="chk" id="ca-enlace"><label for="ca-enlace">Enlace "Ver todos"</label></div>
+                        </div>
+                        <div class="field"><label for="ca-enlaceTexto">Texto del enlace</label><input type="text" id="ca-enlaceTexto" placeholder="Ver todos los concejales →"></div>
+                        <div class="field"><label for="ca-enlaceUrl">URL del enlace</label><input type="text" id="ca-enlaceUrl" placeholder="#concejales o https://..."></div>
+                    </div>
+                </div>
+            </details>
+            <!-- 🔗 ACCESOS RÁPIDOS -->
+            <details class="custom-card" open>
+                <summary>🔗 Accesos Rápidos (tarjetas de enlaces)</summary>
+                <div class="card-body">
+                    <div id="enlaces-editor"></div>
+                    <button class="btn secondary sm" type="button" onclick="addEnlace()" style="margin-top:.6rem;">➕ Agregar acceso rápido</button>
+                </div>
+            </details>
+
+            <!-- 📞 CONTACTO Y REDES -->
+            <details class="custom-card" open>
+                <summary>📞 Contacto y Redes Sociales</summary>
+                <div class="card-body">
+                    <div class="form-grid">
+                        <div class="field"><label for="co-telefono">Teléfono</label><input type="text" id="co-telefono"></div>
+                        <div class="field"><label for="co-email">Email</label><input type="email" id="co-email"></div>
+                        <div class="field"><label for="co-direccion">Dirección</label><input type="text" id="co-direccion"></div>
+                        <div class="field"><label for="co-horario">Horario de atención</label><input type="text" id="co-horario"></div>
+                    </div>
+                    <h4 style="margin:1.2rem 0 .8rem;color:var(--primary);">Redes sociales</h4>
+                    <div id="redes-editor"></div>
+                </div>
+            </details>
+
+            <!-- 🎨 APARIENCIA GLOBAL -->
+            <details class="custom-card" open>
+                <summary>🎨 Apariencia Global (tema, tipografía y layout)</summary>
+                <div class="card-body">
+                    <div class="form-grid">
+                        <div class="field"><label for="th-primary">Color principal</label><input type="color" id="th-primary"></div>
+                        <div class="field"><label for="th-accent">Color de acento</label><input type="color" id="th-accent"></div>
+                        <div class="field"><label for="la-fuente">Tipografía</label>
+                            <select id="la-fuente"><option value="default">Por defecto (Segoe UI)</option><option value="serif">Formal (Georgia)</option><option value="moderna">Moderna (Roboto)</option><option value="institucional">Institucional (Merriweather)</option></select>
+                        </div>
+                        <div class="field"><label for="la-ancho">Ancho del contenido</label>
+                            <select id="la-ancho"><option value="normal">Normal (1150px)</option><option value="ancho">Ancho (1400px)</option><option value="full">Completo</option></select>
+                        </div>
+                        <div class="field full" style="display:flex;gap:2rem;flex-wrap:wrap;">
+                            <div class="switch-row" style="margin:0;"><input type="checkbox" class="chk" id="la-backtop"><label for="la-backtop">Botón "volver arriba"</label></div>
+                            <div class="switch-row" style="margin:0;"><input type="checkbox" class="chk" id="la-alternado"><label for="la-alternado">Fondos alternados en secciones</label></div>
+                            <div class="switch-row" style="margin:0;"><input type="checkbox" class="chk" id="la-darkpublic"><label for="la-darkpublic">Permitir modo oscuro al visitante</label></div>
+                        </div>
+                    </div>
+                </div>
+            </details>
+
+            <!-- 🔍 SEO -->
+            <details class="custom-card" open>
+                <summary>🔍 SEO (buscadores)</summary>
+                <div class="card-body">
+                    <div class="form-grid">
+                        <div class="field full"><label for="se-titulo">Título para buscadores</label><input type="text" id="se-titulo"></div>
+                        <div class="field full"><label for="se-desc">Descripción para buscadores</label><textarea id="se-desc" rows="3"></textarea></div>
+                    </div>
+                </div>
+            </details>
+
+            <div class="btn-row" style="justify-content:center;">
+                <button class="btn" type="button" onclick="saveSiteConfig()">💾 Guardar Configuración</button>
+            </div>
+        </div>
     </div>
 
-    <!-- NOTICIAS -->
-    <div id="sec-noticias" class="panel-section">
-      <h3>Gestión de Noticias</h3>
-      <input type="hidden" id="nt-edit-index" value="-1">
-      <div class="form-row">
-        <div class="form-group">
-          <label>Título *</label>
-          <input type="text" id="nt-titulo" placeholder="Ej: Nueva sesión ordinaria">
-        </div>
-        <div class="form-group">
-          <label>Fecha *</label>
-          <input type="date" id="nt-fecha">
-        </div>
-      </div>
-      <div class="form-group">
-        <label>Resumen (corto) *</label>
-        <input type="text" id="nt-resumen" placeholder="Breve descripción de la noticia">
-      </div>
-      <div class="form-group">
-        <label>Contenido completo *</label>
-        <textarea id="nt-contenido" rows="4" placeholder="Contenido completo..."></textarea>
-      </div>
-      <div class="form-group">
-        <label>Imagen destacada (opcional)</label>
-        <input type="file" id="nt-imagen" accept="image/*">
-        <img id="nt-imagen-preview" class="image-preview" alt="Preview">
-      </div>
-      <div class="form-group">
-        <label>Enlace externo (opcional)</label>
-        <input type="url" id="nt-link" placeholder="https://...">
-      </div>
-      <div class="form-actions">
-        <button class="btn btn-primary" onclick="saveNoticia()">💾 Guardar noticia</button>
-        <button class="btn btn-secondary" onclick="resetNoticiaForm()">Cancelar</button>
-      </div>
-      <div id="listaNoticias" class="item-list"></div>
-    </div>
-
-    <!-- TEMAS DE SESIÓN -->
-    <div id="sec-temas" class="panel-section">
-      <h3>Temas a Tratar en la Próxima Sesión</h3>
-      <input type="hidden" id="tm-edit-index" value="-1">
-      <div class="form-group">
-        <label>Título del tema *</label>
-        <input type="text" id="tm-titulo" placeholder="Ej: Ordenanza de Zonificación Comercial">
-      </div>
-      <div class="form-group">
-        <label>Descripción / Expediente</label>
-        <textarea id="tm-descripcion" rows="3" placeholder="Ej: Expediente 5432-E-2026..."></textarea>
-      </div>
-      <div class="form-row">
-        <div class="form-group">
-          <label>Tipo de proyecto</label>
-          <select id="tm-tipo">
-            <option value="Ordenanza">Ordenanza</option>
-            <option value="Decreto">Decreto</option>
-            <option value="Resolución">Resolución</option>
-            <option value="Comunicación">Comunicación</option>
-            <option value="Nota">Nota</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label>Estado</label>
-          <select id="tm-estado">
-            <option value="A tratar">A tratar</option>
-            <option value="Aprobado">Aprobado</option>
-            <option value="Rechazado">Rechazado</option>
-            <option value="En comisión">En comisión</option>
-          </select>
-        </div>
-      </div>
-      <div class="form-actions">
-        <button class="btn btn-primary" onclick="saveTema()">💾 Guardar tema</button>
-        <button class="btn btn-secondary" onclick="resetTemaForm()">Cancelar</button>
-      </div>
-      <div id="listaTemas" class="item-list"></div>
-    </div>
-  </div>
-</div>
-
-<div id="statusBar" class="status-bar"></div>
-
-<script src="js/github-api.js"></script>
-<script src="js/admin-app.js"></script>
-<script>
-  // === MODO OSCURO ADMIN ===
-  function toggleTheme() {
-    const html = document.documentElement;
-    const currentTheme = html.getAttribute('data-theme');
-    const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-    html.setAttribute('data-theme', newTheme);
-    localStorage.setItem('adminTheme', newTheme);
-    document.getElementById('themeBtn').textContent = newTheme === 'dark' ? '☀️ Modo Claro' : '🌙 Modo Oscuro';
-  }
-  document.addEventListener('DOMContentLoaded', () => {
-    const savedTheme = localStorage.getItem('adminTheme') || 'light';
-    document.documentElement.setAttribute('data-theme', savedTheme);
-    document.getElementById('themeBtn').textContent = savedTheme === 'dark' ? '☀️ Modo Claro' : '🌙 Modo Oscuro';
-  });
-
-  function toggleTokenVisibility() {
-    const input = document.getElementById('ghToken');
-    const btn = document.querySelector('.btn-toggle');
-    if (input.type === 'password') { input.type = 'text'; btn.textContent = '🙈'; } 
-    else { input.type = 'password'; btn.textContent = '👁️'; }
-  }
-
-  function limpiarDatosGuardados() {
-    localStorage.removeItem('hcd_github_config');
-    localStorage.removeItem('hcd_admin_logged_in');
-    localStorage.removeItem('gh_admin_config');
-    document.getElementById('ghOwner').value = '';
-    document.getElementById('ghRepo').value = '';
-    document.getElementById('ghBranch').value = 'main';
-    document.getElementById('ghToken').value = '';
-    alert('✅ Datos borrados. Ahora podés ingresar los datos correctos desde cero.');
-  }
-
-  function switchTab(tabName) {
-    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-    document.querySelectorAll('.panel-section').forEach(s => s.classList.remove('active'));
-    document.querySelector(`[data-tab="${tabName}"]`).classList.add('active');
-    document.getElementById(`sec-${tabName}`).classList.add('active');
-  }
-</script>
+    <div class="status-bar" id="statusBar" role="status"></div>
+    <script src="js/github-api.js"></script>
+    <script src="js/admin-app.js"></script>
 </body>
 </html>
