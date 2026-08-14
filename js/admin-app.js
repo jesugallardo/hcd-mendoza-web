@@ -1,9 +1,8 @@
 /**
- * admin-app.js — sin Noticias, con Fuentes Externas (tablero + gacetillas).
+ * admin-app.js — sin Noticias, con Fuentes Externas (gacetillas).
  */
 const MAX_CONCEJALES = 12;
 let DATA = { concejales: [], banners: [], bloques: [], temas: [] };
-let TABLERO_DATA = { actualizado: null, origen: 'manual', kpis: [], graficos: [] };
 let GACETILLAS_DATA = [];
 
 const DEFAULT_CONFIG = {
@@ -11,15 +10,14 @@ const DEFAULT_CONFIG = {
     anuncio: { visible:false, texto:'', link:'', color:'#c9a227', textoColor:'#122a44' },
     hero: { altura:'md', titulo:'Gestión Legislativa Abierta', subtitulo:'Accedé a toda la información pública sobre proyectos, ordenanzas y actividades del Concejo.', autoplay:6000, overlay:'medio', mostrarFlechas:true, mostrarDots:true },
     carrusel: { tamaño:'mediano', autoplay:4000, nombrePos:'abajo', efecto:'coverflow', mostrarCargo:true, mostrarFlechas:true, mostrarDots:true, mostrarEnlace:true, enlaceTexto:'Ver todos los concejales →', enlaceUrl:'#concejales' },
-    fuentes: { tablero: { enVivo:true }, gacetillas: { enVivo:true, categorias:'' } },
+    fuentes: { gacetillas: { enVivo:true, categorias:'' } },
     sections: [
         { id:'accesos-rapidos', name:'Accesos Rápidos', titleKey:'accesos_titulo', defaultTitle:'Accesos Rápidos', visible:false, order:1, size:'normal' },
         { id:'institucional', name:'Institucional', titleKey:'institucional_titulo', defaultTitle:'Institucional', visible:true, order:2, size:'normal' },
-        { id:'tablero', name:'Tablero de Datos', titleKey:'tablero_titulo', defaultTitle:'📊 Tablero de Datos Abiertos', visible:true, order:3, size:'normal' },
-        { id:'gacetillas', name:'Gacetillas de la Muni', titleKey:'gacetillas_titulo', defaultTitle:'🗞️ Gacetillas de la Ciudad', visible:true, order:4, size:'normal' },
-        { id:'actividad', name:'Actividad Legislativa', titleKey:'actividad_titulo', defaultTitle:'Actividad Legislativa', visible:true, order:5, size:'normal' },
-        { id:'temas-sesion', name:'Temas de Sesión', titleKey:'temas_titulo', defaultTitle:'📋 Temas de la Próxima Sesión', visible:true, order:6, size:'normal' },
-        { id:'contacto', name:'Contacto', titleKey:'contacto_titulo', defaultTitle:'Contacto', visible:true, order:7, size:'normal' }
+        { id:'gacetillas', name:'Gacetillas de la Muni', titleKey:'gacetillas_titulo', defaultTitle:'🗞️ Gacetillas de la Ciudad', visible:true, order:3, size:'normal' },
+        { id:'actividad', name:'Actividad Legislativa', titleKey:'actividad_titulo', defaultTitle:'Actividad Legislativa', visible:true, order:4, size:'normal' },
+        { id:'temas-sesion', name:'Temas de Sesión', titleKey:'temas_titulo', defaultTitle:'📋 Temas de la Próxima Sesión', visible:true, order:5, size:'normal' },
+        { id:'contacto', name:'Contacto', titleKey:'contacto_titulo', defaultTitle:'Contacto', visible:true, order:6, size:'normal' }
     ],
     textos: {},
     contacto: { telefono:'(54) 261-449-5100', email:'contacto@concejomendoza.gob.ar', direccion:'9 de Julio 500 — Mendoza', horario:'Lunes a Viernes de 8:00 a 14:00 hs' },
@@ -70,17 +68,16 @@ async function showPanel(){ const l=$('loginScreen'),p=$('adminPanel'); if(l) l.
 
 async function loadAllData() {
     try {
-        const [c,b,bl,t,cfg,tab,gac] = await Promise.all([
+        const [c,b,bl,t,cfg,gac] = await Promise.all([
             GitHubAPI.getFile('data/concejales.json'), GitHubAPI.getFile('data/banners.json'),
             GitHubAPI.getFile('data/bloques.json'), GitHubAPI.getFile('data/temas_sesion.json'),
-            GitHubAPI.getFile('data/config.json'), GitHubAPI.getFile('data/tablero.json'),
+            GitHubAPI.getFile('data/config.json'),
             GitHubAPI.getFile('data/gacetillas.json')
         ]);
         DATA.concejales = c.content?JSON.parse(c.content):[];
         DATA.banners = b.content?JSON.parse(b.content):[];
         DATA.bloques = bl.content?JSON.parse(bl.content):[];
         DATA.temas = t.content?JSON.parse(t.content):[];
-        if (tab.content) { try { TABLERO_DATA = JSON.parse(tab.content); } catch(e) {} }
         if (gac.content) { try { GACETILLAS_DATA = JSON.parse(gac.content); } catch(e) {} }
         if (cfg.content) { try { SITE_CONFIG = mergeConfig(DEFAULT_CONFIG, JSON.parse(cfg.content)); } catch(e) { SITE_CONFIG = JSON.parse(JSON.stringify(DEFAULT_CONFIG)); } }
         else SITE_CONFIG = JSON.parse(JSON.stringify(DEFAULT_CONFIG));
@@ -136,10 +133,7 @@ function renderPersonalizacion(){
     setVal('he-altura',C.hero.altura); setVal('he-autoplay',String(C.hero.autoplay)); setVal('he-overlay',C.hero.overlay); setChk('he-flechas',C.hero.mostrarFlechas); setChk('he-dots',C.hero.mostrarDots); setVal('he-titulo',C.hero.titulo); setVal('he-subtitulo',C.hero.subtitulo);
     setVal('ca-tamano',C.carrusel.tamaño); setVal('ca-autoplay',String(C.carrusel.autoplay)); setVal('ca-nombrepos',C.carrusel.nombrePos); setVal('ca-efecto',C.carrusel.efecto); setChk('ca-cargo',C.carrusel.mostrarCargo); setChk('ca-flechas',C.carrusel.mostrarFlechas); setChk('ca-dots',C.carrusel.mostrarDots); setChk('ca-enlace',C.carrusel.mostrarEnlace); setVal('ca-enlaceTexto',C.carrusel.enlaceTexto); setVal('ca-enlaceUrl',C.carrusel.enlaceUrl);
     // Fuentes externas
-    const secTab = C.sections.find(s=>s.id==='tablero'), secGac = C.sections.find(s=>s.id==='gacetillas');
-    setChk('fu-tab-visible', secTab ? secTab.visible : true);
-    setChk('fu-tab-vivo', C.fuentes.tablero.enVivo);
-    setVal('fu-tab-titulo', (C.textos && C.textos.tablero_titulo) || (secTab ? secTab.defaultTitle : ''));
+    const secGac = C.sections.find(s=>s.id==='gacetillas');
     setChk('fu-gac-visible', secGac ? secGac.visible : true);
     setChk('fu-gac-vivo', C.fuentes.gacetillas.enVivo);
     setVal('fu-gac-cats', C.fuentes.gacetillas.categorias || '');
@@ -149,7 +143,7 @@ function renderPersonalizacion(){
     setVal('th-primary',C.theme.primary); setVal('th-accent',C.theme.accent); setVal('la-fuente',C.layout.fuente); setVal('la-ancho',C.layout.ancho); setChk('la-backtop',C.layout.mostrarBackTop); setChk('la-alternado',C.layout.fondosAlternados); setChk('la-darkpublic',C.layout.modoOscuroPublico);
     setVal('se-titulo',C.site.seoTitulo); setVal('se-desc',C.site.seoDescripcion);
     renderSectionsEditor(); renderEnlacesEditor(); renderRedesEditor();
-    renderKpiEditor(); renderGacetillasEditor();
+    renderGacetillasEditor();
 }
 function toggleLogoFields(){ const tipo=val('si-logoTipo'); const ef=$('logoEmojiField'),imf=$('logoImgField'); if(ef) ef.style.display=tipo==='emoji'?'block':'none'; if(imf) imf.style.display=tipo==='imagen'?'block':'none'; }
 
@@ -166,31 +160,6 @@ function removeEnlace(i){ SITE_CONFIG.enlaces.splice(i,1); renderEnlacesEditor()
 function initEnlaceDrag(){ const items=document.querySelectorAll('#enlaces-editor .enlace-item'); let dragged=null; items.forEach(item=>{ item.addEventListener('dragstart',()=>{dragged=item;item.classList.add('dragging');}); item.addEventListener('dragend',()=>{item.classList.remove('dragging');reorderEnlaces();}); item.addEventListener('dragover',e=>{ e.preventDefault(); if(dragged===item) return; const r=item.getBoundingClientRect(); const mid=r.top+r.height/2; if(e.clientY<mid) item.parentNode.insertBefore(dragged,item); else item.parentNode.insertBefore(dragged,item.nextSibling); }); }); }
 function reorderEnlaces(){ const orden=[...document.querySelectorAll('#enlaces-editor .enlace-item')].map(el=>parseInt(el.dataset.idx)); SITE_CONFIG.enlaces=orden.map(i=>SITE_CONFIG.enlaces[i]); renderEnlacesEditor(); }
 function renderRedesEditor(){ const cont=$('redes-editor'); if(!cont) return; const labels={facebook:'Facebook',instagram:'Instagram',twitter:'X / Twitter',youtube:'YouTube',whatsapp:'WhatsApp'}; cont.innerHTML=Object.entries(SITE_CONFIG.redes).map(([k,v])=>`<div style="display:flex;gap:.8rem;align-items:center;margin-bottom:.7rem;flex-wrap:wrap;"><input type="checkbox" class="chk" ${v.visible?'checked':''} onchange="SITE_CONFIG.redes['${k}'].visible=this.checked"><label style="width:110px;font-weight:600;">${labels[k]||k}</label><input type="url" value="${esc(v.url||'')}" placeholder="https://..." style="flex:1;min-width:200px;padding:.4rem;border:1px solid var(--border);border-radius:6px;background:var(--surface);color:var(--text);" onchange="SITE_CONFIG.redes['${k}'].url=this.value"></div>`).join(''); }
-
-/* ----- TABLERO: editor KPIs + sync ----- */
-function renderKpiEditor(){
-    const cont=$('kpi-editor'); if(!cont) return;
-    const kpis = TABLERO_DATA.kpis || (TABLERO_DATA.kpis = []);
-    while (kpis.length < 3) kpis.push({ id:'kpi'+(kpis.length+1), titulo:'', valor:0, formato:'numero', detalle:'' });
-    cont.innerHTML = kpis.slice(0,3).map((k,i)=>`<div class="form-grid" style="margin-bottom:.6rem;"><div class="field"><label>Título</label><input type="text" id="kpi-${i}-titulo" value="${esc(k.titulo)}"></div><div class="field"><label>Valor</label><input type="number" id="kpi-${i}-valor" value="${k.valor}"></div><div class="field"><label>Formato</label><select id="kpi-${i}-formato"><option value="numero" ${k.formato==='numero'?'selected':''}>Número</option><option value="moneda" ${k.formato==='moneda'?'selected':''}>Moneda ($)</option></select></div><div class="field"><label>Detalle</label><input type="text" id="kpi-${i}-detalle" value="${esc(k.detalle||'')}"></div></div>`).join('');
-    const info=$('tablero-sync-info'); if(info) info.textContent = TABLERO_DATA.actualizado ? `Última actualización: ${String(TABLERO_DATA.actualizado).slice(0,10)} · Origen: ${TABLERO_DATA.origen||'manual'}` : 'Sin datos todavía: usá "Sincronizar desde Datos Abiertos".';
-}
-function saveTableroManual(){
-    for (let i=0;i<3;i++){ const k=TABLERO_DATA.kpis[i]; k.titulo=val(`kpi-${i}-titulo`); k.valor=Number(val(`kpi-${i}-valor`))||0; k.formato=val(`kpi-${i}-formato`); k.detalle=val(`kpi-${i}-detalle`); }
-    TABLERO_DATA.origen='manual'; TABLERO_DATA.actualizado=new Date().toISOString();
-    GitHubAPI.putFile('data/tablero.json', JSON.stringify(TABLERO_DATA,null,2),'Update tablero manual')
-        .then(()=>showStatus('✅ KPIs guardados','success')).catch(e=>showStatus('Error: '+e.message,'error'));
-}
-async function syncTablero(){
-    try {
-        showStatus('Consultando Datos Abiertos de la Muni...','info');
-        const vivo = await FuentesExternas.fetchTableroVivo();
-        TABLERO_DATA = { ...TABLERO_DATA, ...vivo };
-        await GitHubAPI.putFile('data/tablero.json', JSON.stringify(TABLERO_DATA,null,2),'Sync tablero desde Datos Abiertos');
-        showStatus('✅ Tablero sincronizado','success');
-        renderKpiEditor();
-    } catch(e){ showStatus('❌ No se pudo sincronizar: '+e.message,'error'); }
-}
 
 /* ----- GACETILLAS: editor + sync ----- */
 function renderGacetillasEditor(){
@@ -224,12 +193,9 @@ function collectPersonalizacion(){
     C.textos.hero_titulo=C.hero.titulo; C.textos.hero_subtitulo=C.hero.subtitulo;
     C.carrusel.tamaño=val('ca-tamano'); C.carrusel.autoplay=parseInt(val('ca-autoplay'),10); C.carrusel.nombrePos=val('ca-nombrepos'); C.carrusel.efecto=val('ca-efecto'); C.carrusel.mostrarCargo=$('ca-cargo').checked; C.carrusel.mostrarFlechas=$('ca-flechas').checked; C.carrusel.mostrarDots=$('ca-dots').checked; C.carrusel.mostrarEnlace=$('ca-enlace').checked; C.carrusel.enlaceTexto=val('ca-enlaceTexto').trim(); C.carrusel.enlaceUrl=val('ca-enlaceUrl').trim();
     // Fuentes externas
-    C.fuentes.tablero.enVivo=$('fu-tab-vivo').checked;
     C.fuentes.gacetillas.enVivo=$('fu-gac-vivo').checked;
     C.fuentes.gacetillas.categorias=val('fu-gac-cats').trim();
-    const secTab=C.sections.find(s=>s.id==='tablero'); if(secTab) secTab.visible=$('fu-tab-visible').checked;
     const secGac=C.sections.find(s=>s.id==='gacetillas'); if(secGac) secGac.visible=$('fu-gac-visible').checked;
-    C.textos.tablero_titulo=val('fu-tab-titulo').trim();
     C.textos.gacetillas_titulo=val('fu-gac-titulo').trim();
     // Resto
     C.contacto.telefono=val('co-telefono').trim(); C.contacto.email=val('co-email').trim(); C.contacto.direccion=val('co-direccion').trim(); C.contacto.horario=val('co-horario').trim();

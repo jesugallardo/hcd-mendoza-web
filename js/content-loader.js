@@ -1,8 +1,19 @@
 /**
  * content-loader.js
- * Carga contenido + personalización + tablero y gacetillas (modo mixto).
+ * Carga contenido + personalización y gacetillas (modo mixto).
  */
 (async function() {
+    /* Scroll-reveal de secciones (animación al hacer scroll) */
+    const revealTargets = document.querySelectorAll('#main-content > section');
+    if ('IntersectionObserver' in window) {
+        const io = new IntersectionObserver((entries) => {
+            entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in-view'); io.unobserve(e.target); } });
+        }, { threshold: .12 });
+        revealTargets.forEach(s => io.observe(s));
+    } else {
+        revealTargets.forEach(s => s.classList.add('in-view'));
+    }
+
     const OWNER = 'jesugallardo';
     const REPO = 'hcd-mendoza-web';
     const BRANCH = 'main';
@@ -208,50 +219,7 @@
     }
     await loadConcejales();
 
-    /* ================= 4. TABLERO (mixto) ================= */
-    function fmtValor(v, f){ if (f==='moneda') return '$ ' + new Intl.NumberFormat('es-AR',{maximumFractionDigits:0}).format(v); return new Intl.NumberFormat('es-AR').format(v); }
-    function animateCount(el){ const target = Number(el.dataset.v)||0, f = el.dataset.f, t0 = performance.now(), dur = 900; function step(t){ const p = Math.min(1,(t-t0)/dur); el.textContent = fmtValor(Math.round(target*(0.2+0.8*p*p)), f); if (p<1) requestAnimationFrame(step); else el.textContent = fmtValor(target, f); } requestAnimationFrame(step); }
-    let chartInstances = [];
-    function renderCharts(el, graficos) {
-        if (!el) return;
-        chartInstances.forEach(c => c.destroy()); chartInstances = [];
-        if (typeof Chart === 'undefined' || !graficos.length) { el.innerHTML = ''; return; }
-        el.innerHTML = graficos.map((g,i)=>`<div class="chart-card"><h4>${esc(g.titulo)}</h4><canvas id="chart-${i}"></canvas></div>`).join('');
-        const css = getComputedStyle(document.documentElement);
-        const primary = css.getPropertyValue('--primary').trim() || '#1a3a5c';
-        const gold = css.getPropertyValue('--gold').trim() || '#c9a227';
-        const palette = [primary, gold, '#5b8db8', '#8fbf9f', '#d98c5f', '#7a6fb8', '#4aa3a8', '#b85b8d'];
-        graficos.forEach((g,i)=>{
-            const ctx = $('chart-'+i);
-            const type = g.tipo==='doughnut' ? 'doughnut' : (g.tipo==='line' ? 'line' : 'bar');
-            chartInstances.push(new Chart(ctx, { type,
-                data: { labels: g.labels, datasets: [{ label: g.titulo, data: g.data, backgroundColor: type==='line' ? primary : palette, borderColor: primary, fill: type==='line', tension: .35 }] },
-                options: { responsive: true, plugins: { legend: { display: type==='doughnut', position: 'bottom', labels: { boxWidth: 12, font: { size: 10 } } } } } }));
-        });
-    }
-    async function loadTablero() {
-        const kpisEl = $('tablero-kpis'), chartsEl = $('tablero-graficos'), badge = $('tablero-badge');
-        if (!kpisEl) return;
-        const synced = await loadJSON('data/tablero.json');
-        let data = (synced.ok && synced.data && (synced.data.kpis || synced.data.graficos)) ? synced.data : null;
-        let enVivo = false;
-        const cfgT = cfg && cfg.fuentes && cfg.fuentes.tablero ? cfg.fuentes.tablero : {};
-        if (cfgT.enVivo !== false && typeof FuentesExternas !== 'undefined') {
-            try {
-                const vivo = await FuentesExternas.fetchTableroVivo();
-                data = data ? { ...data, kpis: vivo.kpis.length ? vivo.kpis : data.kpis, graficos: vivo.graficos.length ? vivo.graficos : (data.graficos||[]), actualizado: vivo.actualizado, origen: 'vivo' } : vivo;
-                enVivo = true;
-            } catch (e) { /* queda el respaldo sincronizado */ }
-        }
-        if (!data || (!(data.kpis||[]).length && !(data.graficos||[]).length)) { setStateEmpty(kpisEl, 'Aún no hay datos en el tablero. Sincronizá desde el panel admin.'); return; }
-        if (badge) badge.textContent = enVivo ? '🟢 Datos en vivo — Portal de Datos Abiertos' : `🕐 Respaldo sync: ${data.actualizado ? String(data.actualizado).slice(0,10) : '—'}`;
-        kpisEl.innerHTML = (data.kpis||[]).map(k=>`<div class="kpi-card"><div class="kpi-valor" data-v="${k.valor}" data-f="${k.formato||'numero'}">0</div><div class="kpi-titulo">${esc(k.titulo)}</div><div class="kpi-detalle">${esc(k.detalle||'')}</div></div>`).join('');
-        kpisEl.querySelectorAll('.kpi-valor').forEach(animateCount);
-        renderCharts(chartsEl, data.graficos||[]);
-    }
-    await loadTablero();
-
-    /* ================= 5. GACETILLAS (mixto) ================= */
+    /* ================= 4. GACETILLAS (mixto) ================= */
     let GAC_LISTA = [], GAC_FILTRO = 'todas', GAC_PAGINA = 6;
     function renderGacetillas() {
         const canvas = $('gac-canvas'), filtros = $('gac-filtros'), mas = $('gac-mas');
@@ -294,7 +262,7 @@
     }
     await loadGacetillas();
 
-    /* ================= 6. TEMAS ================= */
+    /* ================= 5. TEMAS ================= */
     async function loadTemas() {
         const ct = $('temas-sesion-lista'), ca = $('temas-aprobados-lista');
         setStateLoading(ct,'Cargando temas...'); setStateLoading(ca,'Cargando temas aprobados...');

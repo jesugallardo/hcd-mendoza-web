@@ -47,8 +47,10 @@
         .brand h1 small { display:block; font-weight:400; opacity:.8; font-size:.8rem; }
         nav.main-nav ul { list-style:none; display:flex; gap:.25rem; align-items:center; }
         nav.main-nav > ul > li { position:relative; }
-        nav.main-nav a { display:block; padding:.6rem .85rem; color:#fff; text-decoration:none; font-size:.92rem; border-radius:6px; transition:background .2s; white-space:nowrap; }
+        nav.main-nav a { display:block; padding:.6rem .85rem; color:#fff; text-decoration:none; font-size:.92rem; border-radius:6px; transition:background .2s; white-space:nowrap; position:relative; }
         nav.main-nav a:hover, nav.main-nav a:focus { background:rgba(255,255,255,.14); }
+        nav.main-nav > ul > li > a::after { content:''; position:absolute; left:50%; bottom:.15rem; width:0; height:2px; background:var(--gold); transition:width .25s ease, left .25s ease; }
+        nav.main-nav > ul > li > a:hover::after { width:60%; left:20%; }
         .dropdown-menu { display:none; position:absolute; top:100%; left:0; background:var(--bg); min-width:230px; border-radius:8px; box-shadow:0 8px 24px rgba(0,0,0,.18); overflow:hidden; padding:.35rem 0; }
         .dropdown:hover .dropdown-menu, .dropdown:focus-within .dropdown-menu { display:block; }
         nav.main-nav .dropdown-menu a { color:var(--text); padding:.55rem 1rem; border-radius:0; }
@@ -93,15 +95,24 @@
         section.section-featured .card ul { color:rgba(255,255,255,.9); }
         section.section-hidden { display:none !important; }
 
+        /* ===== Animaciones ===== */
+        @media (prefers-reduced-motion: no-preference) {
+            #main-content > section { opacity:0; transform:translateY(28px); transition:opacity .7s ease, transform .7s ease; }
+            #main-content > section.in-view { opacity:1; transform:none; }
+            .slide.is-active { animation:heroZoom 8s ease-out forwards; }
+            @keyframes heroZoom { from{ transform:scale(1.06); } to{ transform:scale(1); } }
+        }
+
         .section-title { font-size:1.8rem; color:var(--primary); margin-bottom:.35rem; }
         .section-sub { color:var(--text-muted); margin-bottom:2rem; max-width:720px; }
         .rule { width:56px; height:4px; background:var(--gold); border-radius:2px; margin:.6rem 0 1.5rem; }
         .grid-2 { display:grid; grid-template-columns:1fr 1fr; gap:2rem; }
-        .card { background:var(--bg); border:1px solid var(--border); border-radius:var(--radius); padding:1.5rem; box-shadow:var(--shadow); }
+        .card { background:var(--bg); border:1px solid var(--border); border-radius:var(--radius); padding:1.5rem; box-shadow:var(--shadow); transition:transform .25s ease, box-shadow .25s ease; }
+        .card:hover { transform:translateY(-3px); box-shadow:0 10px 24px rgba(20,40,70,.12); }
         .card h3 { color:var(--primary); font-size:1.1rem; margin-bottom:.6rem; }
         .card ul { padding-left:1.2rem; color:var(--text-muted); }
-        .btn { display:inline-block; background:var(--primary); color:#fff; padding:.7rem 1.3rem; border-radius:8px; text-decoration:none; font-weight:600; border:none; cursor:pointer; font-size:.95rem; transition:background .2s; }
-        .btn:hover { background:var(--primary-dark); }
+        .btn { display:inline-block; background:var(--primary); color:#fff; padding:.7rem 1.3rem; border-radius:8px; text-decoration:none; font-weight:600; border:none; cursor:pointer; font-size:.95rem; transition:background .2s, transform .2s, box-shadow .2s; }
+        .btn:hover { background:var(--primary-dark); transform:translateY(-2px); box-shadow:0 8px 18px rgba(20,40,70,.2); }
         .btn.dorado { background:var(--gold); color:var(--primary-dark); }
         .btn.dorado:hover { background:#b8931f; }
         .btn.secondary { background:var(--bg); color:var(--text); border:1px solid var(--border); }
@@ -159,16 +170,7 @@
             .cf-carousel.cf-lg .cf-slide { width:260px; height:340px; }
         }
 
-        /* ===== Tablero de Datos Abiertos ===== */
-        .kpi-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:1.2rem; margin-bottom:2rem; }
-        .kpi-card { background:var(--bg); border:1px solid var(--border); border-left:5px solid var(--gold); border-radius:var(--radius); padding:1.4rem; box-shadow:var(--shadow); transition:transform .2s; }
-        .kpi-card:hover { transform:translateY(-3px); }
-        .kpi-card .kpi-valor { font-size:1.9rem; font-weight:800; color:var(--primary); }
-        .kpi-card .kpi-titulo { font-size:.9rem; font-weight:700; }
-        .kpi-card .kpi-detalle { font-size:.75rem; color:var(--text-muted); margin-top:.3rem; }
-        .charts-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:1.2rem; }
-        .chart-card { background:var(--bg); border:1px solid var(--border); border-radius:var(--radius); padding:1rem; box-shadow:var(--shadow); }
-        .chart-card h4 { font-size:.9rem; color:var(--primary); margin-bottom:.6rem; }
+        /* ===== Fuente de datos (gacetillas) ===== */
         .fuente-badge { display:inline-block; font-size:.72rem; background:var(--bg-alt); border:1px solid var(--border); padding:.15rem .6rem; border-radius:999px; color:var(--text-muted); }
         .fuente-link { margin-top:1.4rem; font-size:.8rem; color:var(--text-muted); }
         .fuente-link a { color:var(--primary); }
@@ -186,8 +188,6 @@
         .gac-body time { font-size:.72rem; color:var(--gold); font-weight:700; }
         .gac-body p { font-size:.85rem; color:var(--text-muted); }
         .gac-body a { display:inline-block; margin-top:.6rem; font-size:.85rem; font-weight:600; color:var(--primary); text-decoration:none; }
-        @media (max-width:900px) { .kpi-grid, .charts-grid { grid-template-columns:1fr; } }
-
         .temas-box ul { list-style:none; }
         .temas-box li { background:var(--bg); border:1px solid var(--border); border-radius:var(--radius); padding:.9rem 1.1rem; margin-bottom:.7rem; box-shadow:var(--shadow); }
         .temas-box li strong { color:var(--primary); display:block; margin-top:.25rem; }
@@ -269,7 +269,6 @@
                             <a href="#temas-sesion">Temas de la Próxima Sesión</a>
                         </div>
                     </li>
-                    <li><a href="#tablero">Tablero</a></li>
                     <li><a href="#gacetillas">Gacetillas</a></li>
                     <li><a href="#contacto">Contacto</a></li>
                 </ul>
@@ -341,20 +340,8 @@
             </div>
         </section>
 
-        <!-- ===== TABLERO DE DATOS ABIERTOS ===== -->
-        <section id="tablero" class="alt">
-            <div class="container">
-                <h2 class="section-title" data-text="tablero_titulo">📊 Tablero de Datos Abiertos</h2>
-                <div class="rule"></div>
-                <p class="section-sub">Presupuesto, obras y reclamos de la Ciudad de Mendoza. <span class="fuente-badge" id="tablero-badge"></span></p>
-                <div class="kpi-grid" id="tablero-kpis"><div class="loading"><div class="spinner"></div>Cargando indicadores...</div></div>
-                <div class="charts-grid" id="tablero-graficos"></div>
-                <p class="fuente-link">Fuente: <a href="https://datos.ciudaddemendoza.gov.ar/" target="_blank" rel="noopener">Portal de Datos Abiertos — Ciudad de Mendoza</a> (licencia CC-BY 4.0)</p>
-            </div>
-        </section>
-
         <!-- ===== CANVAS DE GACETILLAS ===== -->
-        <section id="gacetillas">
+        <section id="gacetillas" class="alt">
             <div class="container">
                 <h2 class="section-title" data-text="gacetillas_titulo">🗞️ Gacetillas de la Ciudad</h2>
                 <div class="rule"></div>
@@ -501,7 +488,6 @@
     });
     </script>
 
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
     <script src="js/fuentes-externas.js"></script>
     <script src="js/content-loader.js"></script>
 </body>
