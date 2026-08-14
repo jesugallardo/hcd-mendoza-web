@@ -71,7 +71,7 @@
       "titleKey": "tablero_titulo",
       "defaultTitle": "📊 Tablero de Datos Abiertos",
       "visible": true,
-      "order": 3,
+      "order": 4,
       "size": "normal"
     },
     {
@@ -80,7 +80,7 @@
       "titleKey": "gacetillas_titulo",
       "defaultTitle": "🗞️ Gacetillas de la Ciudad",
       "visible": true,
-      "order": 4,
+      "order": 5,
       "size": "normal"
     },
     {
@@ -89,7 +89,7 @@
       "titleKey": "actividad_titulo",
       "defaultTitle": "Actividad Legislativa",
       "visible": true,
-      "order": 5,
+      "order": 3,
       "size": "normal"
     },
     {
