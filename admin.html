@@ -56,7 +56,7 @@
         .item-info { flex:1; min-width:200px; }
         .item-info h4 { color:var(--text); font-size:.95rem; }
         .item-info small { color:var(--text-muted); font-size:.8rem; }
-        .item-actions { display:flex; gap:.5rem; }
+        .item-actions { display:flex; gap:.5rem; align-items:center; }
         .item-actions .btn { padding:.45rem .8rem; font-size:.85rem; }
         .status-bar { position:fixed; bottom:1.5rem; left:50%; transform:translateX(-50%) translateY(20px); background:var(--primary); color:#fff; padding:.7rem 1.4rem; border-radius:999px; font-size:.9rem; opacity:0; pointer-events:none; transition:opacity .3s,transform .3s; z-index:200; box-shadow:var(--shadow); }
         .status-bar.show { opacity:1; transform:translateX(-50%) translateY(0); }
@@ -71,7 +71,7 @@
         .section-item .section-info { flex:1; min-width:140px; }
         .section-item .section-info h4 { font-size:.92rem; }
         .section-controls, .enlace-controls { display:flex; gap:.5rem; align-items:center; flex-wrap:wrap; }
-        .section-controls select, .enlace-controls select { padding:.4rem; border:1px solid var(--border); border-radius:4px; background:var(--bg); color:var(--text); font-size:.85rem; }
+        .section-controls select { padding:.4rem; border:1px solid var(--border); border-radius:4px; background:var(--bg); color:var(--text); font-size:.85rem; }
         input[type="checkbox"].chk { width:20px; height:20px; cursor:pointer; }
         /* Tarjetas del editor de personalización (reflejo de la web) */
         .custom-card { border:1px solid var(--border); border-radius:var(--radius); margin-bottom:1.2rem; background:var(--bg); overflow:hidden; }
@@ -83,7 +83,7 @@
         .custom-card .card-body { padding:1.25rem; }
         .switch-row { display:flex; align-items:center; gap:.8rem; margin-bottom:.8rem; }
         .switch-row label { font-size:.9rem; }
-        .save-strip { position:sticky; top:0; z-index:50; background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:.8rem 1.2rem; display:flex; justify-content:space-between; align-items:center; margin-bottom:1.2rem; box-shadow:var(--shadow); }
+        .save-strip { position:sticky; top:0; z-index:50; background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:.8rem 1.2rem; display:flex; justify-content:space-between; align-items:center; margin-bottom:1.2rem; box-shadow:var(--shadow); flex-wrap:wrap; gap:.6rem; }
         @media (max-width:720px) { .form-grid { grid-template-columns:1fr; } }
     </style>
 </head>
@@ -92,6 +92,7 @@
         <button class="icon-btn" id="themeToggle" type="button" aria-label="Cambiar modo oscuro">🌙 Modo Oscuro</button>
     </div>
 
+    <!-- ===== LOGIN ===== -->
     <div id="loginScreen">
         <div class="login-card">
             <h1>🔐 Panel Admin HCD Mendoza</h1>
@@ -115,6 +116,7 @@
         </div>
     </div>
 
+    <!-- ===== PANEL ===== -->
     <div id="adminPanel">
         <div class="panel-header">
             <div><h2>📋 Panel de Administración</h2><span id="repoInfo">Cargando...</span></div>
@@ -125,12 +127,12 @@
             <button class="tab active" type="button" data-tab="concejales">👥 Concejales</button>
             <button class="tab" type="button" data-tab="bloques">🧩 Bloques</button>
             <button class="tab" type="button" data-tab="banners">🖼️ Banners</button>
-            <button class="tab" type="button" data-tab="noticias">📰 Noticias</button>
             <button class="tab" type="button" data-tab="temas">📋 Temas Sesión</button>
             <button class="tab" type="button" data-tab="personalizacion">🎨 Personalización</button>
+            <button class="tab" type="button" data-tab="fuentes">📡 Fuentes externas</button>
         </div>
 
-        <!-- CONCEJALES -->
+        <!-- ===== CONCEJALES ===== -->
         <div class="panel-section active" id="sec-concejales">
             <h3>Gestión de Concejales <span class="counter" id="cc-counter"></span></h3>
             <div class="form-grid">
@@ -152,7 +154,7 @@
             <div id="listaConcejales" style="margin-top:1.5rem;"></div>
         </div>
 
-        <!-- BLOQUES -->
+        <!-- ===== BLOQUES ===== -->
         <div class="panel-section" id="sec-bloques">
             <h3>Gestión de Bloques Políticos</h3>
             <div class="form-grid">
@@ -165,7 +167,7 @@
             <div id="listaBloques" style="margin-top:1.5rem;"></div>
         </div>
 
-        <!-- BANNERS -->
+        <!-- ===== BANNERS ===== -->
         <div class="panel-section" id="sec-banners">
             <h3>Banners del Slider Principal</h3>
             <div class="form-grid">
@@ -178,23 +180,7 @@
             <div id="listaBanners" style="margin-top:1.5rem;"></div>
         </div>
 
-        <!-- NOTICIAS -->
-        <div class="panel-section" id="sec-noticias">
-            <h3>Gestión de Noticias</h3>
-            <div class="form-grid">
-                <div class="field"><label for="nt-titulo">Título *</label><input type="text" id="nt-titulo"></div>
-                <div class="field"><label for="nt-fecha">Fecha *</label><input type="date" id="nt-fecha"></div>
-                <div class="field full"><label for="nt-resumen">Resumen (corto) *</label><textarea id="nt-resumen" rows="2"></textarea></div>
-                <div class="field full"><label for="nt-contenido">Contenido completo *</label><textarea id="nt-contenido" rows="6"></textarea></div>
-                <div class="field"><label for="nt-imagen">Imagen destacada (opcional)</label><input type="file" id="nt-imagen" accept="image/*"><img class="preview" id="nt-imagen-preview" alt="Vista previa"></div>
-                <div class="field"><label for="nt-link">Enlace externo (opcional)</label><input type="url" id="nt-link" placeholder="https://..."></div>
-            </div>
-            <input type="hidden" id="nt-edit-index" value="-1">
-            <div class="btn-row"><button class="btn" type="button" onclick="saveNoticia()">💾 Guardar noticia</button><button class="btn secondary" type="button" onclick="resetNoticiaForm()">Cancelar</button></div>
-            <div id="listaNoticias" style="margin-top:1.5rem;"></div>
-        </div>
-
-        <!-- TEMAS -->
+        <!-- ===== TEMAS ===== -->
         <div class="panel-section" id="sec-temas">
             <h3>Temas a Tratar en la Próxima Sesión</h3>
             <div class="form-grid">
@@ -246,10 +232,7 @@
                         <div class="field"><label for="si-subtitulo">Subtítulo</label><input type="text" id="si-subtitulo"></div>
                         <div class="field">
                             <label for="si-logoTipo">Tipo de logo</label>
-                            <select id="si-logoTipo" onchange="toggleLogoFields()">
-                                <option value="emoji">Emoji</option>
-                                <option value="imagen">Imagen</option>
-                            </select>
+                            <select id="si-logoTipo" onchange="toggleLogoFields()"><option value="emoji">Emoji</option><option value="imagen">Imagen</option></select>
                         </div>
                         <div class="field" id="logoEmojiField"><label for="si-logoEmoji">Emoji del logo</label><input type="text" id="si-logoEmoji" maxlength="4"></div>
                         <div class="field" id="logoImgField" style="display:none;"><label for="si-logoImagen">Subir logo (PNG)</label><input type="file" id="si-logoImagen" accept="image/*"><img class="preview" id="si-logo-preview" alt="Logo"></div>
@@ -290,38 +273,23 @@
                     <div id="sections-editor"></div>
                 </div>
             </details>
-                        <!-- 🎠 CARRUSEL DE CONCEJALES -->
+
+            <!-- 🎠 CARRUSEL DE CONCEJALES -->
             <details class="custom-card" open>
                 <summary>🎠 Carrusel de Concejales</summary>
                 <div class="card-body">
                     <div class="form-grid">
                         <div class="field"><label for="ca-tamano">Tamaño de las tarjetas</label>
-                            <select id="ca-tamano">
-                                <option value="pequeño">Pequeño (220×280)</option>
-                                <option value="mediano">Mediano (300×380)</option>
-                                <option value="grande">Grande (380×480)</option>
-                            </select>
+                            <select id="ca-tamano"><option value="pequeño">Pequeño (220×280)</option><option value="mediano">Mediano (300×380)</option><option value="grande">Grande (380×480)</option></select>
                         </div>
                         <div class="field"><label for="ca-autoplay">Rotación automática</label>
-                            <select id="ca-autoplay">
-                                <option value="0">Desactivada</option>
-                                <option value="3000">Cada 3 segundos</option>
-                                <option value="4000">Cada 4 segundos</option>
-                                <option value="6000">Cada 6 segundos</option>
-                            </select>
+                            <select id="ca-autoplay"><option value="0">Desactivada</option><option value="3000">Cada 3 segundos</option><option value="4000">Cada 4 segundos</option><option value="6000">Cada 6 segundos</option></select>
                         </div>
                         <div class="field"><label for="ca-nombrepos">Posición del nombre</label>
-                            <select id="ca-nombrepos">
-                                <option value="abajo">Abajo (sobre la foto)</option>
-                                <option value="arriba">Arriba (sobre la foto)</option>
-                                <option value="oculto">Oculto</option>
-                            </select>
+                            <select id="ca-nombrepos"><option value="abajo">Abajo (sobre la foto)</option><option value="arriba">Arriba (sobre la foto)</option><option value="oculto">Oculto</option></select>
                         </div>
                         <div class="field"><label for="ca-efecto">Efecto de transición</label>
-                            <select id="ca-efecto">
-                                <option value="coverflow">Coverflow 3D (rotado)</option>
-                                <option value="plano">Plano (sin rotación)</option>
-                            </select>
+                            <select id="ca-efecto"><option value="coverflow">Coverflow 3D (rotado)</option><option value="plano">Plano (sin rotación)</option></select>
                         </div>
                         <div class="field full" style="display:flex;gap:1.6rem;flex-wrap:wrap;">
                             <div class="switch-row" style="margin:0;"><input type="checkbox" class="chk" id="ca-cargo"><label for="ca-cargo">Mostrar cargo</label></div>
@@ -334,6 +302,7 @@
                     </div>
                 </div>
             </details>
+
             <!-- 🔗 ACCESOS RÁPIDOS -->
             <details class="custom-card" open>
                 <summary>🔗 Accesos Rápidos (tarjetas de enlaces)</summary>
@@ -395,10 +364,61 @@
                 <button class="btn" type="button" onclick="saveSiteConfig()">💾 Guardar Configuración</button>
             </div>
         </div>
+
+        <!-- ====================================================
+             FUENTES EXTERNAS (Municipalidad)
+        ==================================================== -->
+        <div class="panel-section" id="sec-fuentes">
+            <h3>📡 Fuentes Externas (Municipalidad)</h3>
+            <p style="color:var(--text-muted);margin-bottom:1.2rem;">Personalizá el Tablero de Datos Abiertos y el Canvas de Gacetillas. "Sincronizar" trae los datos desde la Muni y los guarda en tu repo como respaldo (opción mixta).</p>
+
+            <details class="custom-card" open>
+                <summary>📊 Tablero de Datos Abiertos</summary>
+                <div class="card-body">
+                    <div class="form-grid">
+                        <div class="field"><label for="fu-tab-titulo">Título de la sección</label><input type="text" id="fu-tab-titulo"></div>
+                        <div class="field" style="display:flex;gap:1.5rem;align-items:center;">
+                            <div class="switch-row" style="margin:0;"><input type="checkbox" class="chk" id="fu-tab-visible"><label for="fu-tab-visible">Mostrar tablero</label></div>
+                            <div class="switch-row" style="margin:0;"><input type="checkbox" class="chk" id="fu-tab-vivo"><label for="fu-tab-vivo">Actualización en vivo</label></div>
+                        </div>
+                    </div>
+                    <h4 style="margin:1rem 0 .6rem;color:var(--primary);">Indicadores (KPIs) — editables a mano</h4>
+                    <div id="kpi-editor"></div>
+                    <div class="btn-row">
+                        <button class="btn secondary" type="button" onclick="syncTablero()">🔄 Sincronizar desde Datos Abiertos</button>
+                        <button class="btn" type="button" onclick="saveTableroManual()">💾 Guardar KPIs</button>
+                    </div>
+                    <p class="hint" id="tablero-sync-info"></p>
+                </div>
+            </details>
+
+            <details class="custom-card" open>
+                <summary>🗞️ Canvas de Gacetillas de la Muni</summary>
+                <div class="card-body">
+                    <div class="form-grid">
+                        <div class="field"><label for="fu-gac-titulo">Título de la sección</label><input type="text" id="fu-gac-titulo"></div>
+                        <div class="field"><label for="fu-gac-cats">Mostrar solo categorías (opcional, separadas por coma)</label><input type="text" id="fu-gac-cats" placeholder="Obras, Cultura, Deportes"></div>
+                        <div class="field" style="display:flex;gap:1.5rem;align-items:center;">
+                            <div class="switch-row" style="margin:0;"><input type="checkbox" class="chk" id="fu-gac-visible"><label for="fu-gac-visible">Mostrar canvas</label></div>
+                            <div class="switch-row" style="margin:0;"><input type="checkbox" class="chk" id="fu-gac-vivo"><label for="fu-gac-vivo">Actualización en vivo</label></div>
+                        </div>
+                    </div>
+                    <h4 style="margin:1rem 0 .6rem;color:var(--primary);">Gacetillas (sincronizadas + manuales)</h4>
+                    <div id="gac-editor"></div>
+                    <div class="btn-row">
+                        <button class="btn secondary" type="button" onclick="syncGacetillas()">🔄 Sincronizar desde Prensa Muni</button>
+                        <button class="btn secondary" type="button" onclick="addGacetillaManual()">➕ Gacetilla manual</button>
+                        <button class="btn" type="button" onclick="saveGacetillas()">💾 Guardar cambios</button>
+                    </div>
+                </div>
+            </details>
+        </div>
     </div>
 
     <div class="status-bar" id="statusBar" role="status"></div>
+
     <script src="js/github-api.js"></script>
+    <script src="js/fuentes-externas.js"></script>
     <script src="js/admin-app.js"></script>
 </body>
 </html>

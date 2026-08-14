@@ -32,7 +32,6 @@
         img { max-width:100%; display:block; }
         a { color:inherit; }
 
-        /* ===== Barra de anuncio ===== */
         #anuncio-bar { display:none; padding:.6rem 1.25rem; text-align:center; font-size:.9rem; font-weight:600; }
         #anuncio-bar.visible { display:block; }
         #anuncio-bar a { color:inherit; text-decoration:underline; }
@@ -57,7 +56,6 @@
         .caret { font-size:.7rem; opacity:.8; margin-left:.3rem; }
         .menu-toggle { display:none; background:none; border:1px solid rgba(255,255,255,.4); color:#fff; font-size:1.4rem; border-radius:6px; padding:.3rem .7rem; cursor:pointer; }
 
-        /* ===== Hero ===== */
         .hero { position:relative; overflow:hidden; background:var(--primary-dark); }
         .hero-slides { position:relative; transition:min-height .3s ease; }
         .hero.hero-sm .hero-slides { min-height:280px; }
@@ -106,8 +104,8 @@
         .btn:hover { background:var(--primary-dark); }
         .btn.dorado { background:var(--gold); color:var(--primary-dark); }
         .btn.dorado:hover { background:#b8931f; }
+        .btn.secondary { background:var(--bg); color:var(--text); border:1px solid var(--border); }
 
-        /* Accesos rápidos */
         .accesos-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:1rem; }
         .acceso-card { background:var(--bg); border:1px solid var(--border); border-radius:var(--radius); padding:1.5rem 1rem; text-align:center; text-decoration:none; box-shadow:var(--shadow); transition:transform .2s; }
         .acceso-card:hover { transform:translateY(-4px); border-color:var(--gold); }
@@ -122,36 +120,27 @@
         .org-card h4 { color:var(--primary); font-size:.98rem; }
         .org-card .meta { font-size:.78rem; color:var(--text-muted); }
 
-        /* =====================================================
-           CARRUSEL COVERFLOW DE CONCEJALES (configurable)
-        ===================================================== */
+        /* ===== Carrusel coverflow de concejales ===== */
         .bloque-item { background:var(--bg); border:1px solid var(--border); border-left:5px solid var(--gold); border-radius:var(--radius); padding:1.2rem; margin-bottom:2.2rem; box-shadow:var(--shadow); }
         .bloque-item h3 { color:var(--primary); margin-bottom:.2rem; }
         .bloque-pres { font-size:.85rem; color:var(--text-muted); margin-bottom:.4rem; }
-
         .cf-carousel { position:relative; overflow:hidden; padding:.5rem 0 0; }
         .cf-stage { position:relative; height:440px; display:flex; align-items:center; justify-content:center; perspective:1400px; }
         .cf-slide { position:absolute; width:300px; height:380px; border-radius:16px; overflow:hidden; background:var(--bg-alt); box-shadow:0 12px 30px rgba(15,30,60,.18); transition:transform .55s ease, opacity .55s ease; cursor:pointer; }
         .cf-slide img, .cf-slide .cf-noimg { width:100%; height:100%; object-fit:cover; display:block; }
         .cf-noimg { display:flex; align-items:center; justify-content:center; font-size:4rem; }
-
-        /* Tamaños */
         .cf-carousel.cf-sm .cf-stage { height:330px; }
         .cf-carousel.cf-sm .cf-slide { width:220px; height:280px; }
         .cf-carousel.cf-md .cf-stage { height:440px; }
         .cf-carousel.cf-md .cf-slide { width:300px; height:380px; }
         .cf-carousel.cf-lg .cf-stage { height:560px; }
         .cf-carousel.cf-lg .cf-slide { width:380px; height:480px; }
-
-        /* Posición del nombre */
         .cf-name { position:absolute; left:0; right:0; color:#fff; text-align:center; }
         .cf-name strong { display:block; font-size:1rem; }
         .cf-name small { display:block; font-size:.75rem; opacity:.85; margin-top:.15rem; }
         .cf-carousel.name-abajo .cf-name { bottom:0; padding:2.4rem .8rem .9rem; background:linear-gradient(180deg, transparent, rgba(10,20,40,.88)); }
         .cf-carousel.name-arriba .cf-name { top:0; padding:.9rem .8rem 2.4rem; background:linear-gradient(0deg, transparent, rgba(10,20,40,.88)); }
         .cf-carousel.name-oculto .cf-name { display:none; }
-
-        /* Flechas / dots / extras */
         .cf-arrow { position:absolute; top:50%; transform:translateY(-50%); width:44px; height:44px; border-radius:50%; border:none; background:rgba(100,110,125,.85); color:#fff; font-size:1rem; cursor:pointer; z-index:200; transition:background .2s; }
         .cf-arrow:hover { background:var(--primary); }
         .cf-arrow.prev { left:6px; }
@@ -163,7 +152,6 @@
         .cf-carousel.no-dots .cf-dots { display:none; }
         .cf-ver-todos { display:block; text-align:center; margin:1.6rem 0 0; color:var(--primary); font-weight:700; text-decoration:none; font-size:1rem; }
         .cf-ver-todos:hover { color:var(--gold); }
-
         @media (max-width:720px) {
             .cf-carousel .cf-stage { height:340px; }
             .cf-carousel .cf-slide { width:220px; height:290px; }
@@ -171,18 +159,35 @@
             .cf-carousel.cf-lg .cf-slide { width:260px; height:340px; }
         }
 
-        /* ===== Noticias ===== */
-        #noticias-container { display:grid; grid-template-columns:repeat(3,1fr); gap:1.5rem; }
-        .noticia-card { background:var(--bg); border:1px solid var(--border); border-radius:var(--radius); overflow:hidden; box-shadow:var(--shadow); display:flex; flex-direction:column; }
-        .noticia-card img { height:180px; width:100%; object-fit:cover; }
-        .noticia-content { padding:1.2rem; display:flex; flex-direction:column; flex:1; }
-        .noticia-content .fecha { font-size:.76rem; color:var(--gold); font-weight:700; text-transform:uppercase; }
-        .noticia-content h3 { color:var(--primary); font-size:1.02rem; margin:.4rem 0 .5rem; }
-        .noticia-content p { font-size:.9rem; color:var(--text-muted); flex:1; }
-        .noticia-content .leer-mas { margin-top:.9rem; color:var(--primary); font-weight:600; text-decoration:none; font-size:.9rem; }
-        .noticia-content .leer-mas:hover { color:var(--gold); }
+        /* ===== Tablero de Datos Abiertos ===== */
+        .kpi-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:1.2rem; margin-bottom:2rem; }
+        .kpi-card { background:var(--bg); border:1px solid var(--border); border-left:5px solid var(--gold); border-radius:var(--radius); padding:1.4rem; box-shadow:var(--shadow); transition:transform .2s; }
+        .kpi-card:hover { transform:translateY(-3px); }
+        .kpi-card .kpi-valor { font-size:1.9rem; font-weight:800; color:var(--primary); }
+        .kpi-card .kpi-titulo { font-size:.9rem; font-weight:700; }
+        .kpi-card .kpi-detalle { font-size:.75rem; color:var(--text-muted); margin-top:.3rem; }
+        .charts-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:1.2rem; }
+        .chart-card { background:var(--bg); border:1px solid var(--border); border-radius:var(--radius); padding:1rem; box-shadow:var(--shadow); }
+        .chart-card h4 { font-size:.9rem; color:var(--primary); margin-bottom:.6rem; }
+        .fuente-badge { display:inline-block; font-size:.72rem; background:var(--bg-alt); border:1px solid var(--border); padding:.15rem .6rem; border-radius:999px; color:var(--text-muted); }
+        .fuente-link { margin-top:1.4rem; font-size:.8rem; color:var(--text-muted); }
+        .fuente-link a { color:var(--primary); }
 
-        /* ===== Temas ===== */
+        /* ===== Canvas de gacetillas ===== */
+        .gac-filtros { display:flex; gap:.5rem; flex-wrap:wrap; margin-bottom:1.2rem; }
+        .gac-chip { border:1px solid var(--border); background:var(--bg); color:var(--text); border-radius:999px; padding:.35rem .9rem; font-size:.8rem; cursor:pointer; }
+        .gac-chip.active { background:var(--primary); color:#fff; border-color:var(--primary); }
+        .gac-canvas { columns:3 260px; column-gap:1.2rem; }
+        .gac-card { break-inside:avoid; margin-bottom:1.2rem; background:var(--bg); border:1px solid var(--border); border-radius:var(--radius); overflow:hidden; box-shadow:var(--shadow); }
+        .gac-card img { width:100%; display:block; }
+        .gac-body { padding:1rem; }
+        .gac-cat { display:inline-block; font-size:.68rem; font-weight:700; text-transform:uppercase; background:var(--bg-alt); color:var(--primary); border-radius:6px; padding:.15rem .5rem; margin-bottom:.4rem; }
+        .gac-body h3 { font-size:.98rem; color:var(--primary); margin:.2rem 0 .35rem; }
+        .gac-body time { font-size:.72rem; color:var(--gold); font-weight:700; }
+        .gac-body p { font-size:.85rem; color:var(--text-muted); }
+        .gac-body a { display:inline-block; margin-top:.6rem; font-size:.85rem; font-weight:600; color:var(--primary); text-decoration:none; }
+        @media (max-width:900px) { .kpi-grid, .charts-grid { grid-template-columns:1fr; } }
+
         .temas-box ul { list-style:none; }
         .temas-box li { background:var(--bg); border:1px solid var(--border); border-radius:var(--radius); padding:.9rem 1.1rem; margin-bottom:.7rem; box-shadow:var(--shadow); }
         .temas-box li strong { color:var(--primary); display:block; margin-top:.25rem; }
@@ -219,7 +224,6 @@
         #publicDarkToggle.visible { display:block; }
 
         @media (max-width:900px) {
-            #noticias-container { grid-template-columns:repeat(2,1fr); }
             .footer-grid { grid-template-columns:1fr 1fr; }
             .accesos-grid { grid-template-columns:repeat(2,1fr); }
             .contacto-grid { grid-template-columns:repeat(2,1fr); }
@@ -232,7 +236,7 @@
             .dropdown-menu { position:static; display:block; box-shadow:none; background:rgba(255,255,255,.08); }
             nav.main-nav .dropdown-menu a { color:#dbe4ee; padding-left:2rem; }
             .header-inner { flex-wrap:wrap; }
-            .grid-2, #noticias-container, .contacto-grid, .footer-grid, .org-grid { grid-template-columns:1fr; }
+            .grid-2, .contacto-grid, .footer-grid, .org-grid { grid-template-columns:1fr; }
         }
     </style>
 </head>
@@ -265,7 +269,8 @@
                             <a href="#temas-sesion">Temas de la Próxima Sesión</a>
                         </div>
                     </li>
-                    <li><a href="#noticias">Noticias</a></li>
+                    <li><a href="#tablero">Tablero</a></li>
+                    <li><a href="#gacetillas">Gacetillas</a></li>
                     <li><a href="#contacto">Contacto</a></li>
                 </ul>
             </nav>
@@ -336,11 +341,28 @@
             </div>
         </section>
 
-        <section id="noticias" class="alt">
+        <!-- ===== TABLERO DE DATOS ABIERTOS ===== -->
+        <section id="tablero" class="alt">
             <div class="container">
-                <h2 class="section-title" data-text="noticias_titulo">Actualidad y Novedades</h2>
+                <h2 class="section-title" data-text="tablero_titulo">📊 Tablero de Datos Abiertos</h2>
                 <div class="rule"></div>
-                <div id="noticias-container"><div class="loading"><div class="spinner"></div>Cargando noticias...</div></div>
+                <p class="section-sub">Presupuesto, obras y reclamos de la Ciudad de Mendoza. <span class="fuente-badge" id="tablero-badge"></span></p>
+                <div class="kpi-grid" id="tablero-kpis"><div class="loading"><div class="spinner"></div>Cargando indicadores...</div></div>
+                <div class="charts-grid" id="tablero-graficos"></div>
+                <p class="fuente-link">Fuente: <a href="https://datos.ciudaddemendoza.gov.ar/" target="_blank" rel="noopener">Portal de Datos Abiertos — Ciudad de Mendoza</a> (licencia CC-BY 4.0)</p>
+            </div>
+        </section>
+
+        <!-- ===== CANVAS DE GACETILLAS ===== -->
+        <section id="gacetillas">
+            <div class="container">
+                <h2 class="section-title" data-text="gacetillas_titulo">🗞️ Gacetillas de la Ciudad</h2>
+                <div class="rule"></div>
+                <p class="section-sub">Actividades y novedades recientes de la Municipalidad. <span class="fuente-badge" id="gac-badge"></span></p>
+                <div class="gac-filtros" id="gac-filtros"></div>
+                <div class="gac-canvas" id="gac-canvas"><div class="loading"><div class="spinner"></div>Cargando gacetillas...</div></div>
+                <div style="text-align:center;margin-top:1.4rem;"><button class="btn secondary" id="gac-mas" type="button" style="display:none;">Cargar más</button></div>
+                <p class="fuente-link">Fuente: <a href="https://prensa.ciudaddemendoza.gob.ar/" target="_blank" rel="noopener">Prensa — Municipalidad de la Ciudad de Mendoza</a></p>
             </div>
         </section>
 
@@ -411,7 +433,7 @@
                     <ul>
                         <li><a href="#institucional">Institucional</a></li>
                         <li><a href="#concejales">Nuestros Concejales</a></li>
-                        <li><a href="#noticias">Noticias</a></li>
+                        <li><a href="#gacetillas">Gacetillas</a></li>
                     </ul>
                 </div>
                 <div>
@@ -479,6 +501,8 @@
     });
     </script>
 
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+    <script src="js/fuentes-externas.js"></script>
     <script src="js/content-loader.js"></script>
 </body>
 </html>
