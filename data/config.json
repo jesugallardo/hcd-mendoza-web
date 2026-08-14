@@ -38,6 +38,9 @@
     "enlaceUrl": "#concejales"
   },
   "fuentes": {
+    "tablero": {
+      "enVivo": true
+    },
     "gacetillas": {
       "enVivo": true,
       "categorias": ""
@@ -102,7 +105,8 @@
   "textos": {
     "hero_titulo": "Gestión Legislativa Abierta",
     "hero_subtitulo": "Accedé a toda la información pública sobre proyectos, ordenanzas y actividades del Concejo.",
-    "gacetillas_titulo": "🗞️ Gacetillas de la Ciudad"
+    "gacetillas_titulo": "🗞️ Gacetillas de la Ciudad",
+    "tablero_titulo": ""
   },
   "contacto": {
     "telefono": "(54) 261-449-5100",
