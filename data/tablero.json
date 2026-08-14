@@ -1,0 +1,28 @@
+{
+  "actualizado": "2026-08-14T15:24:44.687Z",
+  "origen": "manual",
+  "kpis": [
+    {
+      "id": "kpi1",
+      "titulo": "Obras",
+      "valor": 50,
+      "formato": "numero",
+      "detalle": "Obras realizadas"
+    },
+    {
+      "id": "kpi2",
+      "titulo": "",
+      "valor": 0,
+      "formato": "numero",
+      "detalle": ""
+    },
+    {
+      "id": "kpi3",
+      "titulo": "",
+      "valor": 0,
+      "formato": "numero",
+      "detalle": ""
+    }
+  ],
+  "graficos": []
+}
