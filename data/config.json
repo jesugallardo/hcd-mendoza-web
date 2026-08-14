@@ -2,9 +2,9 @@
   "site": {
     "nombre": "Honorable Concejo Deliberante",
     "subtitulo": "de la Ciudad de Mendoza",
-    "logoTipo": "imagen",
+    "logoTipo": "emoji",
     "logoEmoji": "🏛️",
-    "logoImagen": "assets/img/logo.png",
+    "logoImagen": "",
     "copyright": "© 2026 Informática — Concejo Municipal de la Ciudad de Mendoza",
     "seoTitulo": "Honorable Concejo Deliberante — Ciudad de Mendoza",
     "seoDescripcion": "Sitio oficial del Honorable Concejo Deliberante de la Ciudad de Mendoza."
@@ -37,6 +37,15 @@
     "enlaceTexto": "Ver todos los concejales →",
     "enlaceUrl": "#concejales"
   },
+  "fuentes": {
+    "tablero": {
+      "enVivo": true
+    },
+    "gacetillas": {
+      "enVivo": true,
+      "categorias": ""
+    }
+  },
   "sections": [
     {
       "id": "accesos-rapidos",
@@ -57,12 +66,21 @@
       "size": "normal"
     },
     {
-      "id": "noticias",
-      "name": "Noticias",
-      "titleKey": "noticias_titulo",
-      "defaultTitle": "Actualidad y Novedades",
+      "id": "tablero",
+      "name": "Tablero de Datos",
+      "titleKey": "tablero_titulo",
+      "defaultTitle": "📊 Tablero de Datos Abiertos",
       "visible": true,
       "order": 3,
+      "size": "normal"
+    },
+    {
+      "id": "gacetillas",
+      "name": "Gacetillas de la Muni",
+      "titleKey": "gacetillas_titulo",
+      "defaultTitle": "🗞️ Gacetillas de la Ciudad",
+      "visible": true,
+      "order": 4,
       "size": "normal"
     },
     {
@@ -71,7 +89,7 @@
       "titleKey": "actividad_titulo",
       "defaultTitle": "Actividad Legislativa",
       "visible": true,
-      "order": 4,
+      "order": 5,
       "size": "normal"
     },
     {
@@ -80,7 +98,7 @@
       "titleKey": "temas_titulo",
       "defaultTitle": "📋 Temas de la Próxima Sesión",
       "visible": true,
-      "order": 5,
+      "order": 6,
       "size": "normal"
     },
     {
@@ -89,13 +107,15 @@
       "titleKey": "contacto_titulo",
       "defaultTitle": "Contacto",
       "visible": true,
-      "order": 6,
+      "order": 7,
       "size": "normal"
     }
   ],
   "textos": {
     "hero_titulo": "Gestión Legislativa Abierta",
-    "hero_subtitulo": "Accedé a toda la información pública sobre proyectos, ordenanzas y actividades del Concejo."
+    "hero_subtitulo": "Accedé a toda la información pública sobre proyectos, ordenanzas y actividades del Concejo.",
+    "tablero_titulo": "📊 Tablero de Datos Abiertos",
+    "gacetillas_titulo": "🗞️ Gacetillas de la Ciudad"
   },
   "contacto": {
     "telefono": "(54) 261-449-5100",
