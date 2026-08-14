@@ -1,5 +1,49 @@
 [
   {
+    "id": "muni-183075",
+    "titulo": "Ulpiano Suarez encabezó el reconocimiento del Senado a los restaurantes mendocinos premiados por la Guía Michelin 2026",
+    "fecha": "2026-08-14",
+    "url": "https://prensa.ciudaddemendoza.gob.ar/2026/08/14/ulpiano-suarez-encabezo-el-reconocimiento-del-senado-a-los-restaurantes-mendocinos-premiados-por-la-guia-michelin-2026/",
+    "resumen": "El encuentro se llevó a cabo en la Legislatura provincial, con la participación de autoridades provinciales y municipales, junto a representantes del sector turístico y gastronómico.",
+    "imagen": "https://prensa.ciudaddemendoza.gob.ar/wp-content/uploads/2026/08/a72f4b7d-50f8-14f3-b941-3136270ba04e-scaled.jpg",
+    "categoria": "Desarrollo Económico",
+    "origen": "muni",
+    "visible": true
+  },
+  {
+    "id": "muni-183058",
+    "titulo": "Cristián Mohaded llegó a la Ciudad de Mendoza y compartió su mirada sobre el diseño y la creatividad",
+    "fecha": "2026-08-14",
+    "url": "https://prensa.ciudaddemendoza.gob.ar/2026/08/14/cristian-mohaded-llego-a-la-ciudad-de-mendoza-y-compartio-su-mirada-sobre-el-diseno-y-la-creatividad/",
+    "resumen": "El reconocido diseñador argentino, recientemente distinguido como Designer of the Year 2026, brindó este jueves en el Teatro Quintanilla la conferencia “Curiosidad: El punto de vista cambia la perspectiva”, ante una sala",
+    "imagen": "https://prensa.ciudaddemendoza.gob.ar/wp-content/uploads/2026/08/9d5cfc04-b4b0-9df3-fe6b-fb92b5e9ad69-scaled.jpg",
+    "categoria": "Cultura",
+    "origen": "muni",
+    "visible": true
+  },
+  {
+    "id": "muni-183033",
+    "titulo": "Oficios del futuro: capacitan en innovación, digitalización y negocios a trabajadores e institutos técnicos",
+    "fecha": "2026-08-14",
+    "url": "https://prensa.ciudaddemendoza.gob.ar/2026/08/14/oficios-del-futuro-capacitan-en-innovacion-digitalizacion-y-negocios-a-trabajadores-e-institutos-tecnicos/",
+    "resumen": "Se viene la Jornada de Oficios e Innovación, un encuentro que la Ciudad de Mendoza organiza de manera gratuita para conectar la labor tradicional con el ecosistema tecnológico, PyMEs y emprendedores. La cita es el martes",
+    "imagen": "https://prensa.ciudaddemendoza.gob.ar/wp-content/uploads/2026/08/IMG_3819-scaled.jpg",
+    "categoria": "Gobierno",
+    "origen": "muni",
+    "visible": true
+  },
+  {
+    "id": "muni-183013",
+    "titulo": "La Ciudad y la UNCuyo solicitaron declarar al Parque Deportivo de Montaña como Área Natural Protegida",
+    "fecha": "2026-08-14",
+    "url": "https://prensa.ciudaddemendoza.gob.ar/2026/08/14/la-ciudad-y-la-uncuyo-solicitaron-declarar-al-parque-deportivo-de-montana-como-area-natural-protegida/",
+    "resumen": "El intendente Ulpiano Suarez y la rectora de la UNCuyo, Esther Sanchez presentaron ante el Ministerio de Energía y Ambiente de la Provincia una solicitud conjunta para iniciar el procedimiento de declaración del Parque D",
+    "imagen": "https://prensa.ciudaddemendoza.gob.ar/wp-content/uploads/2026/08/WhatsApp-Image-2026-08-14-at-10.57.35-AM.jpeg",
+    "categoria": "Ambiente",
+    "origen": "muni",
+    "visible": true
+  },
+  {
     "id": "muni-183008",
     "titulo": "Llega Gastrofeat a la Ciudad de Mendoza",
     "fecha": "2026-08-14",
@@ -84,50 +128,6 @@
     "resumen": "La comunidad de lectores realizará un nuevo encuentro en la Ciudad de Mendoza. Será el viernes 21 de agosto, a las 17, con una propuesta que combinará lectura silenciosa, una visita guiada y el acercamiento al patrimonio",
     "imagen": "https://prensa.ciudaddemendoza.gob.ar/wp-content/uploads/2026/08/12-1.jpeg",
     "categoria": "Cultura",
-    "origen": "muni",
-    "visible": true
-  },
-  {
-    "id": "muni-182910",
-    "titulo": "La Ciudad de Mendoza revive la huella libertadora con el recorrido especial del Bus Sanmartiniano",
-    "fecha": "2026-08-12",
-    "url": "https://prensa.ciudaddemendoza.gob.ar/2026/08/12/la-ciudad-de-mendoza-revive-la-huella-libertadora-con-el-recorrido-especial-del-bus-sanmartiniano/",
-    "resumen": "La actividad se realizará este sábado 15 de agosto, a las 9 h, con punto de encuentro en el edificio municipal. Tickets en Entradaweb.",
-    "imagen": "https://prensa.ciudaddemendoza.gob.ar/wp-content/uploads/2026/08/1-2.jpg",
-    "categoria": "Destacada",
-    "origen": "muni",
-    "visible": true
-  },
-  {
-    "id": "muni-182893",
-    "titulo": "Ulpiano Suarez dialogó con empresarios sobre los desafíos y oportunidades para Mendoza",
-    "fecha": "2026-08-12",
-    "url": "https://prensa.ciudaddemendoza.gob.ar/2026/08/12/ulpiano-suarez-dialogo-con-empresarios-sobre-los-desafios-y-oportunidades-para-mendoza/",
-    "resumen": "El intendente de la Ciudad participó de un encuentro con integrantes de Aliados, una comunidad que reúne a jóvenes líderes de la provincia.",
-    "imagen": "https://prensa.ciudaddemendoza.gob.ar/wp-content/uploads/2026/08/49a15d64-8fe9-f773-fd71-5d809b2cacad-scaled.jpg",
-    "categoria": "Desarrollo Económico",
-    "origen": "muni",
-    "visible": true
-  },
-  {
-    "id": "muni-182881",
-    "titulo": "El Outlet revitalizó las galerías del centro y dejó un balance positivo para los comerciantes",
-    "fecha": "2026-08-11",
-    "url": "https://prensa.ciudaddemendoza.gob.ar/2026/08/11/el-outlet-revitalizo-las-galerias-del-centro-y-dejo-un-balance-positivo-para-los-comerciantes/",
-    "resumen": "Esta iniciativa ofreció durante tres días importantes descuentos en las galerías. Los participantes destacaron el incremento en la circulación de público y el impacto en las ventas.",
-    "imagen": "https://prensa.ciudaddemendoza.gob.ar/wp-content/uploads/2026/08/IMG_6967-1-scaled.jpg",
-    "categoria": "Desarrollo Económico",
-    "origen": "muni",
-    "visible": true
-  },
-  {
-    "id": "muni-182876",
-    "titulo": "¡Después sigue!: una propuesta para que los jóvenes tomen decisiones responsables antes de conducir",
-    "fecha": "2026-08-11",
-    "url": "https://prensa.ciudaddemendoza.gob.ar/2026/08/11/despues-sigue-una-propuesta-para-que-los-jovenes-tomen-decisiones-responsables-antes-de-conducir/",
-    "resumen": "La Municipalidad de la Ciudad de Mendoza invita a las instituciones educativas de nivel secundario a participar de “Después sigue”, un espacio de reflexión pensado para acompañar a los jóvenes que se encuentran próximos ",
-    "imagen": "https://prensa.ciudaddemendoza.gob.ar/wp-content/uploads/2026/08/WhatsApp-Image-2026-08-12-at-14.27.55.jpeg",
-    "categoria": "Atención y Cercanía",
     "origen": "muni",
     "visible": true
   }
